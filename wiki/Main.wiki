@@ -10,4 +10,6 @@ Reimplements Java Serialization with focus on speed and size. It fully supports 
 The main target are high-speed grids/remoting architectures.
 Supports java 1.7+
 
-a benchmark result comparing with stock java serialization and the kryo serialization library can be found here: http://code.google.com/p/fast-serialization/trunk/result.html
+a benchmark result comparing with stock java serialization and the kryo serialization library can be found here: 
+
+http://code.google.com/p/fast-serialization/source/browse/trunk/result.html
