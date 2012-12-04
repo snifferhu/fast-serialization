@@ -1,4 +1,4 @@
-#=FST - Fast Serialization Thingy=
+=FST - Fast Serialization Thingy=
 
 Reimplements Java Serialization with focus on speed and size. It fully supports JDK-serialization specialities such as write/read Obejct, readreplace, runvalidation() etc. to allow drop-in replacement. Other features:
 
