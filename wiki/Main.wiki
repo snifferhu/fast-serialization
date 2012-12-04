@@ -12,4 +12,4 @@ Supports java 1.7+
 
 a benchmark result comparing with stock java serialization and the kryo serialization library can be found here: 
 
-[http://code.google.com/p/fast-serialization/source/browse/trunk/result.html]
+[http://fast-serialization.googlecode.com/files/result.html]
