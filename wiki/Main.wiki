@@ -1,13 +1,13 @@
-#summary One-sentence summary of this page.
+#=FST - Fast Serialization Thingy=
 
-= Introduction =
+Reimplements Java Serialization with focus on speed and size. It fully supports JDK-serialization specialities such as write/read Obejct, readreplace, runvalidation() etc. to allow drop-in replacement. Other features:
 
-Add your content here.
+  * serialization can be optimized using annotations
+  * custom serializers
+  * conditional decoding (conditionally skip decoding parts of a stream)
 
 
-= Details =
+The main target are high-speed grids/remoting architectures.
+Supports java 1.7+
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+a benchmark result comparing with stock java serialization and the kryo serialization library can be found here: http://code.google.com/p/fast-serialization/trunk/result.html
