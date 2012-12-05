@@ -32,14 +32,14 @@ or better if you know the type of the Object (saves some bytes for the class nam
 static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 ...
 public MyClass myreadMethod(InputStream stream) {
-    FSTObjectInput in = new FSTObjectInput(conf);
+    FSTObjectInput in = new FSTObjectInput(stream,conf);
     MyClass result = in.readObject(MyObject.class);
     in.close();
     return result;
 }
 
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
-    FSTObjectOutput out = new FSTObjectOutput(OutputStream stream, conf);
+    FSTObjectOutput out = new FSTObjectOutput(stream, conf);
     out.writeObject( toWrite, toWrite.getClass() );
 }
 }}}
