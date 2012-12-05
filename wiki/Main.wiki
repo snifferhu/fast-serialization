@@ -98,4 +98,4 @@ if you read the Object, do the following:
 
 }}}
 
-The {{{FSTObjectInput}}} will deserialize all fields of {{{ConditionalExample}}} then call 'shouldSkip' giving in the partially-deserialized Object. If the shouldSkip method returns true, the @Conditional reference will be decoded and set, else it will be skipped.
+The {{{FSTObjectInput}}} will deserialize all fields of {{{ConditionalExample}}} then call 'shouldSkip' giving in the partially-deserialized Object. If the shouldSkip method returns false, the @Conditional reference will be decoded and set, else it will be skipped.
