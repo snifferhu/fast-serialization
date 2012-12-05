@@ -41,6 +41,7 @@ public MyClass myreadMethod(InputStream stream) {
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     FSTObjectOutput out = new FSTObjectOutput(stream, conf);
     out.writeObject( toWrite, toWrite.getClass() );
+    out.close();
 }
 }}}
 Note that if you write with a type, you also have to read with a type !
