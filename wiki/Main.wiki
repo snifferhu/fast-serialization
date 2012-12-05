@@ -67,7 +67,7 @@ A work around in the current version would be to write your Objects chunked (e.g
 
 *Using conditional Decoding*
 
-There are scenarios (e.g. when using multicast), where not every receiver needs to decode all received Objects. In a high performance environment you then like to decode only Objects/Messages you are interested in. With FST you can achieve that using the @Conditional annotation.
+There are scenarios (e.g. when using multicast), where a receiver conditionally wants to skip decoding parts of a received Object in order to save CPU time. With FST one can achieve that using the @Conditional annotation.
 
 {{{
 class ConditionalExample {
