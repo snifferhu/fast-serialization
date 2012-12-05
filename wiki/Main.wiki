@@ -72,7 +72,6 @@ There are scenarios (e.g. when using multicast), where not every receiver needs 
 {{{
 class ConditionalExample {
    int messagetype;
-   String ReceiverTag;
 
    @Conditional
    BigObject aBigObject;
