@@ -5,6 +5,7 @@
 
 *Plain {{{ObjectOutputStream}}} Replacement Usage *
 
+Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 {{{
 ...
 // ! reuse this Object, it caches metadata. Performance degrades massively
@@ -45,10 +46,8 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     out.close();
 }
 }}}
-Note that if you write with a type, you also have to read with a type !
+Note that if you write with a type, you also have to read with the same type !
 
-
-Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 
 _Multi threaded read/write_
 
