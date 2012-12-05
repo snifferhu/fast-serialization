@@ -2,7 +2,7 @@
 
 ==Quick Start==
 
-===Plain {{{ObjectOutputStrem}}} Replacement Usage (Single Threaded)===
+===Plain {{{ObjectOutputStrem}}} Replacement Usage ===
 
 {{{
 ...
@@ -47,3 +47,4 @@ Note that if you write with a type, you also have to read with a type !
 
 
 Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}
+In case of *multi-threaded* usage you have to create a distinct FSTConfiguration Object for each reading/writing Thread. (This will probably change with a newer version). Maybe use a {{{ThreadLocal}}} variable to hold/cache a FSTConfiguration.
