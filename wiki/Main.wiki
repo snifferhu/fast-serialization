@@ -4,5 +4,12 @@
 
 Plain {{{ObjectOutputStrem}}} Replacement Usage (Single Threaded)
 {{{
-...static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+...
+// ! reuse this Object, it caches metadata. Performance degrades massively
+if you create a new Configuration Object with each serialization !
+static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+...
+public void mySerializeMethod( Object ) {
+    FSTObjectInput in = new FSTObjectInput(conf);
+}
 }}}
