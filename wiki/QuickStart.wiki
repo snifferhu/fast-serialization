@@ -107,7 +107,7 @@ So if you have trouble with stock JDK serilaization speed/efficiency, you might 
 
 the basic interface to define the serialization of an Object is {{{FSTObjectSerializer}}}. However in most cases you'll use a subclass of {{{FSTBasicObjectSerializer}}}.
 
-Example of an FSTDateSerializer delivered with FST (note the registration in the instantiate method, you need to do it if you instantiate the object by yourself)
+The FSTDateSerializer delivered with FST (note the registration in the instantiate method, you need to do it if you instantiate the object by yourself)
 {{{
 public class FSTDateSerializer extends FSTBasicObjectSerializer {
     @Override
