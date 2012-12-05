@@ -60,7 +60,7 @@ _Huge Objects / chunked,streaming I/O:_
 
 The Object is written to the underlying stream once you close the FSTOutputStream. Vice versa, the FSTInput reads the full stream until it starts decoding. 
 
-This may be a problem in case you read/write huge Objects or want to stream an ObjectGraph in small chunks.
+This may be a problem in case you read/write huge Objects or want to stream an object graph in small chunks.
 
 A work around in the current version would be to write your Objects chunked (e.g. if you have a List of Objects to serialize, create a new FSTObjectOutput for each Object of the list). Usually allocating some 100 kByte (or even MB) of byte arrays should not be a problem, I just mention this limitation in case you plan reading/writing huge Object Trees or you are trying to stream an ObjectGraph in small chunks.
 
