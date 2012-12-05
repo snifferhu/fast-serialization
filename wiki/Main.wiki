@@ -24,7 +24,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 }
 }}}
 
-or better if you know the type of the Object (saves some bytes for the class name):
+if you know the type of the Object (saves some bytes for the class name of the initial Object) you can do:
 {{{
 ...
 // ! reuse this Object, it caches metadata. Performance degrades massively
