@@ -1,6 +1,7 @@
-_FST - Fast Serialization Thingy_
----
-=Quick Start=
+<p lign=right>_FST - Fast Serialization Thingy_</p>
+----
+
+==Quick Start==
 
 
 *Plain {{{ObjectOutputStream}}} Replacement Usage *
