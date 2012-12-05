@@ -53,7 +53,7 @@ Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with 
 In case of *multi-threaded* usage you have to create a distinct FSTConfiguration Object for each reading/writing Thread. (This will probably change with a newer version). Maybe use a {{{ThreadLocal}}} variable to hold/cache a FSTConfiguration.
 
 
-Huge Objects / chunked IO:
+*Huge Objects / chunked IO:*
 
 The Object is written to the underlying stream once you close the FSTOutputStream. Vice versa, the FSTInput reads the full stream until it starts decoding. 
 
