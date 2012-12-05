@@ -1,0 +1,4 @@
+    public boolean getShadow()
+    {
+        return mCmd.hasOption("s");
+    }
