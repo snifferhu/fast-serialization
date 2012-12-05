@@ -2,7 +2,7 @@
 
 ==Quick Start==
 
-Plain {{{ObjectOutputStrem}}} Replacement Usage (Single Threaded)
+===Plain {{{ObjectOutputStrem}}} Replacement Usage (Single Threaded)===
 
 {{{
 ...
@@ -44,3 +44,6 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 }
 }}}
 Note that if you write with a type, you also have to read with a type !
+
+
+Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}
