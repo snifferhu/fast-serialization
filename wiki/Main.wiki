@@ -1,15 +1,8 @@
 =FST - Fast Serialization Thingy=
 
-Reimplements Java Serialization with focus on speed and size. It fully supports JDK-serialization specialities such as write/read Obejct, readreplace, runvalidation() etc. to allow drop-in replacement. Other features:
+==Quick Start==
 
-  * serialization can be optimized using annotations
-  * custom serializers
-  * conditional decoding (conditionally skip decoding parts of a stream)
-
-
-The main target are high-speed grids/remoting architectures.
-Supports java 1.7+
-
-a benchmark result comparing with stock java serialization and the kryo serialization library can be found here: 
-
-http://fast-serialization.googlecode.com/files/result-0.5.html
+Plain {{{ObjectOutputStrem}}} Replacement Usage (Single Threaded)
+{{{
+...static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+}}}
