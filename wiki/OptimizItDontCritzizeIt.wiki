@@ -9,13 +9,14 @@ FST has some utility methods which let you measure the effects of your optimizat
 
 {{{
 FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-        YourObjectToSerialize ex = new YourObjectToSerialize();
-        System.out.println("Size:"+conf.calcObjectSizeBytesNotAUtility(ex));
-        System.out.println("Write:"+conf.calcObjectWriteTimeNotAUtility(1000000, ex));
-        System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
+// .. register some serializers etc.
+YourObjectToSerialize ex = new YourObjectToSerialize(); // <= annotate this or not
+
+System.out.println("Size:"+conf.calcObjectSizeBytesNotAUtility(ex));       System.out.println("Write:"+conf.calcObjectWriteTimeNotAUtility(1000000, ex));
+System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 }}}
 
-Note that these methods are not intended for usage at runtime ever !
+Note that these methods are not intended for usage at runtime ever ! The times are given in picoseconds as else it would be hard to measure the duration on serializing small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself.
 
 *{{{@Compress}}}*
 
