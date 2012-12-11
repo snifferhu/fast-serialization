@@ -1,3 +1,5 @@
+<p lign=right>_FST - Fast Serialization Thingy_</p>
+----
 =FST - Fast Serialization Thingy=
 
 QuickStart - basic usage and functionality
