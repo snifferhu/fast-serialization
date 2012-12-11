@@ -12,7 +12,8 @@ FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 // .. register some serializers etc.
 YourObjectToSerialize ex = new YourObjectToSerialize(); // <= annotate this or not
 
-System.out.println("Size:"+conf.calcObjectSizeBytesNotAUtility(ex));       System.out.println("Write:"+conf.calcObjectWriteTimeNotAUtility(1000000, ex));
+System.out.println("Size:"+conf.calcObjectSizeBytesNotAUtility(ex));   
+System.out.println("Write:"+conf.calcObjectWriteTimeNotAUtility(1000000, ex));
 System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 }}}
 
