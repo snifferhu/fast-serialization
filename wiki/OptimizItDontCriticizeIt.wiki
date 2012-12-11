@@ -102,16 +102,16 @@ same as {{{@EqualnessIsBinary}}}, but does not copy the Object at deserializatio
 FST applies this optimization automatically for Strings. Note that a reference still costs 3 to 6 bytes, so if an object only has one field such as Date, it does not pay off (applies also to {{{@EqualnessIsBinary}}}).
 
 
-*{{{Flat}}}*
+*{{{@Flat}}}*
 
 This is a pure CPU-saving annotation. If a field referencing some Object is marked as @Flat, FST will not do any effort to reuse this Object. E.g. if a second reference to this Object exists, it will not be restored but contain a copy after deserialization. However if you know in advance there are no identical objects in the object graph, you can save some CPU time. The effects are pretty little, but in case you want to save any nanosecond possible consider this ;)
 
 
-*{{{Plain}}}*
+*{{{@Plain}}}*
 
 by default int arrays are saved in a compact form. Actually most integers do not use full 32bit. However worst case (lots of large int numbers), this will increase the size of an int array by 20%. In case you know this in advance you may switch to plain 4-byte per integer encoding using this annotation on an int array. Useful for image or sound data.
 
-*{{{Predict}}}*
+*{{{@Predict}}}*
 
 Can be used at class or field level. At class level, the classes contained in the Predict array, are added to the list of known classes, so no full classnames for those classes are written to the serialization stream.
 If used at field level, it can save some bytes in case of losse typing. E.g. you have a reference typed 'Entity' and you know it is most likely a 'Employee' or 'Employer', you might add {{{@Predict({Employ.class,Employer.class})}}} to that field. This way only one byte is used to denote the class of the Object. This also works for fields containing losely typed Collections.
@@ -121,6 +121,6 @@ Since FST does a pretty decent job minimizing the size of class names, this opti
 Note it is possible to directly register Classes in advance at the FSTConfiguration object.
 
 
-*Thin*
+*@Thin*
 
 applicable to int and object arrays, enforces 'Thin' compression as described above in {{{@Compress}}} section.
