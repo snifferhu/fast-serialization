@@ -50,7 +50,7 @@ Since this consumes some CPU-time, only for classes tagged with {{{EqualnessIsBi
 
 Example:
 {{{
-@EqualnessIsIdentity
+@EqualnessIsBinary
 public class ObjectOrientedDataType implements Serializable {
 
     // encapsulate like a boss
@@ -71,7 +71,8 @@ public class ObjectOrientedDataType implements Serializable {
     public boolean equals( Object o ) {
         if ( o instanceof ObjectOrientedDataType) {
             ObjectOrientedDataType dt = (ObjectOrientedDataType) o;
-            return dt.aString.equals(aString) && dt.isCapableOfDoingAnythingMeaningful == isCapableOfDoingAnythingMeaningful;
+            return dt.aString.equals(aString) 
+                && dt.isCapableOfDoingAnythingMeaningful == isCapableOfDoingAnythingMeaningful;
         }
         return super.equals(o);
     }
