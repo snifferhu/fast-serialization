@@ -35,11 +35,56 @@ For integer arrays a detection is done wether one of the following algorithms su
   * diff int - successful if your integer array contains little volatility (e.g. chart data). Only the first value is written, after that only the difference to the next value is written.
   * offset int - computes min an max of the int array. In case the range is < 65535, the min value and a series of short's is written.
 
-*{{{Conditional}}}*
+*{{{@Conditional}}}*
 
 see QuickStart page
 
-*{{{EqualnessIsBinary}}}*
+*{{{@EqualnessIsBinary}}}*
+
+This option may greatly reduce the size of the serialized Objects. In todays enterprise application one frequently has value type objects such as Person { name, prename, age, id } or ValuePair { int key, String value }. Frequently these objects result from some generated data source  abstraction layer such as Hibernate or some homegrown generated stuff.
+Unfortunately often you get several instances for the same business object. Example you have 2 Person objects which are equal in all their field values.
+
+FST can detect those double instances during serialization and manages to write only one instance. At deserialization time, the InputStream is "rewinded" and the single copy is read several times, so at read time you get an exact copy of the object graph you serialized.
+
+Since this consumes some CPU-time, only for classes tagged with {{{EqualnessIsBinary}}} a equalness detection is performed. Note that you have to implement equals and hashCode correctly to have this work. Also not if the equals method does not cover all fields of a class, you may get wrong results upon deserializing.
+
+Example:
+{{{
+@EqualnessIsIdentity
+public class ObjectOrientedDataType implements Serializable {
+
+    // encapsulate like a boss
+    @Compress
+    private String aString="";
+    private boolean isCapableOfDoingAnythingMeaningful;
+    public ObjectOrientedDataType() {}
+
+    public ObjectOrientedDataType(String valueString) {
+        if ( valueString == null ) {
+            isCapableOfDoingAnythingMeaningful = false;
+            aString = "";
+        } else {
+            this.aString = valueString;
+        }
+    }
+
+    public boolean equals( Object o ) {
+        if ( o instanceof ObjectOrientedDataType) {
+            ObjectOrientedDataType dt = (ObjectOrientedDataType) o;
+            return dt.aString.equals(aString) && dt.isCapableOfDoingAnythingMeaningful == isCapableOfDoingAnythingMeaningful;
+        }
+        return super.equals(o);
+    }
+
+    public int hashCode() {
+        return aString.hashCode();
+    }
+
+    public String toString() {
+        return aString;
+    }
+}
+}}}
 
 
 *{{{EqualnessIsIdentity}}}*
