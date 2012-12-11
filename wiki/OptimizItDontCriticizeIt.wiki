@@ -113,6 +113,14 @@ by default int arrays are saved in a compact form. Actually most integers do not
 
 *{{{Predict}}}*
 
+Can be used at class or field level. At class level, the classes contained in the Predict array, are added to the list of known classes, so no full classnames for those classes are written to the serialization stream.
+If used at field level, it can save some bytes in case of losse typing. E.g. you have a reference typed 'Entity' and you know it is most likely a 'Employee' or 'Employer', you might add {{{@Predict({Employ.class,Employer.class})}}} to that field. This way only one byte is used to denote the class of the Object. This also works for fields containing losely typed Collections.
+
+Since FST does a pretty decent job minimizing the size of class names, this optimization makes sense only if you write very short objects, where the transmission of a classname might require more space than the object itself.
+
+Note it is possible to directly register Classes in advance at the FSTConfiguration object.
 
 
 *Thin*
+
+applicable to int and object arrays, enforces 'Thin' compression as described above in {{{@Compress}}} section.
