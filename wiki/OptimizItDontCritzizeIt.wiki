@@ -5,25 +5,25 @@
 
 FST defines a set of annotations which influence the en/decoding of objects at runtime.
 
-*Compress*
+*{{{Compress}}}*
 
 
-*Conditional*
+*{{{Conditional}}}*
 
 
-*EqualnessIsBinary*
+*{{{EqualnessIsBinary}}}*
 
 
-*EqualnessIsIdentity*
+*{{{EqualnessIsIdentity}}}*
 
 
-*Flat*
+*{{{Flat}}}*
 
 
-*Plain*
+*{{{Plain}}}*
 
 
-*Predict*
+*{{{Predict}}}*
 
 
 *Thin*
