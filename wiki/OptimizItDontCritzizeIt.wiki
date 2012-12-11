@@ -39,9 +39,10 @@ For integer arrays a detection is done wether one of the following algorithms su
 
 see QuickStart page
 
+
 *{{{@EqualnessIsBinary}}}*
 
-This option may greatly reduce the size of the serialized Objects. In todays enterprise application one frequently has value type objects such as Person { name, prename, age, id } or ValuePair { int key, String value }. Frequently these objects result from some generated data source  abstraction layer such as Hibernate or some homegrown generated stuff.
+This option may greatly reduce the size of the serialized Objects. In todays enterprise application one frequently has value type objects such as {{{Person { name, prename, age, id } }}} or {{{ValuePair { int key, String value } }}}. Frequently these objects result from some generated data source  abstraction layer such as Hibernate or some homegrown generated stuff.
 Unfortunately often you get several instances for the same business object. Example you have 2 Person objects which are equal in all their field values.
 
 FST can detect those double instances during serialization and manages to write only one instance. At deserialization time, the InputStream is "rewinded" and the single copy is read several times, so at read time you get an exact copy of the object graph you serialized.
