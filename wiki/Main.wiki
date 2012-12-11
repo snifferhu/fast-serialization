@@ -1,4 +1,5 @@
 =FST - Fast Serialization Thingy=
 
 QuickStart - basic usage and functionality
+
 OptimizItDontCritzizeIt - how to customize serialization using annotations
