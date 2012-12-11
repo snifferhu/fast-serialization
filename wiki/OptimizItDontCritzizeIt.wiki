@@ -21,6 +21,7 @@ Note that these methods are not intended for usage at runtime ever ! The times a
 
 
 
+
 *{{{@Compress}}}*
 
 The compress annotation lets FST do moderate compression on the annotated field.
