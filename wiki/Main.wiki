@@ -4,6 +4,4 @@
 
 QuickStart - basic usage and functionality
 
-OptimizItDontCritzizeIt - how to customize serialization using annotations
-
 OptimizItDontCriticizeIt - how to customize serialization using annotations
