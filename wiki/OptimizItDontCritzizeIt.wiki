@@ -25,7 +25,7 @@ The compress annotation lets FST do moderate compression on the annotated field.
 It is currently aknowledged only for Strings and integer arrays.
 
 
-For Strings an attempt is beeing made to squeeze 2 chars into a byte .. this works good for plain text containing small caps. Don't use it for large caps only Strings. For normal english strings expect a saving of 10..30%. Note that the String should at least have >12 chars to make this effective. The performance hit for this compression is moderate (far lower than a real compression algorithm). It is guaranteed that the string will not grow in size due to compression, you only have a small performance hit in string writing then (<10%).
+For Strings an attempt is made to squeeze 2 chars into a byte .. this works good for plain text containing small caps. Don't use it for large caps-only Strings. For normal english strings expect a saving of 10..30%. Note that the String should at least have >12 chars to make this effective. The performance hit for this compression is moderate (far lower than a real compression algorithm). It is guaranteed that the string will not grow in size due to compression, you only have a small performance hit in string writing then (<10%).
 
 
 For integer arrays a detection is done wether one of the following algorithms succeeds in reducing the size:
@@ -37,6 +37,7 @@ For integer arrays a detection is done wether one of the following algorithms su
 
 *{{{Conditional}}}*
 
+see QuickStart page
 
 *{{{EqualnessIsBinary}}}*
 
