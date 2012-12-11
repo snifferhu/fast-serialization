@@ -1,1 +1,29 @@
-test
+<p lign=right>_FST - Fast Serialization Thingy_</p>
+----
+==Optimization==
+
+
+FST defines a set of annotations which influence the en/decoding of objects at runtime.
+
+*Compress*
+
+
+*Conditional*
+
+
+*EqualnessIsBinary*
+
+
+*EqualnessIsIdentity*
+
+
+*Flat*
+
+
+*Plain*
+
+
+*Predict*
+
+
+*Thin*
