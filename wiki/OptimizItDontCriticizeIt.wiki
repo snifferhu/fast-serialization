@@ -121,6 +121,6 @@ Since FST does a pretty decent job minimizing the size of class names, this opti
 Note it is possible to directly register Classes in advance at the FSTConfiguration object.
 
 
-*@Thin*
+*{{{@Thin}}}*
 
 applicable to int and object arrays, enforces 'Thin' compression as described above in {{{@Compress}}} section.
