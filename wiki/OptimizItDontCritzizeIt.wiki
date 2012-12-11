@@ -19,6 +19,8 @@ System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 
 Note that these methods are not intended for usage at runtime ever ! The times are given in picoseconds else it would be hard to measure the duration of small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself. However if you play around with {{{@EqualnessIsBinary}}} this might skew the Object size :).
 
+
+
 *{{{@Compress}}}*
 
 The compress annotation lets FST do moderate compression on the annotated field.
@@ -35,9 +37,12 @@ For integer arrays a detection is done wether one of the following algorithms su
   * diff int - successful if your integer array contains little volatility (e.g. chart data). Only the first value is written, after that only the difference to the next value is written.
   * offset int - computes min an max of the int array. In case the range is < 65535, the min value and a series of short's is written.
 
+
+
 *{{{@Conditional}}}*
 
 see QuickStart page
+
 
 
 *{{{@EqualnessIsBinary}}}*
@@ -45,7 +50,7 @@ see QuickStart page
 This option may greatly reduce the size of the serialized Objects. In todays enterprise application one frequently has value type objects such as {{{Person { name, prename, age, id } }}} or {{{ValuePair { int key, String value } }}}. Frequently these objects result from some generated data source  abstraction layer such as Hibernate or some homegrown generated stuff.
 Unfortunately often you get several instances for the same business object. Example you have 2 Person objects which are equal in all their field values.
 
-FST can detect those double instances during serialization and manages to write only one instance. At deserialization time, the InputStream is "rewinded" and the single copy is read several times, so at read time you get an exact copy of the object graph you serialized.
+FST can detect those double instances during serialization and manages to write only one instance. At deserialization time, the {{{InputStream }}} is "rewinded" and the single copy is read several times, so at read time you get an exact copy of the object graph you serialized.
 
 Since this consumes some CPU-time, only for classes tagged with {{{EqualnessIsBinary}}} a equalness detection is performed. Note that you have to implement equals and hashCode correctly to have this work. Also not if the equals method does not cover all fields of a class, you may get wrong results upon deserializing.
 
