@@ -104,7 +104,7 @@ FST applies this optimization automatically for Strings. Note that a reference s
 
 *{{{@Flat}}}*
 
-This is a pure CPU-saving annotation. If a field referencing some Object is marked as @Flat, FST will not do any effort to reuse this Object. E.g. if a second reference to this Object exists, it will not be restored but contain a copy after deserialization. However if you know in advance there are no identical objects in the object graph, you can save some CPU time. The effects are pretty little, but in case you want to save any nanosecond possible consider this ;)
+This is a pure CPU-saving annotation. If a field referencing some Object is marked as @Flat, FST will not do any effort to reuse this Object. E.g. if a second reference to this Object exists, it will not be restored but contain a copy after deserialization. However if you know in advance there are no identical objects in the object graph, you can save some CPU time. The effects are pretty little, but in case you want to save any nanosecond possible consider this ;). If a class is marked as {{{@Flat}}}, no instance of this class will be checked for equalness or identity. Using this annotation can be important when you serialize small objects as typical in remoting or heap offloading.
 
 
 *{{{@Plain}}}*
