@@ -18,7 +18,7 @@ It is clear, that *the performance of such an off heap buffer depends mostly on 
 FST encapsulates the low level stuff by providing 2 classes:
 
   * {{{FSTOffheap}}} - a simple off heap collection. One can add objects and search the collection using an iterator. Additionally each object can be saved with a tag object to speed up linear search later on.
-  * {{{FSTOffHeapMap}}} - an implementation of Map, which puts its value Objects to dirrectly allocated memory.
+  * {{{FSTOffHeapMap}}} - an implementation of Map, which puts its value Objects to directly allocated 'native' memory.
 
 
 Sample usage scenarios:
