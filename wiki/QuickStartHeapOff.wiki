@@ -15,7 +15,7 @@ This means the application serializes objects into the offheap memory, later on 
 
 The heap size managed by the java VM can be kept small, so GC pauses are in the millis, everybody is happy, job done.
 
-It is clear, that *the performance of such an off heap buffer depends mostly on the performance of the serialization implementation*.
+It is clear, that *the performance of such an off heap buffer depends mostly on the performance of the serialization implementation*. Well, for some reason FST is pretty fast :-).
 
 FST encapsulates the low level stuff by providing 2 classes:
 
