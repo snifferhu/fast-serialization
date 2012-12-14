@@ -10,8 +10,10 @@ However todays server applications (frequently built on top of bloaty frameworks
 One *solution* to these memory requirements, is to 'offload' parts of the objects to the non-java heap (directly allocated from the OS).
 Fortunately java.nio provides classes to directly allocate/read and write 'unmanaged' chunks of memory (even memory mapped files).
 
-So one can allocate large amounts of 'unmanaged' memory and use this to save objects there. In order to save arbitrary objects into memory, the most viable solution is the use of Serialization. 
+So one can allocate large amounts of 'unmanaged' memory and use this to save objects there. In order to save arbitrary objects into unmanaged memory, the most viable solution is the use of Serialization. 
 This means the application serializes objects into the offheap memory, later on the object can be read using deserialization.
+
+The heap size managed by the java VM can be kept small, so GC pauses are in the millis, everybody is happy, job done.
 
 It is clear, that *the performance of such an off heap buffer depends mostly on the performance of the serialization implementation*.
 
