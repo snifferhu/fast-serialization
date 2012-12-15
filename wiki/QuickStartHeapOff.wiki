@@ -26,3 +26,28 @@ FST encapsulates the low level stuff by providing 2 classes:
 Sample usage scenarios:
   * Session cache in a server application. Use a memory mapped file to store gigabytes of (inactive) user sessions. Once the user logs into your application, you can quickly access user-related data without having to deal with a database.
   * Caching of computational results (queries, html pages, ..) (only applicable if computation is slower than deserializing the result object ofc).
+
+
+<br><br>
+*What performance to expect ?*
+
+For benchmarking I use a somewhat typical enterprise bloat object using finegrained data type classes. {{{ObjectOrientedDataType}}} consists of a string and a boolean, {{{ObjectOrientedInt}}} wrappes an int.
+
+{{{
+public class SimpleOrder implements Serializable {
+
+    Date mOrderTime;
+    ObjectOrientedDataType mTradableId;
+    ObjectOrientedDataType mTraderId;
+    ObjectOrientedDataType mBuySell;
+    ObjectOrientedDataType mOrderType;
+    ObjectOrientedInt mOrderQty;
+    ObjectOrientedInt mInitialOrderQty;
+    ObjectOrientedInt mOrderPrc;
+    Long mOrderId;
+    ObjectOrientedDataType mText;
+}
+}}}
+
+benchmark reading/writing 4 millions of those objects:
+
