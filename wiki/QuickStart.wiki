@@ -36,14 +36,14 @@ static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 ...
 public MyClass myreadMethod(InputStream stream) {
     FSTObjectInput in = new FSTObjectInput(stream,conf);
-    MyClass result = in.readObject(MyObject.class);
+    MyClass result = in.readObject(MyClass.class);
     in.close();
     return result;
 }
 
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     FSTObjectOutput out = new FSTObjectOutput(stream, conf);
-    out.writeObject( toWrite, toWrite.getClass() );
+    out.writeObject( toWrite, MyClass.class );
     out.close();
 }
 }}}
