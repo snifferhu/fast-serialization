@@ -51,3 +51,6 @@ public class SimpleOrder implements Serializable {
 
 benchmark reading/writing 4 millions of those objects (FST v0.7):
 http://fast-serialization.googlecode.com/files/offheap-0.7.html
+
+As one can see, performance of off-heap storage is far slower than Java-Heap storage. However it is much faster than using other methods to move  bigdata outside the VM (Databases etc.). It is clear that an applications needs some kind of indexing in order to access the data, straight forward search will not be fast enough in most cases.
+However accessing (and deserializing) a stored Object within 3.5 nanoseconds (=284 pers ms) is decent and much faster than any kind of other storage methods except the built in java heap.
