@@ -49,5 +49,5 @@ public class SimpleOrder implements Serializable {
 }
 }}}
 
-benchmark reading/writing 4 millions of those objects:
-
+benchmark reading/writing 4 millions of those objects (FST v0.7):
+http://fast-serialization.googlecode.com/files/offheap-0.7.html
