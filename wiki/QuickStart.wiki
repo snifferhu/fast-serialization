@@ -1,5 +1,5 @@
 #labels Featured
-<p lign=right>_FST - Fast Serialization Thingy_</p>
+<p lign=right>_FST - Fast Serialization_</p>
 ----
 ==Quick Start==
 
