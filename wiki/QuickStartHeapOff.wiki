@@ -84,7 +84,7 @@ This class is not thread safe.
 
 A 'binary Queue' implementation. Objects are serialized directly when they are added to the queue, so queued objects do not consume java heap space. One can take Objects or plain byte arrays representing a serialized objects from the queue. Vice versa it is possible to add byte arrays representing a serialized object and take a deserialized object.
 
-This is very useful for network application. Typically the producer process puts objects to the queue, a sender thread takes byte arrays and  sends them over the net, the receiver process then adds the raw byte array to his receiving queue instance and reads deserialized objects from his receiving queue. 
+This is very useful for distributed applications. Typically producer threads put objects to the queue, a sender threads takes byte arrays and  send them over the net, the receiver process then adds the raw byte array to his receiving queue instance and reads deserialized objects from his receiving queue. 
 This reduces the danger of running OutOfMemory under high load conditions, where large queues occur frequently. There is no performance impact, as one has to serialize the objects anyway in order to send them over the net.
 
 _multithreading_
