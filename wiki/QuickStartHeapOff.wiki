@@ -59,6 +59,8 @@ However accessing (and deserializing) a stored Object *within 3.5 microseconds* 
 
 * FST Offheap classes *
 
+_all objects added off-heap, must be serializable. FST annotations are acknowledged._
+
 *{{{FSTOffHeap}}}*
 
 Basic Offheap store. It allocates a chunk of memory and allows to add Objects to it. Objects cannot be removed.
