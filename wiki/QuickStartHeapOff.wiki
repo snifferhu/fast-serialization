@@ -74,3 +74,8 @@ _multi threading_
 The add methods directly avaiable at the offheap class are not thread safe, to get thread safe access use the getAccess() method. using a distinct access object for each concurrent thread accessing the buffer is thread safe. Iteration is thread safe also.
 
 This is only a basic building block for higher level functionality (e.g. offheap queue and offheap map), however it can be useful to save heap memory, by off-heaping e.g. tons of strings or other frequently used objects of your application.
+
+*{{{FSTOffHeapMap}}}*
+
+A Hashmap implentation which stores its value objects offheap. Note that you need to re-organize the map from time to time as the underlying offheap grows with each object added (aka remove does remove a key from the map, not the underlying buffer). The easiest way to reorganize is to create a new offheap map and put all values from the old to the new map.
+This class is not thread safe.
