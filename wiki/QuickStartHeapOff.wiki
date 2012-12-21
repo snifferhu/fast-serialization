@@ -79,3 +79,20 @@ This is only a basic building block for higher level functionality (e.g. offheap
 
 A Hashmap implentation which stores its value objects offheap. Note that you need to re-organize the map from time to time as the underlying offheap grows with each object added (aka remove does remove a key from the map, not the underlying buffer). The easiest way to reorganize is to create a new offheap map and put all values from the old to the new map.
 This class is not thread safe.
+
+*{{{FSTOffHeapQueue}}}*
+
+A 'binary Queue' implementation. Objects are serialized directly when they are added to the queue, so queued objects do not consume java heap space. One can take Objects or plain byte arrays representing a serialized objects from the queue. Vice versa it is possible to add byte arrays representing a serialized object and take a deserialized object.
+
+This is very useful for network application. Typically the producer process puts objects to the queue, a sender thread takes byte arrays and  sends them over the net, the receiver process then adds the raw byte array to his receiving queue instance and reads deserialized objects from his receiving queue. 
+This reduces the danger of running OutOfMemory under high load conditions, where large queues occur frequently. There is no performance impact, as one has to serialize the objects anyway in order to send them over the net.
+
+_multithreading_
+
+{{{FSTOffHeapQueue}}} supports to usage patterns:
+  * many readers/many writers
+  * single reader/writer with *multi-threaded decoding*
+
+multi threaded en/decoding can boost the speed of your application in case your process receives/sends one large stream of events to only a few receiver/sender instances. In this scenario throughput can be greatly improved by using multi threaded en/decoding (>400%). This lets you make use of multi core servers even if your application is basically single threaded. Multi threaded en/decoding is done behind the scenes and does not mees up the message order in the queue.
+
+In case of client/server applications (one sender/many receivers) the ammount of concurrency usually is high enough to get something from your 16 core server, in these scenarios you just access the queue concurrently.
