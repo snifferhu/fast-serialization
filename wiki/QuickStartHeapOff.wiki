@@ -59,7 +59,7 @@ However accessing (and deserializing) a stored Object *within 3.5 microseconds* 
 
 * FST Offheap classes *
 
-*{{{FSToffHeap}}}*
+*{{{FSTOffHeap}}}*
 
 Basic Offheap store. It allocates a chunk of memory and allows to add Objects to it. Objects cannot be removed.
 In order to allow searching/iterating, one can associate a "tag" object with each entry (e.g. {{{offheap.add(person, person.getName()}}} ). When iterating tag-wise, only the tag is deserialized, so it is possible to search quicker only deserializing the tag object (note its an extended subclass of iterator). The heap store does not grow automatically. 
