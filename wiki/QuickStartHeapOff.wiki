@@ -56,3 +56,19 @@ http://fast-serialization.googlecode.com/files/offheap-0.8.html
 
 As one can see, performance of off-heap storage is far slower than Java-Heap storage. However it is much faster than using other methods to move  bigdata outside the VM (Databases etc.). It is clear that an applications needs some kind of indexing in order to access the data, straight forward search will not be fast enough in most cases.
 However accessing (and deserializing) a stored Object *within 3.5 microseconds* (=284 per ms) is decent and much faster than any kind of other storage methods except the built in java heap.
+
+* FST Offheap classes *
+
+*{{{FSToffHeap}}}*
+
+Basic Offheap store. It allocates a chunk of memory and allows to add Objects to it. Objects cannot be removed.
+In order to allow searching/iterating, one can associate a "tag" object with each entry (e.g. {{{offheap.add(person, person.getName()}}} ). When iterating tag-wise, only the tag is deserialized, so it is possible to search quicker only deserializing the tag object (note its an extended subclass of iterator). The heap store does not grow automatically. 
+Each add() returns an int handle which can be used to obtain the stored object later on.
+
+By initializing {{{FSTOffHeap}}} with a memory mapped file buffer, one may use this class to write to files.
+
+_multi threading_
+
+The add methods directly avaiable at the offheap class are not thread safe, to get thread safe access use the getAccess() method. using a distinct access object for each concurrent thread accessing the buffer is thread safe. Iteration is thread safe also.
+
+This is only a basic building block for higher level functionality (e.g. offheap queue and offheap map).
