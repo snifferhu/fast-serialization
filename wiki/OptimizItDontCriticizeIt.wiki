@@ -17,7 +17,7 @@ System.out.println("Write:"+conf.calcObjectWriteTimeNotAUtility(1000000, ex));
 System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 }}}
 
-Note that these methods are not intended for usage at runtime ever ! The times are given in picoseconds else it would be hard to measure the duration of small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself. However if you play around with {{{@EqualnessIsBinary}}} this might skew the Object size :).
+Note that these methods are not intended for usage at runtime ever ! The times are given in microseconds else it would be hard to measure the duration of small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself. However if you play around with {{{@EqualnessIsBinary}}} this might skew the Object size :).
 
 
 
