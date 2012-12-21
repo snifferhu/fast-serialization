@@ -89,10 +89,11 @@ This reduces the danger of running OutOfMemory under high load conditions, where
 
 _multithreading_
 
-{{{FSTOffHeapQueue}}} supports to usage patterns:
+{{{FSTOffHeapQueue}}} supports two usage patterns:
   * many readers/many writers
   * single reader/writer with *multi-threaded decoding*
 
 multi threaded en/decoding can boost the speed of your application in case your process receives/sends one large stream of events to only a few receiver/sender instances. In this scenario throughput can be greatly improved by using multi threaded en/decoding (>400%). This lets you make use of multi core servers even if your application is basically single threaded. Multi threaded en/decoding is done behind the scenes and does not mees up the message order in the queue.
 
 In case of client/server applications (one sender/many receivers) the ammount of concurrency usually is high enough to get something from your 16 core server, in these scenarios you just access the queue concurrently.
+For details see OffHeapQueue
