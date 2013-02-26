@@ -21,7 +21,7 @@ Note that these methods are not intended for usage at runtime ever ! The times a
 
 *Unsafe*
 
-{{{System.setProperty("fst.unsafe","true");}}} enables use of unsafe memory operations (speeds up up to 30%). Note that this flag must be initialized before any call to FSTConfiguration.createXX. use 
+{{{System.setProperty("fst.unsafe","true");}}} enables use of unsafe memory operations (speeds up up to 30%). Note that this flag must be initialized before any call to FSTConfiguration.createXX. If in doubt, consider  
 {{{ static { System.setProperty("fst.unsafe","true"); } }}} in your main class to ensure the options is set before FST builds up any metainformation.
 
 *{{{@Compress}}}*
