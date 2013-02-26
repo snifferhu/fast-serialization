@@ -2,8 +2,7 @@
 ----
 ==Optimization==
 
-
-FST defines a set of annotations which influence the en/decoding of objects at runtime. Note that default FST (no annotations) is optimized the most. So prepare for a tradeoff speed <=> serialization size. However frequently it is more important to minimize the size of an object bandwith considerations, further processing (remoting in a cluster) etc.
+FST defines a set of annotations which influence the en/decoding of objects at runtime. Note that default FST (no annotations) is optimized the most. So prepare for a tradeoff speed <=> serialization size. However frequently it is more important to minimize the size of an object because of bandwith considerations, further processing (remoting in a cluster) etc.
 
 FST has some utility methods which let you measure the effects of your optimization:
 
@@ -20,7 +19,10 @@ System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 Note that these methods are not intended for usage at runtime ever ! The times are given in microseconds else it would be hard to measure the duration of small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself. However if you play around with {{{@EqualnessIsBinary}}} this might skew the Object size :).
 
 
+*Unsafe*
 
+{{{System.setProperty("fst.unsafe","true");}}} enables use of unsafe memory operations (speeds up up to 30%). Note that this flag must be initialized before any call to FSTConfiguration.createXX. use 
+{{{ static { System.setProperty("fst.unsafe","true"); } }}} in your main class to ensure the options is set before FST builds up any metainformation.
 
 *{{{@Compress}}}*
 
