@@ -126,3 +126,17 @@ Note it is possible to directly register Classes in advance at the FSTConfigurat
 *{{{@Thin}}}*
 
 applicable to int and object arrays, enforces 'Thin' compression as described above in {{{@Compress}}} section.
+
+*{{{@OneOf}}}*
+
+applicable references to Strings. Often Strings contain de-facto enumerations, but are not declared so. To prevent the transmission of constant Strings, one can define up to 254 constants at a field reference. If at serialization time the field contains one of the constants, only one byte is written instead of the full string. If the field contains a different string, this one is transmitted. So the list can be incomplete (e.g. just denote frequent values or default values).
+
+{{{
+...
+@OneOf({"EUR", "DOLLAR", "YEN"})
+String currency;
+...
+@OneOf({"BB-", "CC-"})
+Object euRating;
+...
+}}}
