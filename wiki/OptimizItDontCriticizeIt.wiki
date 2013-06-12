@@ -120,7 +120,7 @@ If used at field level, it can save some bytes in case of losse typing. E.g. you
 
 Since FST does a pretty decent job minimizing the size of class names, this optimization makes sense only if you write very short objects, where the transmission of a classname might require more space than the object itself.
 
-Note it is possible to directly register Classes in advance at the FSTConfiguration object.
+Note it is possible to directly register Classes in advance at the FSTConfiguration object. This way the class name is never transmitted. Ofc this must be done at writing and reading side.
 
 
 *{{{@Thin}}}*
