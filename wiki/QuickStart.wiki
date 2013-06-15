@@ -204,4 +204,5 @@ a serializer is registered at the {{{FSTConfiguration}}} Object:
 
 (ofc you have to use exactly this configuration later on in the {{{FSTObjectIn/OutputStream}}})
 
-Full Example:
+* Full Example: *
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
