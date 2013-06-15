@@ -90,7 +90,7 @@ This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread
 
 * Privacy is for amateurs :) *
 
-{{{FSTObjectOutput}}} temporary serializes into an byte array. You can set the underlying byte array, access it etc. . This makes it easy i.e. to serialize and Object, then take the resulting byte byte and do whatever you want with that. Both streams have a "resetForReuse()" which allows to reuse a given instance (e.g. write an object, take the bytearray and send it somewhere or multiple times without re-encoding, reset and write another object). This way one can avoid massive object creation overhead often induced by closed Stream Interfaces. Ofc you have to be careful regarding accidental shared byte[] arrays when doing so.
+{{{FSTObjectOutput}}} temporary serializes into a byte array. You can set the underlying byte array, access it etc. . This makes it easy i.e. to serialize and Object, then take the resulting byte byte and do whatever you want with that. Both streams have a "resetForReuse()" which allows to reuse a given instance (e.g. write an object, take the bytearray and send it somewhere or multiple times without re-encoding, reset and write another object). This way one can avoid massive object creation overhead often induced by closed Stream Interfaces. Ofc you have to be careful regarding accidental shared byte[] arrays when doing so.
 
 * What is that {{{FSTConfiguration}}} ? *
 
