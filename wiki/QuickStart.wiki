@@ -52,6 +52,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 *!* Note that if you create an instance with each serialization you *have to close* the FSTStream, because behind the scenes some datastructures are cached and reused. If this fails, you might cause a pretty nasty performance hit (too much object creation going on), especially if you encode smallish objects.
 
 
+
 * Recommended {{{FSTIn/OutputStream}}} Usage *
 
 In order optimize object reusing and thread safety, FSTConfiguration provides 2 simple factory methods to obtain input/outputstream instances:
@@ -79,6 +80,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 }}}
 
 This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread.
+
 
 
 * What is that {{{FSTConfiguration}}} ? *
