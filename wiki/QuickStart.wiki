@@ -80,7 +80,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 }
 }}}
 
-This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread.
+This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread, which implies you should not save references to streams returned from that method.
 
 
 
