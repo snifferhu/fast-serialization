@@ -1,7 +1,7 @@
 #labels Featured
 <p lign=right>_FST - Fast Serialization_</p>
 ----
-==Quick Start==
+==Getting Started==
 
 
 * Plain {{{ObjectOutputStream}}} Replacement Usage *
@@ -50,6 +50,36 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 *!* Note that if you write with a type, you also have to read with the same type.
 
 *!* Note that if you create an instance with each serialization you *have to close* the FSTStream, because behind the scenes some datastructures are cached and reused. If this fails, you might cause a pretty nasty performance hit (too much object creation going on), especially if you encode smallish objects.
+
+
+* Recommended {{{FSTIn/OutputStream}}} Usage *
+
+In order optimize object reusing and thread safety, FSTConfiguration provides 2 simple factory methods to obtain input/outputstream instances:
+
+{{{
+...
+// ! reuse this Object, it caches metadata. Performance degrades massively
+// if you create a new Configuration Object with each serialization !
+static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+...
+public MyClass myreadMethod(InputStream stream) {
+    FSTObjectInput in = conf.getObjectInput(stream);
+    MyClass result = in.readObject(MyClass.class);
+    // DON'T: in.close(); prevents reuse and will result in an exception      
+    stream.close();
+    return result;
+}
+
+public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
+    FSTObjectOutput out = conf.getObjectOutput(stream);
+    out.writeObject( toWrite, MyClass.class );
+    // DON'T out.close();
+    stream.close();
+}
+}}}
+
+This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread.
+
 
 * What is that {{{FSTConfiguration}}} ? *
 
