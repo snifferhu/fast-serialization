@@ -85,7 +85,7 @@ This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread
 
 * What is that {{{FSTConfiguration}}} ? *
 
-This class defines the encoders/decoders used during serialization. Usually you just create one global singleton. Since instantiation of this class is very expensive. Usage of several distinct Configurations is for special use cases which require some in-depth knowledge of FST code. You probably never will need more than this one default instance.
+This class defines the encoders/decoders used during serialization. Usually you just create one global singleton (instantiation of this class is very expensive). Usage of several distinct Configurations is for special use cases which require some in-depth knowledge of FST code. You probably never will need more than this one default instance.
 
 e.g.
 
