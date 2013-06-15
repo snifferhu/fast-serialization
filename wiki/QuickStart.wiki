@@ -13,14 +13,16 @@ Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with 
 // if you create a new Configuration Object with each serialization !
 static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 ...
-public MyClass myreadMethod( InputStream stream ) {
+public MyClass myreadMethod( InputStream stream ) throws IOException, ClassNotFoundException 
+{
     FSTObjectInput in = new FSTObjectInput(stream,conf);
     MyClass result = (MyClass)in.readObject();
     in.close(); // required when instantiating yourself !!
     return result;
 }
 
-public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
+public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOException 
+{
     FSTObjectOutput out = new FSTObjectOutput(stream,conf);
     out.writeObject( toWrite );
     out.close(); // required when instantiating yourself !!
@@ -34,14 +36,16 @@ if you know the type of the Object (saves some bytes for the class name of the i
 // if you create a new Configuration Object with each serialization !
 static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 ...
-public MyClass myreadMethod(InputStream stream) {
+public MyClass myreadMethod(InputStream stream) throws IOException, ClassNotFoundException
+{
     FSTObjectInput in = new FSTObjectInput(stream,conf);
     MyClass result = in.readObject(MyClass.class);
     in.close();
     return result;
 }
 
-public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
+public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOException 
+{
     FSTObjectOutput out = new FSTObjectOutput(stream, conf);
     out.writeObject( toWrite, MyClass.class );
     out.close();
@@ -63,7 +67,8 @@ In order optimize object reusing and thread safety, FSTConfiguration provides 2 
 // if you create a new Configuration Object with each serialization !
 static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 ...
-public MyClass myreadMethod(InputStream stream) {
+public MyClass myreadMethod(InputStream stream) throws IOException, ClassNotFoundException
+{
     FSTObjectInput in = conf.getObjectInput(stream);
     MyClass result = in.readObject(MyClass.class);
     // DON'T: in.close(); prevents reuse and will result in an exception      
@@ -71,7 +76,8 @@ public MyClass myreadMethod(InputStream stream) {
     return result;
 }
 
-public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
+public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOException 
+{
     FSTObjectOutput out = conf.getObjectOutput(stream);
     out.writeObject( toWrite, MyClass.class );
     // DON'T out.close();
