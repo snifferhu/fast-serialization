@@ -82,7 +82,9 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 
 This will create and reuse a single {{{FSTIn/OutputStream}}} instance per thread, which implies you should not save references to streams returned from that method.
 
+* Privacy is for amateurs :) *
 
+{{{FSTObjectOutput}}} temporary serializes into an array. You can set the underlying byte[] array, access it etc. . This makes it easy i.e. to serialize and Object, then take the resulting byte[] and do whatever you want with that. Both streams have a "resetForReuse()" which allows to reuse a given instance (e.g. write an object, take the bytearray and send it somewhere, reset and write another object). This way one can avoid massive object creation overhead often induced by closed Stream Interfaces. Ofc you have to be careful regarding accidental shared byte[] arrays when doing so.
 
 * What is that {{{FSTConfiguration}}} ? *
 
