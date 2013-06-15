@@ -106,15 +106,14 @@ One easy and important Optimization is to register classes which are serialized 
 
 
 
-_Multi threaded read/write_
+* Multi threaded read/write *
 
-In case of multi-threaded usage you have to create a distinct FSTConfiguration Object for each reading/writing Thread. (This will probably change with a newer version). Maybe use a {{{ThreadLocal}}} variable to hold/cache a FSTConfiguration.
+You cannot read write from different Threads into the same {{{FSTInput/OutputStream}}}. However you can create/use an arbitrary number of {{{FSTInput/OutputStreams}}} sharing one FSTConfiguration. Just see above "Recommended Usage"
 
 
+*Huge Objects / chunked,streaming I/O:*
 
-_Huge Objects / chunked,streaming I/O:_
-
-The encoded Objects are written to the underlying stream once you close the FSTOutputStream. Vice versa, the FSTInput reads the full stream until it starts decoding. 
+The encoded Objects are written to the underlying stream once you close/flush the FSTOutputStream. Vice versa, the FSTInput reads the full stream until it starts decoding. 
 
 This may be a problem in case you read/write huge Objects or want to stream an object graph in small chunks.
 
