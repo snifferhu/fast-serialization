@@ -75,6 +75,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     FSTObjectOutput out = conf.getObjectOutput(stream);
     out.writeObject( toWrite, MyClass.class );
     // DON'T out.close();
+    out.flush();
     stream.close();
 }
 }}}
