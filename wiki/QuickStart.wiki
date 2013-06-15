@@ -53,7 +53,8 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
 
 * What is that {{{FSTConfiguration}}} ? *
 
-This class defines the encoders/decoders used during serialization. Usually you just create one global singleton. Since instantiation of this class is very expensive.
+This class defines the encoders/decoders used during serialization. Usually you just create one global singleton. Since instantiation of this class is very expensive. Usage of several distinct Configurations is for special use cases which require some in-depth knowledge of FST code. You probably never will need more than this one default instance.
+
 e.g.
 
 {{{
@@ -64,6 +65,14 @@ public class MyApplication {
     }
 }
 }}}
+
+You can customize the FSTConfiguration returned by {{{createDefaultConfiguration()}}}. E.g. register new or different serializers, some hooks, set additional flags on defined serializers etc. . Just have a look on the source.
+
+One easy and important Optimization is to register classes which are serialized for sure in your application at the FSTCOnfiguration object. This way FST can avoid writing classnames.
+
+*!* Reader and writer configuration should be identical. Even the order of class registration matters.
+
+
 
 _Multi threaded read/write_
 
