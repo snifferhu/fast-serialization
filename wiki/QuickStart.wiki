@@ -94,7 +94,7 @@ e.g.
 
 {{{
 public class MyApplication {
-    static FSTConfiguration singletonConf = FSTConfiguration.FSTConfiguration.createDefaultConfiguration();
+    static FSTConfiguration singletonConf = FSTConfiguration.createDefaultConfiguration();
     public static FSTConfiguration getInstance() {
         return singletonConf;
     }
