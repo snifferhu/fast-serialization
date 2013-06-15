@@ -4,7 +4,7 @@
 ==Quick Start==
 
 
-*Plain {{{ObjectOutputStream}}} Replacement Usage *
+* Plain {{{ObjectOutputStream}}} Replacement Usage *
 
 Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 {{{
@@ -47,8 +47,23 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     out.close();
 }
 }}}
-Note that if you write with a type, you also have to read with the same type !
+*!* Note that if you write with a type, you also have to read with the same type.
 
+*!* Note that if you create an instance with each serialization you *have to close* the FSTStream, because behind the scenes some datastructures are cached and reused. If this fails, you might cause a pretty nasty performance hit (too much object creation going on), especially if you encode smallish objects.
+
+* What is that {{{FSTConfiguration}}} ? *
+
+This class defines the encoders/decoders used during serialization. Usually you just create one global singleton. Since instantiation of this class is very expensive.
+e.g.
+
+{{{
+public class MyApplication {
+    FSTConfiguration singletonConf = FSTConfiguration.FSTConfiguration.createDefaultConfiguration();
+    public static FSTConfiguration getInstance() {
+        return singletonConf;
+    }
+}
+}}}
 
 _Multi threaded read/write_
 
