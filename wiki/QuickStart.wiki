@@ -16,14 +16,14 @@ static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 public MyClass myreadMethod( InputStream stream ) {
     FSTObjectInput in = new FSTObjectInput(stream,conf);
     MyClass result = (MyClass)in.readObject();
-    in.close();
+    in.close(); // required when instantiating yourself !!
     return result;
 }
 
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) {
     FSTObjectOutput out = new FSTObjectOutput(stream,conf);
     out.writeObject( toWrite );
-    out.close();
+    out.close(); // required when instantiating yourself !!
 }
 }}}
 
