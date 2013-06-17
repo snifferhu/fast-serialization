@@ -4,6 +4,7 @@
 ==Short Guide==
 
 Content:
+
 [#Plain_ObjectOutputStream_Replacement_Usage]
 
 [#Recommended_threadsafe_Use]
