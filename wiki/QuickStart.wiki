@@ -5,7 +5,7 @@
 
 Content:
 
-[#Plain_ObjectOutputStream_Replacement_Usage Simple OOStream Replacement]
+[#Plain_ObjectOutputStream_Replacement Simple !ObjectOutputStream Replacement]
 
 [#Recommended_threadsafe_Use Recommended Use of FST Streams]
 
@@ -20,7 +20,7 @@ Content:
 Complete Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
 
-==== Plain {{{ObjectOutputStream}}} Replacement Usage ====
+==== Plain {{{ObjectOutputStream}}} Replacement ====
 
 Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 {{{
