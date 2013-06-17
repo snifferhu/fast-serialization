@@ -5,7 +5,7 @@
 
 Content:
 
-[#Plain_ObjectOutputStream_Replacement Simple !ObjectOutputStream Replacement]
+[#Plain_ObjectOutputStream_Replacement Simple ObjectOutputStream Replacement]
 
 [#Recommended_threadsafe_Use Recommended Use of FST Streams]
 
