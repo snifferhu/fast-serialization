@@ -9,13 +9,13 @@ Content:
 
 [#Recommended_threadsafe_Use Recommended Use of FST Streams]
 
-[#What_is_that_FSTConfiguration_?]
+[#What_is_that_FSTConfiguration_? FSTConfiguration]
 
-[#Conditional_Decoding]
+[#Conditional_Decoding Conditional Decoding]
 
-[#Custom_Serializers]
+[#Custom_Serializers Custom Serializers]
 
-[#Unsafe_/_Byte_Order_Issues]
+[#Unsafe_/_Byte_Order_Issues About Unsafe and ByteOrder Issues]
 
 Complete Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
