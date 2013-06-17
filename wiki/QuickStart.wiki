@@ -11,10 +11,11 @@ Content:
 
 [#What_is_that_FSTConfiguration_?]
 
-[#Using_conditional_Decoding]
+[#Conditional_Decoding]
 
-[#Using_Custom_Serializers]
+[#Custom_Serializers]
 
+[#Unsafe_/_Byte_Order_Issues]
 
 Complete Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
@@ -144,7 +145,7 @@ This may be a problem in case you read/write huge Objects or want to stream an o
 A work around in the current version would be to write your Objects chunked (e.g. if you have a List of Objects to serialize, create a new FSTObjectOutput for each Object of the list). Usually allocating some 100 kByte (or even MB) of byte arrays should not be a problem, I just mention this limitation in case you plan reading/writing huge Object Trees or you are trying to stream an object graph in small chunks.
 
 
-==== Using conditional Decoding ====
+==== Conditional Decoding ====
 
 There are scenarios (e.g. when using multicast), where a receiver conditionally wants to skip decoding parts of a received Object in order to save CPU time. With FST one can achieve that using the @Conditional annotation.
 
@@ -178,7 +179,7 @@ if you read the Object, do the following:
 
 The {{{FSTObjectInput}}} will deserialize all fields of {{{ConditionalExample}}} then call 'shouldSkip' giving in the partially-deserialized Object. If the shouldSkip method returns false, the @Conditional reference will be decoded and set, else it will be skipped.
 
-==== Using Custom Serializers ====
+==== Custom Serializers ====
 
 By default FST falls back to the methods defined by the JDK. Especially if private methods like 'writeObject' are involved, performance suffers, because reflection must be used. Additionally the efficiency of some stock JDK classes is _cruel_ regarding size and speed. The FST default configuration ({{{FSTConfiguration.createDefaultConfiguration()}}}) already registers some serializers for common classes (popular Collections and some other frequently used classes).
 So if you have trouble with stock JDK serilaization speed/efficiency, you might want to register a piece of custom code defining how to read and write an object of a specific class.
@@ -219,7 +220,7 @@ a serializer is registered at the {{{FSTConfiguration}}} Object:
 
 (ofc you have to use exactly this configuration later on in the {{{FSTObjectIn/OutputStream}}})
 
-*Usage of Unsafe/ Byte Order Issues*
+==== Unsafe / Byte Order Issues ====
 
 By default FST does not make use of unsafe operations, usage of Unsafe must be enabled by calling {{{"System.setProperty("fst.unsafe","true")"}}} *prior to referencing any FST class*. A better approach is to switch Unsafe usage at command line like {{{java -Dfst.unsafe=true ...}}} when starting your program.
 The usage of Unsafe can improve performance significantly (see bechnmark), however if you use FST in client server applications or heterogenous networks you might run into byte order issues, as the byteorder of an x86 and (RIP) Solaris SPARC machine are different.
