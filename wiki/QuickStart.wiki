@@ -3,7 +3,7 @@
 ----
 ==Short Guide==
 
-[#Plain_ObjectOutputStream_Replacement_Usage]
+[Plain_ObjectOutputStream_Replacement_Usage]
 
 Complete Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
