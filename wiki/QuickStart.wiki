@@ -5,9 +5,9 @@
 
 Content:
 
-[#Plain_ObjectOutputStream_Replacement_Usage]
+[#Plain_ObjectOutputStream_Replacement_Usage Simple OOStream Replacement]
 
-[#Recommended_threadsafe_Use]
+[#Recommended_threadsafe_Use Recommended Use of FST Streams]
 
 [#What_is_that_FSTConfiguration_?]
 
