@@ -6,7 +6,7 @@
 Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
 
-* Plain {{{ObjectOutputStream}}} Replacement Usage *
+=== Plain {{{ObjectOutputStream}}} Replacement Usage ===
 
 Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 {{{
@@ -19,7 +19,7 @@ public MyClass myreadMethod( InputStream stream ) throws IOException, ClassNotFo
 {
     FSTObjectInput in = new FSTObjectInput(stream,conf);
     MyClass result = (MyClass)in.readObject();
-    in.close(); // required when instantiating yourself !!
+    in.close(); // required !
     return result;
 }
 
@@ -27,7 +27,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOExcep
 {
     FSTObjectOutput out = new FSTObjectOutput(stream,conf);
     out.writeObject( toWrite );
-    out.close(); // required when instantiating yourself !!
+    out.close(); // required !
 }
 }}}
 
