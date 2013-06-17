@@ -13,6 +13,9 @@ Content:
 
 [#Using_conditional_Decoding]
 
+[#Using_Custom_Serializers]
+
+
 Complete Source Example: 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/serialization/testclasses/docusample/FSTTestApp.java
 
@@ -175,7 +178,7 @@ if you read the Object, do the following:
 
 The {{{FSTObjectInput}}} will deserialize all fields of {{{ConditionalExample}}} then call 'shouldSkip' giving in the partially-deserialized Object. If the shouldSkip method returns false, the @Conditional reference will be decoded and set, else it will be skipped.
 
-*Using Custom Serializers*
+==== Using Custom Serializers ====
 
 By default FST falls back to the methods defined by the JDK. Especially if private methods like 'writeObject' are involved, performance suffers, because reflection must be used. Additionally the efficiency of some stock JDK classes is _cruel_ regarding size and speed. The FST default configuration ({{{FSTConfiguration.createDefaultConfiguration()}}}) already registers some serializers for common classes (popular Collections and some other frequently used classes).
 So if you have trouble with stock JDK serilaization speed/efficiency, you might want to register a piece of custom code defining how to read and write an object of a specific class.
