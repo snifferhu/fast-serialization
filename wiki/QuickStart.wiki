@@ -4,9 +4,7 @@
 ==Short Guide==
 
 [#Plain_ObjectOutputStream_Replacement_Usage]
-
 [#Recommended_threadsafe_Use]
-
 [#What_is_that_FSTConfiguration_?]
 
 Complete Source Example: 
