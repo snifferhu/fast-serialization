@@ -4,9 +4,7 @@
 
 *What is Heap-Offloading ?*
 
-Usually all non-temporary objects you allocate are managed by java's garbage collector. Although the VM does a decent job doing garbage collection, at a certain point the VM has to do a so called 'Full GC'. A full GC involves scanning the complete allocated Heap, which means GC pauses/slowdowns are proportional to an applications heap size. So don't trust any person telling you 'Memory is Cheap'. In java memory consumtion hurts performance. Additionally you may get notable pauses using heap sizes > 1 Gb. This can be nasty if you have any near-real-time stuff going on, in a cluster or grid a java process might get unresponsive and get dropped from the cluster.
-
-However todays server applications (frequently built on top of bloaty frameworks ;-) ) easily require heaps far beyond 4Gb.
+Usually all non-temporary objects you allocate are managed by java's garbage collector. Although the VM does a decent job doing garbage collection, at a certain point the VM has to do a so called 'Full GC'. A full GC involves scanning the complete allocated Heap, which means GC pauses/slowdowns are proportional to an applications heap size. So don't trust any person telling you 'Memory is Cheap'. In java memory consumption hurts performance. The G1 Collector of 1.7 may improve the situation, but anyway .. the hurt of huge heaps will persist.
 
 One *solution* to these memory requirements, is to 'offload' parts of the objects to the non-java heap (directly allocated from the OS).
 Fortunately java.nio provides classes to directly allocate/read and write 'unmanaged' chunks of memory (even memory mapped files).
@@ -33,29 +31,13 @@ Sample usage scenarios:
 <br><br>
 *What performance to expect ?*
 
-For benchmarking I use a somewhat typical enterprise bloat object using finegrained data type classes. {{{ObjectOrientedDataType}}} consists of a string and a boolean, {{{ObjectOrientedInt}}} wrappes an int.
+For benchmarking I use a simple 'Order' class. It is clear performance of Offheap depends on the complexity of the objects stored.
 
-{{{
-public class SimpleOrder implements Serializable {
+benchmark reading/writing 4 millions of those objects (FST v1.12) is
+[http://fast-serialization.googlecode.com/files/offheap.html here]
 
-    Date mOrderTime;
-    ObjectOrientedDataType mTradableId;
-    ObjectOrientedDataType mTraderId;
-    ObjectOrientedDataType mBuySell;
-    ObjectOrientedDataType mOrderType;
-    ObjectOrientedInt mOrderQty;
-    ObjectOrientedInt mInitialOrderQty;
-    ObjectOrientedInt mOrderPrc;
-    Long mOrderId;
-    ObjectOrientedDataType mText;
-}
-}}}
-
-benchmark reading/writing 4 millions of those objects (FST v0.7):
-http://fast-serialization.googlecode.com/files/offheap-0.9_1.html
-
-As one can see, performance of off-heap storage is far slower than Java-Heap storage. However it is much faster than using other methods to move  bigdata outside the VM (Databases etc.). It is clear that an applications needs some kind of indexing in order to access the data, straight forward search will not be fast enough in most cases.
-However accessing (and deserializing) a stored Object *within 3.5 microseconds* (=284 per ms) is decent and much faster than any kind of other storage methods except the built in java heap.
+As one can see, performance of off-heap storage is far slower than Java-Heap storage. However it is much faster than using other methods to move  big data outside the VM (Databases etc.). It is clear that an applications needs some kind of indexing in order to access the data, straight forward search will not be fast enough in most cases.
+However accessing (and deserializing) a stored Object *within 1.1 microseconds* (~800 per ms) is decent and much faster than any kind of other storage methods except the built in java heap.
 
 <br><br>
 * FST Offheap classes *
@@ -72,16 +54,16 @@ By initializing {{{FSTOffHeap}}} with a memory mapped file buffer, one may use t
 
 _multi threading_
 
-The add methods directly avaiable at the offheap class are not thread safe, to get thread safe access use the getAccess() method. using a distinct access object for each concurrent thread accessing the buffer is thread safe. Iteration is thread safe also.
+Use the getAccess() method to get thread safe concurrent access to the offheap. Iteration is thread safe also.
 
 This is only a basic building block for higher level functionality (e.g. offheap queue and offheap map), however it can be useful to save heap memory, by off-heaping e.g. tons of strings or other frequently used objects of your application.
 
-*{{{FSTOffHeapMap}}}*
+*{{{FSTOffHeapMap}}} -UNDER CONSTRUCTION- *
 
 A Hashmap implentation which stores its value objects offheap. Note that you need to re-organize the map from time to time as the underlying offheap grows with each object added (aka remove does remove a key from the map, not the underlying buffer). The easiest way to reorganize is to create a new offheap map and put all values from the old to the new map.
 This class is not thread safe.
 
-*{{{FSTOffHeapQueue}}}*
+*{{{FSTOffHeapQueue}}} -UNDER CONSTRUCTION- *
 
 A 'binary Queue' implementation. Objects are serialized directly when they are added to the queue, so queued objects do not consume java heap space. One can take Objects or plain byte arrays representing a serialized objects from the queue. Vice versa it is possible to add byte arrays representing a serialized object and take a deserialized object.
 
