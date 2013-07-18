@@ -5,17 +5,18 @@
 _In C++, one needs to sacrifice performance in order to get convenience, in Java one needs to sacrifice convenience in order to get performance_
 
 
-While serialization can flatten any Object Graph into a byte array, a disadvantage is that you need to deserialize the Object in order to access the data. However frequently (offheap objects, locality) one would like to access the data without the costly "decoding" part.
+While serialization can flatten any Object Graph into a byte array, one needs to deserialize the Object in order to access the data contained. Frequently (offheap objects, locality) one would like to access the data without the costly "deserialization"-part.
 
 FSTStructs provide a way to store and access data in a deterministic structured layout in a continuous chunk of memory.
-I therefore use runtime byte code generation and (may change in future) the Unsafe class in order to redirect direct member access of a methods code to a {{{byte[]}}}} array.
+I therefore use runtime byte code generation and (may change in future) the Unsafe class in order to redirect direct member access of method bodies to an underlying {{{byte[]}}}} array.
 
-While there are a lot compromises to be made (an orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits "flattening" data structures:
+While there are a lot compromises to be made (an orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits "flattening" data structures keeping them accessible:
 
   * very low GC cost (store GB of structured data with <10ms Full GC duration) 
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
   * use memory mapped files to virtually enlarge your memory, as it is possibble to control memory layout of your data
   * faster iteration of complex data structures compared to On-Heap due to control over in memory layout and "pointer-alike" memory access patterns
+  * data structures can be de/encoded easy from external languages
 
 
 = Details =
