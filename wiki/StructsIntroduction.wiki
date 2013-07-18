@@ -20,3 +20,58 @@ While there are a lot compromises to be made (an orthogonal implementation would
 
 
 https://fast-serialization.googlecode.com/files/structlayout.PNG
+
+==How does this work ?==
+
+Structs are stored in byte arrays, additionally FST generates "pointer"-alike Wrapper Classes providing access to the the flattened object inside the byte array. One could put arbitrary amounts of structs into a single byte array.
+
+
+Code Examples:
+{{{
+        // build template
+        TestInstrument ti = new TestInstrument();
+        // max 4 legs
+        ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
+        StructArray<TestInstrument> instruments = fac.toStructArray(100000, ti);
+
+}}} 
+
+results in a flat array of in-place copies of the given "template" instacne. One can access this like a normal object structures like
+
+{{{
+        sum = 0;
+        for ( int i = 0; i < instruments.size(); i++ ) {
+            sum+=instruments.get(i).getAccumulatedQty();
+        }
+}}}
+
+One can create a pointer (structure wrapper) to pick an arbitrary element and pass it like a regular object to other code like:
+
+{{{
+        TestInstrument toDetach = instruments.get(i);
+        toDetach.detach();
+}}}
+
+One can achieve unmatched iteration performance (err.. requires some C-alike coding)
+{{{
+        sum = 0;
+        TestInstrument p = instruments.createPointer(0);
+        TestInstrumentLeg legp = (TestInstrumentLeg)              p.legs(0).detach();
+        final int legSiz = legp.getByteSize();
+        // relative offset of first TestInstrumentLeg of StructArray<TestInstrumentLeg>
+        final long legoff = legp.___offset - p.___offset; 
+        for (int i=0; i < count; i++ ) {
+            int legs = p.getNumLegs();
+            sum++;
+            for ( int k = 0; k < legs; k++ ) {
+                sum+=legp.getLegQty();
+                legp.next(legSiz);
+            }
+            p.next(siz);
+            legp.___offset=p.___offset+legoff;
+        }
+}}}
+
+While this is real ugly code, it runs about twice as fast as any possible on-heap implementation (with similar data structure) due to improved locality and the lack of dereferencing. Since everything is fixed size, one can create a kind of pointer to a substructure element and iterate over the whole structure array by simply moving the base pointer.
+
+Emebedded Objects can be rewritten, however one gets an exception if the new object requires more bytes than the previous. 
