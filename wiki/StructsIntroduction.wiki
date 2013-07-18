@@ -75,3 +75,7 @@ One can achieve unmatched iteration performance (err.. requires some C-alike cod
 While this is real ugly code, it runs about twice as fast as any possible on-heap implementation (with similar data structure) due to improved locality and the lack of dereferencing. Since everything is fixed size, one can create a kind of pointer to a substructure element and iterate over the whole structure array by simply moving the base pointer.
 
 Emebedded Objects can be rewritten, however one gets an exception if the new object requires more bytes than the previous. 
+
+== Limitations of structuble classes ==
+
+to be continued
