@@ -8,13 +8,13 @@ _In C++, one needs to sacrifice performance in order to get convenience, in Java
 While serialization can flatten any Object Graph into a byte array, one needs to deserialize the Object in order to access the data contained. Frequently (offheap objects, locality) one would like to access the data without the costly "deserialization"-part.
 
 FSTStructs provide a way to store and access data in a deterministic structured layout in a continuous chunk of memory.
-I therefore use runtime byte code generation and (may change in future) the Unsafe class in order to redirect direct member access of method bodies to an underlying {{{byte[]}}}} array.
+I therefore use runtime byte code generation and (may change in future) the Unsafe class in order to redirect member access inside methods to an underlying {{{byte[]}}}} array.
 
-While there are a lot compromises to be made (an orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits "flattening" data structures keeping them accessible:
+While there are a lot compromises to be made (an clean, orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits when "flattening" data structures in an still accessible way:
 
   * very low GC cost (store GB of structured data with <10ms Full GC duration) 
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
-  * use memory mapped files to virtually enlarge your memory, as it is possibble to control memory layout of your data
+  * use memory mapped files to virtually enlarge your memory, as it is possible to control memory layout of your data
   * faster iteration of complex data structures compared to On-Heap due to control over in memory layout and "pointer-alike" memory access patterns
   * data structures can be de/encoded easy from external languages
 
@@ -23,7 +23,7 @@ https://fast-serialization.googlecode.com/files/structlayout.PNG
 
 ==How does this work ?==
 
-Structs are stored in byte arrays, additionally FST generates "pointer"-alike Wrapper Classes providing access to the the flattened object inside the byte array. One could put arbitrary amounts of structs into a single byte array.
+Structs are stored in byte arrays, additionally FST generates "pointer"-alike Wrapper Classes at runtime providing access to the flattened objects inside the byte array. One could put an arbitrary number of struct instances into a single byte array.
 
 
 Code Examples:
@@ -36,7 +36,7 @@ Code Examples:
 
 }}} 
 
-results in a flat array of in-place copies of the given "template" instacne. One can access this like a normal object structures like
+results in a flat array of in-place copies of the given "template" instance. One can access this like usual object structures like
 
 {{{
         sum = 0;
@@ -52,7 +52,7 @@ One can create a pointer (structure wrapper) to pick an arbitrary element and pa
         toDetach.detach();
 }}}
 
-Faster-than-on-heap iteration performance (er.. requires some C-alike coding)
+Faster-than-on-heap iteration performance (er.. requires some C-alike coding, extreme example)
 {{{
         sum = 0;
         TestInstrument p = instruments.createPointer(0);
@@ -72,7 +72,7 @@ Faster-than-on-heap iteration performance (er.. requires some C-alike coding)
         }
 }}}
 
-While this is real ugly code, it runs about twice as fast as any possible on-heap implementation (with similar data structure) due to improved locality and the lack of dereferencing. Since everything is fixed size, one can create a kind of pointer to a substructure element and iterate over the whole structure array by simply moving the base pointer.
+While this is real ugly code, it runs about twice as fast as any possible on-heap implementation (with similar data structure) due to improved locality and the lack of dereferencing. Since everything is fixed size, one can create a pointer to a substructure element and iterate over the whole structure array by simply moving the base of pointer by the array element size.
 
 Embedded Objects can be rewritten, however one gets an exception if the new object requires more bytes than the previous. 
 
