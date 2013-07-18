@@ -19,6 +19,4 @@ While there are a lot compromises to be made (an orthogonal implementation would
   * data structures can be de/encoded easy from external languages
 
 
-= Memory Layout =
-
 https://fast-serialization.googlecode.com/files/structlayout.PNG
