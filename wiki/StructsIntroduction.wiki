@@ -52,7 +52,7 @@ One can create a pointer (structure wrapper) to pick an arbitrary element and pa
         toDetach.detach();
 }}}
 
-One can achieve unmatched iteration performance (err.. requires some C-alike coding)
+Faster-than-on-heap iteration performance (er.. requires some C-alike coding)
 {{{
         sum = 0;
         TestInstrument p = instruments.createPointer(0);
@@ -76,6 +76,6 @@ While this is real ugly code, it runs about twice as fast as any possible on-hea
 
 Emebedded Objects can be rewritten, however one gets an exception if the new object requires more bytes than the previous. 
 
-== Limitations of structuble classes ==
+== Limitations of structable classes ==
 
 to be continued
