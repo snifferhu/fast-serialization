@@ -19,9 +19,6 @@ While there are a lot compromises to be made (an orthogonal implementation would
   * data structures can be de/encoded easy from external languages
 
 
-= Details =
+= Memory Layout =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+https://fast-serialization.googlecode.com/files/structlayout.PNG
