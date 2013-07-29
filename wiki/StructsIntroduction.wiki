@@ -34,7 +34,8 @@ Code Examples:
         TestInstrument ti = new TestInstrument();
         // max 4 legs
         ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
-        FSTStructAllocator<TestInstrument> alloc = new FSTStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
+        FSTStructAllocator<TestInstrument> alloc = 
+             new FSTStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
 
         StructArray<TestInstrument> instruments = alloc.newArray(100000);
 
@@ -49,7 +50,7 @@ results in a flat array of in-place copies of the given "template" instance. One
         }
 }}}
 
-In order to pass an structure embedded object to outer code, a 'pointer' (accessor class instance) must be created. FST Byte code instrumentation automatically creates and caches thos 'accessor classes'. However if you want to 'keep' (assign) such an struct object, a call to 'detach()' is required. Else subsequent calls will point your accessor to another instance (accessors are reused).
+In order to pass an structure embedded object to outer code, a 'pointer' (accessor class instance) must be created. FST Byte code instrumentation automatically creates and caches those 'accessor classes'. However if you want to 'keep' (assign) such an struct object, a call to 'detach()' is required. Else subsequent calls will point your accessor to another instance (accessors are reused).
 
 
 {{{
@@ -60,7 +61,7 @@ In order to pass an structure embedded object to outer code, a 'pointer' (access
 
 Embedded Objects can be rewritten, however one gets an exception if the new object requires more bytes than the previous. 
 
-more benchmarks:
+some benchmarks:
 https://fast-serialization.googlecode.com/files/structiter.html
 
 == Limitations of structable classes ==
