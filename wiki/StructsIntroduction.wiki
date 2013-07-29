@@ -67,6 +67,7 @@ https://fast-serialization.googlecode.com/files/structiter.html
 == Rules for structable classes ==
 
   * a structable class has to inherit FSTStruct
+  * no direct public field access possible. You need to use getter/setter methods. This does not apply for member methods.
   * a structable class can only contain fields that reference FSTStruct and subclasses or primitives. It is not possible to have references from within a struct to a heap object.
   * all fields and methods must be non-final public or proteced. (required to enable instrumentation)
   * no direct references to embedded arrays are allowed. You have to create array accessor methods following a defined naming pattern.
@@ -76,3 +77,34 @@ https://fast-serialization.googlecode.com/files/structiter.html
   * if you want to 'keep' a reference to an embedded object (store tmp variable in a loop or field) you need to call detach() on that reference
   * you cannot synchronize on embedded objects
   * System.identityHashcode delivers the identity of the access wrapper, not the embedded object.
+
+== Primitive fields ==
+
+{{{
+public class Example extends FSTStruct {
+
+    protected int intField;
+    protected double d = 66666666666.66;
+
+    public int getIntField() {
+        return intField;
+    }
+
+    public void setIntField(int val) {
+        intField = val;
+    }
+
+    public void multiply(int mul) {
+        // direct member access is OK inside your struct class (and subclasses)
+        intField *= mul; 
+    }
+
+    public double getD() {
+        return d;
+    }
+
+    public String toString() {
+        return "Example if:"+intField+" d:"+d;
+    }
+}
+}}}
