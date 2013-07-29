@@ -140,6 +140,7 @@ The struct example actually allocates one large byte array, which will have prac
 *Important:* calling a setter on an struct's embedded object will *copy* the given object. When calling a setter on normal object, a reference will be stored. For structs, every set is "by value" not by reference. This is a technical necessity.
 
 if you examine the (volatile) structpointer obtained by {{{exampleArray.get(10).getSub()}}} you will note, that the instance variables are null or 0. This is because FST instrumentation patches all accesses of the methods of 'Example' and redirects the read/write to the underlying byte array. This is not the case if you allocate it regular on the heap with {{{new}}}. 
+
 *Important:* If you need a permanent reference, call 'detach()' on the volatile access wrapper:
 {{{
     SubStruct sub = exampleArray.get(10).getSub();
