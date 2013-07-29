@@ -99,7 +99,7 @@ public class Example extends FSTStruct {
     public int getIntField() { return intField; }
     public void setIntField(int val) { intField = val; }
 
-    public SubStructgetSub() { return sub ; }
+    public SubStruct getSub() { return sub ; }
     public void setSub(SubStruct val) { sub = val; }
 
     public void multiply(int mul) {
@@ -137,4 +137,11 @@ if we create a struct array from that
 we get an array of 1 million Example struct instances, initialzed as a copy of the template given by "new Example()". The difference is, that a "normal" implementation would have created 3.000.001 Objects (array and 1 million Example, 1 million substruct, 1 million structstring instances), which (if not temporary) will cost the garbage collector ~800 to 1250 ms to traverse.
 The struct example actually allocates one large byte array, which will have practical no impact on GC duration. The data is 'hidden' from the Garbage Collector. 
 
-*Important:* calling a setter on an struct's embedded object will *copy* the given object. When calling a setter on normal object, a reference will be stored.
+*Important:* calling a setter on an struct's embedded object will *copy* the given object. When calling a setter on normal object, a reference will be stored. For structs, every set is "by value" not by reference. This is a technical necessity.
+
+if you examine the (volatile) structpointer obtained by {{{exampleArray.get(10).getSub()}}} you will note, that the instance variables are null or 0. This is because FST instrumentation patches all accesses of the methods of 'Example' and redirects the read/write to the underlying byte array. This is not the case if you allocate it regular on the heap with {{{new}}}. 
+*Important:* If you need a permanent reference, call 'detach()' on the volatile access wrapper:
+{{{
+    SubStruct sub = exampleArray.get(10).getSub();
+    sub.detach();
+}}}
