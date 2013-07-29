@@ -31,11 +31,11 @@ Code Examples:
 {{{
         
         // build template
-        TestInstrument ti = new TestInstrument();
+        TestInstrument template = new TestInstrument();
         // max 4 legs
-        ti.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
+        template.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
         FSTStructAllocator<TestInstrument> alloc = 
-             new FSTStructAllocator<TestInstrument>(TestInstrument.createInstrumentTemplate(),SIZE);
+             new FSTStructAllocator<TestInstrument>(template,SIZE);
 
         StructArray<TestInstrument> instruments = alloc.newArray(100000);
 
