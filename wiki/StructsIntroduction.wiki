@@ -71,5 +71,5 @@ https://fast-serialization.googlecode.com/files/structiter.html
   * all fields and methods must be non-final public or proteced. (required to enable instrumentation)
   * no direct references to embedded arrays are allowed. You have to create array accessor methods following a defined naming pattern.
   * no support for arrays of arrays (multidimensional) within structs 
-  * all sizings are determined at instantiation time, this also applies to strings. StructStrings are fixed size.
+  * all sizings are determined at instantiation time, this also applies to strings. {{{StructStrings}}} are fixed size.
   * there are several method naming schemes which are recognized by FST byte code instrumentation. This way it is possible to e.g. get the base index of an embedded int array in case.
