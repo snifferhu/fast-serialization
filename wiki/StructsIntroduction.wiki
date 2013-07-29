@@ -73,3 +73,6 @@ https://fast-serialization.googlecode.com/files/structiter.html
   * no support for arrays of arrays (multidimensional) within structs 
   * all sizings are determined at instantiation time, this also applies to strings. {{{StructStrings}}} are fixed size.
   * there are several method naming schemes which are recognized by FST byte code instrumentation. This way it is possible to e.g. get the base index of an embedded int array in case.
+  * if you want to 'keep' a reference to an embedded object (store tmp variable in a loop or field) you need to call detach() on that reference
+  * you cannot synchronize on embedded objects
+  * System.identityHashcode delivers the identity of the access wrapper, not the embedded object.
