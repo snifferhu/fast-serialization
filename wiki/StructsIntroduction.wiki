@@ -147,7 +147,7 @@ if you examine the (volatile) structpointer obtained by {{{exampleArray.get(10).
     sub.detach();
 }}}
 
-== arrays of primitives ==
+== Arrays of Primitives ==
 
 while it is possible to patch field access in a methods byte code in order to redirect the code from fields to a byte[], this does not work for arrays. Therefore there are harder rules to follow when using arrays of primitives inside a struct's code.
 
