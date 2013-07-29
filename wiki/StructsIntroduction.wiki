@@ -80,6 +80,8 @@ https://fast-serialization.googlecode.com/files/structiter.html
 
 == Primitive fields ==
 
+primitive fields can be declared straight forward and can be accessed directly from method code.
+
 {{{
 public class Example extends FSTStruct {
 
@@ -108,3 +110,20 @@ public class Example extends FSTStruct {
     }
 }
 }}}
+
+Note, that this class is fully operable when allocated as usual on the heap.
+
+if we create a struct array from that
+
+{{{
+    STStructAllocator<Example> allocator = 
+             new FSTStructAllocator<Example>(new Example());
+
+    StructArray<Example> example = allocator.newArray(1000000);
+
+    Example onHeap = new Example();
+    Example pointer = example.get(10); // pointer to 10't element
+
+}}}
+
+we get an array of 1 million Example struct instances initialzed from the template given by "new Example()". The difference is, that a "normal" implementation would have created 1.000.001 Objects (array and 1 million Example instances), which (if not temporary) will cost the garbage collector ~200 to 250 ms to traverse while the struct example actually allocates one large byte array, the data is 'hidden' from the gc. Of course this could have been achieved using an int[] and a long[] array instead of the Example class, however things get interesting when bringing in Strings, arrays, maps and other more complex structures.
