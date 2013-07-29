@@ -10,7 +10,7 @@ While serialization can flatten any Object Graph into a byte array, one needs to
 FSTStructs provide a way to store and access data in a deterministic structured layout in a continuous chunk of memory.
 I therefore use runtime byte code generation and (may change in future) the Unsafe class in order to redirect member access inside methods to an underlying {{{byte[]}}}} array.
 
-While there are a lot compromises to be made (an clean, orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits when "flattening" data structures in an still accessible way:
+While there are a lot compromises to be made (a clean, orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits when "flattening" data structures in a still accessible way:
 
   * very low GC cost (store GB of structured data with <10ms Full GC duration) 
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
@@ -50,7 +50,7 @@ results in a flat array of in-place copies of the given "template" instance. One
         }
 }}}
 
-In order to pass an structure embedded object to outer code, a 'pointer' (accessor class instance) must be created. FST Byte code instrumentation automatically creates and caches those 'accessor classes'. However if you want to 'keep' (assign) such an struct object, a call to 'detach()' is required. Else subsequent calls will point your accessor to another instance (accessors are reused).
+In order to pass a structure embedded object to outer code, a 'pointer' (accessor class instance) must be created. FST Byte code instrumentation automatically creates and caches those 'accessor classes'. However if you want to 'keep' (assign) such a struct object, a call to 'detach()' is required. Else subsequent calls will point your accessor to another instance (accessors are reused).
 
 
 {{{
