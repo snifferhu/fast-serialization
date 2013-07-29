@@ -176,6 +176,8 @@ protected|public int [arrayfieldName](int index)
 protected|public void [arrayfieldName](int index, int value)
 }}}
 
+if these naming pattern is not used, instrumentation will not patch the method resulting in malfunction of your class once it is struct allocated.
+
 With normal onheap allocation, the array will be allocated somewhere on the heap and the reference to this array is stored in the 'array' field of the example given above.
 
 When this class is struct allocated, the array elements will directly sit behind the objects field data. This can actually increase access performance, as the risk of getting a CPU cache miss is much lower. A cache miss requiring the CPU to access main memory can be aequivalent to 300-1000 CPU instructions.
