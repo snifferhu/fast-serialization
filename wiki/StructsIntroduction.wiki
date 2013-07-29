@@ -15,7 +15,7 @@ While there are a lot compromises to be made (a clean, orthogonal implementation
   * very low GC cost (store GB of structured data with <10ms Full GC duration) 
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
   * use memory mapped files to virtually enlarge your memory, as it is possible to control memory layout of your data
-  * faster iteration of complex data structures compared to On-Heap due to control over in memory layout and "pointer-alike" memory access patterns
+  * faster iteration of complex data structures compared to On-Heap due to control over in-memory layout (locality!) and "pointer-alike" memory access patterns
   * data structures can be de/encoded easy from external languages
 
 
