@@ -170,9 +170,11 @@ Again you can test your code using usual 'new' allocation as its hard to debug t
 
 The naming pattern has to be 
 
-{{{protected|public int [arrayfieldName]Len()}}}
-{{{protected|public int [arrayfieldName](int index)}}}
-{{{protected|public void [arrayfieldName](int index, int value)}}}
+{{{
+protected|public int [arrayfieldName]Len()
+protected|public int [arrayfieldName](int index)
+protected|public void [arrayfieldName](int index, int value)
+}}}
 
 With normal onheap allocation, the array will be allocated somewhere on the heap and the reference to this array is stored in the 'array' field of the example given above.
 
