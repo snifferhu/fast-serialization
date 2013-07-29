@@ -25,7 +25,7 @@ https://fast-serialization.googlecode.com/files/structlayout.PNG
 
 Structs are stored in byte arrays, additionally FST generates "pointer"-alike Wrapper Classes at runtime providing access to the flattened objects inside the byte array. One could put an arbitrary number of struct instances into a single byte array.
 
-Technically FST separates ObjectHeader and instance fields. So the data of an object is stored inside a flat byte[]. In order to access the data, an accessor instance pointing to the embedded data has to be created. By moving the address-pointer of such an accessor class (generated at runtime) one can use a single instance to read different datasets stored in the flat byte array. FST has a per-thread cache of those wrappers (i call them pointer) in order to enable transparent access to structures and embedded substructures.
+Technically FST separates object header and instance fields. So the data of an object is stored inside a flat byte[]. In order to access the data, an accessor instance pointing to the embedded data has to be created. By moving the address-pointer of such an accessor class (generated at runtime) one can use a single instance to read different datasets stored in the flat byte array. FST has a per-thread cache of those wrappers (i call them pointer) in order to enable transparent access to structures and embedded substructures.
 
 Code Examples:
 {{{
