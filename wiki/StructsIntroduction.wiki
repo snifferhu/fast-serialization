@@ -34,10 +34,10 @@ Code Examples:
         TestInstrument template = new TestInstrument();
         // max 4 legs
         template.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
-        FSTStructAllocator<TestInstrument> alloc = 
+        FSTStructAllocator<TestInstrument> allocator = 
              new FSTStructAllocator<TestInstrument>(template,SIZE);
 
-        StructArray<TestInstrument> instruments = alloc.newArray(100000);
+        StructArray<TestInstrument> instruments = allocator.newArray(100000);
 
 }}} 
 
@@ -67,7 +67,7 @@ https://fast-serialization.googlecode.com/files/structiter.html
 == Rules for structable classes ==
 
   * a structable class has to inherit FSTStruct
-  * a structable class can only reference FSTStruct and subclasses. It is not possible to have references from within a struct to a heap object.
+  * a structable class can only contain fields that reference FSTStruct and subclasses or primitives. It is not possible to have references from within a struct to a heap object.
   * all fields and methods must be non-final public or proteced. (required to enable instrumentation)
   * no direct references to embedded arrays are allowed. You have to create array accessor methods following a defined naming pattern.
   * no support for arrays of arrays (multidimensional) within structs 
