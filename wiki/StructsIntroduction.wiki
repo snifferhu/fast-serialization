@@ -149,7 +149,7 @@ if you examine the (volatile) structpointer obtained by {{{exampleArray.get(10).
 
 == Arrays of Primitives ==
 
-while it is possible to patch field access in a methods byte code in order to redirect the code from fields to a byte[], this does not work for arrays. Therefore there are harder rules to follow when using arrays of primitives inside a struct's code.
+while it is possible to patch field access in a methods byte code in order to redirect the code from fields to the {{{byte[]}}} backing the struct, this does not work for arrays. Therefore there are harder rules to follow when using arrays of primitives inside a struct's code.
 
 {{{
 class .. extends FSTStruct {
@@ -180,4 +180,4 @@ With normal onheap allocation, the array will be allocated somewhere on the heap
 
 When this class is struct allocated, the array elements will directly sit behind the objects field data. This can actually increase access performance, as the risk of getting a CPU cache miss is much lower. A cache miss requiring the CPU to access main memory can be aequivalent to 300-1000 CPU instructions.
 
-It is possible to obtain the base adress (explained below in hacking section) of the embedded array data and read this direct without the [] operator. This can actually be faster than usual array[index] on heap performance. However this is required in rare cases and the resulting code is very C-ish and strange.
+It is possible to obtain the base adress (explained below in hacking section) of the embedded array data and read this direct without the {{{[]}}} operator. This can actually be faster than usual array[index] on heap performance. However this is required in rare cases and the resulting code is very C-ish and strange.
