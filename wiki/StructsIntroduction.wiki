@@ -146,3 +146,36 @@ if you examine the (volatile) structpointer obtained by {{{exampleArray.get(10).
     SubStruct sub = exampleArray.get(10).getSub();
     sub.detach();
 }}}
+
+== arrays of primitives ==
+
+while it is possible to patch field access in a methods byte code in order to redirect the code from fields to a byte[], this does not work for arrays. Therefore there are harder rules to follow when using arrays of primitives inside a struct's code.
+
+{{{
+class .. extends FSTStruct {
+    int array[] = new int[50];
+    public int array(int index) { return anArray[index]; }
+    public void array(int index, int value) { anArray[index] = value; }
+    public int arrayLen() { return anArray.length; }
+
+    public void addToAll( int toAdd ) {
+        for ( int i = 0; i < arrayLen(); i++ )
+            array(i,array(i)+toAdd);
+    }
+}}}
+
+All array accesses must use the 3 accessor methods. Once this class is struct-allocated, instrumentation will redirect those accessormethods to another place (array will be null then).
+
+Again you can test your code using usual 'new' allocation as its hard to debug the instrumented struct version of your class.
+
+The naming pattern has to be 
+
+{{{protected|public int [arrayfieldName]Len()}}}
+{{{protected|public int [arrayfieldName](int index)}}}
+{{{protected|public void [arrayfieldName](int index, int value)}}}
+
+With normal onheap allocation, the array will be allocated somewhere on the heap and the reference to this array is stored in the 'array' field of the example given above.
+
+When this class is struct allocated, the array elements will directly sit behind the objects field data. This can actually increase access performance, as the risk of getting a CPU cache miss is much lower. A cache miss requiring the CPU to access main memory can be aequivalent to 300-1000 CPU instructions.
+
+It is possible to obtain the base adress (explained below in hacking section) of the embedded array data and read this direct without the [] operator. This can actually be faster than usual array[index] on heap performance. However this is required in rare cases and the resulting code is very C-ish and strange.
