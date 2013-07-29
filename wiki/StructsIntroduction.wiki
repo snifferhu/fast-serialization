@@ -76,25 +76,31 @@ https://fast-serialization.googlecode.com/files/structiter.html
   * there are several method naming schemes which are recognized by FST byte code instrumentation. This way it is possible to e.g. get the base index of an embedded int array in case.
   * if you want to 'keep' a reference to an embedded object (store tmp variable in a loop or field) you need to call detach() on that reference
   * you cannot synchronize on embedded objects
+  * the template object defining the layout and initial values of struct(s) must not contain cyclic references 
   * System.identityHashcode delivers the identity of the access wrapper, not the embedded object.
 
-== Primitive fields ==
+== Simple fields ==
 
 primitive fields can be declared straight forward and can be accessed directly from method code.
 
 {{{
+public class SubStruct extends FSTStruct {
+    StructString name = new StructString(30);
+    int age = 42;
+    ... getters / setters ommitted here ...
+}
+
 public class Example extends FSTStruct {
 
     protected int intField;
     protected double d = 66666666666.66;
+    protected SubStruct sub = new SubStruct();
 
-    public int getIntField() {
-        return intField;
-    }
+    public int getIntField() { return intField; }
+    public void setIntField(int val) { intField = val; }
 
-    public void setIntField(int val) {
-        intField = val;
-    }
+    public SubStructgetSub() { return sub ; }
+    public void setSub(SubStruct val) { sub = val; }
 
     public void multiply(int mul) {
         // direct member access is OK inside your struct class (and subclasses)
@@ -123,7 +129,12 @@ if we create a struct array from that
 
     Example onHeap = new Example();
     exampleArray.get(10).getIntField(); // get volatile pointer to 10't element and get intVal
+    exampleArray.get(10).getSub().getName().setString("Me"); // rewrite StructString content
+    exampleArray.get(10).getSub().setName( new StructString("You") ); // rewrite StructString object
 
 }}}
 
-we get an array of 1 million Example struct instances, initialzed as a copy of the template given by "new Example()". The difference is, that a "normal" implementation would have created 1.000.001 Objects (array and 1 million Example instances), which (if not temporary) will cost the garbage collector ~200 to 250 ms to traverse while the struct example actually allocates one large byte array, the data is 'hidden' from the gc. Of course this could have been achieved using an int[] and a long[] array instead of the Example class, however things get interesting when bringing in Strings, arrays, maps and other more complex structures.
+we get an array of 1 million Example struct instances, initialzed as a copy of the template given by "new Example()". The difference is, that a "normal" implementation would have created 3.000.001 Objects (array and 1 million Example, 1 million substruct, 1 million structstring instances), which (if not temporary) will cost the garbage collector ~800 to 1250 ms to traverse.
+The struct example actually allocates one large byte array, which will have practical no impact on GC duration. The data is 'hidden' from the Garbage Collector. 
+
+*Important:* calling a setter on an struct's embedded object will *copy* the given object. When calling a setter on normal object, a reference will be stored.
