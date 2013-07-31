@@ -297,3 +297,5 @@ It is slightly slower than {{{HashMap}}} when doing micro benchmarks, however in
 
 *{{{StructInt}}}*
 present to be able to use integer keys in {{{StructMap}}}
+
+== Allocator and allocation patterns ==
