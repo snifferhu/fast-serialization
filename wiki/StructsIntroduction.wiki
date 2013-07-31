@@ -19,7 +19,9 @@ I therefore use runtime byte code generation and (may change in future) the Unsa
 
 While there are a lot compromises to be made (a clean, orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits when "flattening" data structures in a still accessible way:
 
-  * very low GC cost (store GB of structured data with <10ms Full GC duration) 
+  * low GC cost (store GB of structured data with <1s Full GC duration) see my blog for some research regarding this:
+http://java-is-the-new-c.blogspot.de/2013/07/what-drives-full-gc-duration-its.html
+http://java-is-the-new-c.blogspot.de/2013/07/impact-of-large-primitive-arrays-blobs.html
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
   * use memory mapped files to virtually enlarge your memory, as it is possible to control memory layout of your data
   * faster iteration of complex data structures compared to On-Heap due to control over in-memory layout (locality!) and "pointer-alike" memory access patterns
@@ -307,11 +309,9 @@ https://fast-serialization.googlecode.com/files/comlexheapobject.PNG
 Usually an object contains several subobjects. E.g. a String which in turn contains a character array etc. .
 This can be transformed to a FSTStruct backed by a single byte array and an accesswrapper which 'acts' like the objects (with slightly different semantics, see section 'volatile access wrapper').
 
-https://fast-serialization.googlecode.com/files/comlexheapobject.PNG
-
-One can choose to create an access wrapper ('pointer) for each struct allocated, this will save instances in case the flattened Object has at least 2 subobjects (e. one String+its char[]). With this use case you can treat the "complex Object" like any other object, synchronize on it, put it to on-heap collections etc. . The underlying byte array then will be freed when the wrapper is GC'ed.
-
 https://fast-serialization.googlecode.com/files/singlebyte.PNG
+
+One can choose to create an access wrapper ('pointer) for each struct allocated, this will save instances in case the flattened Object has at least 2 subobjects (e. one String+its char[]). With this use case one can treat the "complex Object" like any other object, synchronize on it, put it to on-heap collections etc. . The underlying byte array then will be freed when the wrapper is GC'ed.
 
 
 Another option is to allocate larger chunks of byte[] and store several structs inside this. FSTStructAllocator allows to set the chunksize measured in number of Objects or absolute bytes (may create unused bytes at the end of each cunk).
