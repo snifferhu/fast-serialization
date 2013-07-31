@@ -332,7 +332,7 @@ the byte array will be freed if all access wrapper objects pointing to it are fr
    ComplexObject myobject = allocator.newStruct();
    normalHashMap.put( myobject, "this is ok");
 
-   javautilHashMap.put( myobject.getString(), "WRONG !!! volatile pointer stored");
+   javautilHashMap.put( myobject.getString(), "WRONG !!! volatile reference stored");
 
    //right:
    StructString tmp = myobject.getString();
