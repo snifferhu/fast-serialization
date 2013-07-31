@@ -339,5 +339,7 @@ the byte array will be freed if all access wrapper objects pointing to it are fr
    tmp.detach();
    javautilHashMap.put( myobject.getString(), "now that's better");
 
+   //better (create new string):
+   javautilHashMap.put( myobject.getString().toString(), "no reference to byte[] stored");
 
 }}}
