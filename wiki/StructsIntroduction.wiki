@@ -1,5 +1,11 @@
 #FST struct emulation
 
+*Disclaimer:*
+This library uses unsafe and direct memory access. There are some sanity checks, however you can easily construct (wrong) code which will let your VM coredump.
+I migtht provide a ByteBuffer backed version later on, but currently the difference in performance inbetween a "safe" and an "unsafe" implementation is too big.
+This is not for beginners and some C background might help. Ensure you understand the basic concepts before throwing this at your code.
+Pls don't hesitate to file an Issue in case you detect problems, errors or missing sanity checks. This will help me getting this bugfree.
+
 = Introduction =
 
 _In C++, one needs to sacrifice performance in order to get convenience, in Java one needs to sacrifice convenience in order to get performance_
