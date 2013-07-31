@@ -19,14 +19,20 @@ I therefore use runtime byte code generation and (may change in future) the Unsa
 
 While there are a lot compromises to be made (a clean, orthogonal implementation would require VM extensions) when defining FSTStructs, there are a lot of benefits when "flattening" data structures in a still accessible way:
 
-  * low GC cost (store GB of structured data with <1s Full GC duration) see my blog for some research regarding this:
-http://java-is-the-new-c.blogspot.de/2013/07/what-drives-full-gc-duration-its.html
-http://java-is-the-new-c.blogspot.de/2013/07/impact-of-large-primitive-arrays-blobs.html
+  * low GC cost (store GB of structured data with <1s Full GC duration)    
   * (un-)marshalling is equal to a memory copy. This speeds up inter process communication using shared memory or network messages.
   * use memory mapped files to virtually enlarge your memory, as it is possible to control memory layout of your data
   * faster iteration of complex data structures compared to On-Heap due to control over in-memory layout (locality!) and "pointer-alike" memory access patterns
   * data structures can be de/encoded easy from external languages
 
+see my blog for some research regarding effects of instance and locality saving on GC:
+
+http://java-is-the-new-c.blogspot.de/2013/07/what-drives-full-gc-duration-its.html
+
+http://java-is-the-new-c.blogspot.de/2013/07/impact-of-large-primitive-arrays-blobs.html
+
+
+Memory layout:
 
 https://fast-serialization.googlecode.com/files/structlayout.PNG
 
