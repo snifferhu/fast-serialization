@@ -239,6 +239,7 @@ class MyStruct extends FSTStruct {
 
     public static MyStruct createTemplate() {
         MyStruct res = new MyStruct();
+        // set template in first entry (see @Templated below)
         res.array[0] = new StructString("initial value");
         return res;
     }
