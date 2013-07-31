@@ -299,3 +299,10 @@ It is slightly slower than {{{HashMap}}} when doing micro benchmarks, however in
 present to be able to use integer keys in {{{StructMap}}}
 
 == Allocator and allocation patterns ==
+
+Let's look on a object on the heap
+
+https://fast-serialization.googlecode.com/files/complexheapobject.PNG
+
+Usually an object contains several subobjects. E.g. a String which in turn contains a character array etc. .
+This can be transformed to a FSTStruct backed by a single byte array and an accesswrapper which 'acts' like the objects (with slightly different semantics, see section 'volatile access wrapper').
