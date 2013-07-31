@@ -1,6 +1,7 @@
 #FST struct emulation
 
 *Disclaimer:
+
 This library uses unsafe and direct memory access. There are some sanity checks, however you can easily construct (wrong) code which will let your VM coredump.
 I migtht provide a ByteBuffer backed version later on, but currently the difference in performance inbetween a "safe" and an "unsafe" implementation is too big.
 This is not for beginners and some C background might help. Ensure you understand the basic concepts before throwing this at your code.
