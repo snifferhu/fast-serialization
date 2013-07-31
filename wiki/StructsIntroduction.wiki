@@ -153,7 +153,7 @@ while it is possible to patch field access in a methods byte code in order to re
 
 {{{
 class .. extends FSTStruct {
-    int array[] = new int[50];
+    protected int array[] = new int[50];
     public int array(int index) { return anArray[index]; }
     public void array(int index, int value) { anArray[index] = value; }
     public int arrayLen() { return anArray.length; }
@@ -183,3 +183,54 @@ With normal onheap allocation, the array will be allocated somewhere on the heap
 When this class is struct allocated, the array elements will directly sit behind the objects field data. This can actually increase access performance, as the risk of getting a CPU cache miss is much lower. A cache miss requiring the CPU to access main memory can be aequivalent to 300-1000 CPU instructions.
 
 It is possible to obtain the base adress (explained below in hacking section) of the embedded array data and read this direct without the {{{[]}}} operator. This can actually be faster than usual array[index] on heap performance. However this is required in rare cases and the resulting code is very C-ish and strange.
+
+== Arrays of Objects ==
+
+arrays of substructures should be kept of equal types, else things might get complicated. The same rules as for primitive arrays apply, however there is the exception that you somehow try to set a larger Object than initially given by the template, this will result in an exception.
+
+{{{
+class .. extends FSTStruct {
+
+    protected StructString array[] = { new StructString("x"), new StructString("xx"), new StructString("xxx",10)};
+
+    public StructString array(int index) { return anArray[index]; }
+    public void array(int index, StructString value) { anArray[index] = value; }
+    public int arrayLen() { return anArray.length; }
+
+}}}
+
+Note that the array content has to be initialized in the template instance given to the allocator class. FST will search for the largest element in your template array, this will then determine the size of *each* element  in the struct array. In the example above, all StructStrings of the array will get a max len of 10, because the last element has this size.
+
+One can also use the @Templated annotation to define the initial values of a Struct array.
+
+{{{
+class .. extends FSTStruct {
+
+    @Templated
+    protected StructString array[] = { new StructString("empty",120), null, null,};
+
+    public StructString array(int index) { return anArray[index]; }
+    public void array(int index, StructString value) { anArray[index] = value; }
+    public int arrayLen() { return anArray.length; }
+
+}}}
+
+in this case all elements in the array will be initialized with a copy of the first element. To define larger array size consider something like:
+
+{{{
+class MyStruct extends FSTStruct {
+
+    public static MyStruct createTemplate() {
+        MyStruct res = new MyStruct();
+        res.array[0] = new StructString("initial value");
+        return res;
+    }
+
+    @Templated
+    protected StructString array[] = new StructString[200];
+
+    public StructString array(int index) { return anArray[index]; }
+    public void array(int index, StructString value) { anArray[index] = value; }
+    public int arrayLen() { return anArray.length; }
+
+}}}
