@@ -1,4 +1,5 @@
-#FST struct emulation
+<p lign=right>_FST - Fast Serialization_</p>
+----
 
 *Disclaimer:
 
