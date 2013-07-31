@@ -282,7 +282,7 @@ a note on performance: if you set an object (field or array element), the conten
    StructString tmp = allocator.newStruct(new StructString(20));
    for ( int i = 0; .. ) {
       tmp.setString( "count "+i );
-      mystruct.array(i,tmp);
+      mystruct.array(i,tmp); // copy !
    }
 }}}
 is faster than
