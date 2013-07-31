@@ -25,7 +25,7 @@ While there are a lot compromises to be made (a clean, orthogonal implementation
   * faster iteration of complex data structures compared to On-Heap due to control over in-memory layout (locality!) and "pointer-alike" memory access patterns
   * data structures can be de/encoded easy from external languages
 
-see my blog for some research regarding effects of instance and locality saving on GC:
+see my blog for some research regarding effects of instance saving and locality on GC:
 
 http://java-is-the-new-c.blogspot.de/2013/07/what-drives-full-gc-duration-its.html
 
