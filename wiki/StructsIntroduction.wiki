@@ -243,3 +243,44 @@ class MyStruct extends FSTStruct {
     public int arrayLen() { return anArray.length; }
 
 }}}
+
+*untyped Object arrays*
+
+it is possible to store losely typed substructures e.g.:
+
+{{{
+class UnTyped extends FSTStruct {
+
+    protected FSTStruct array[] = { new StructString("x"), new StructInt(13), new SubStruct()};
+
+    public FSTStruct array(int index) { return anArray[index]; }
+    public void array(int index, FSTStruct value) { anArray[index] = value; }
+    public int arrayLen() { return anArray.length; }
+
+}}}
+
+however things get tricky, you have to call cas() then when accessing those elements
+
+{{{ 
+for (..) {
+   FSTStruct tmp = unTyped.array(i).cast();
+   if ( tmp instanceof .. ) {
+   }
+}
+}}}
+
+a note on performance: if you set an object (field or array element), the content of the given object is copied in place of the previous object. This is faster (memCopy) if you create an of heap instance of the object to set. Additionally you can reuse the object set.
+{{{
+   StructString tmp = allocator.newStruct(new StructString(20));
+   for ( int i = 0; .. ) {
+      tmp.setString( "count "+i );
+      mystruct.array(i,tmp);
+   }
+}}}
+is faster than
+{{{
+   StructString tmp = new StructString(20);
+   for ( int i = 0; .. ) {
+      mystruct.array(i,new StructString("count "+i));
+   }
+}}}
