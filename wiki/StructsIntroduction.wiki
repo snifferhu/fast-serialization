@@ -320,6 +320,24 @@ https://fast-serialization.googlecode.com/files/singlebyte.PNG
 One can choose to create an access wrapper ('pointer) for each struct allocated, this will save instances in case the flattened Object has at least 2 subobjects (e. one String+its char[]). With this use case one can treat the "complex Object" like any other object, synchronize on it, put it to on-heap collections etc. . The underlying byte array then will be freed when the wrapper is GC'ed.
 
 
-Another option is to allocate larger chunks of byte[] and store several structs inside this. FSTStructAllocator allows to set the chunksize measured in number of Objects or absolute bytes (may create unused bytes at the end of each cunk).
+Another option is to allocate larger chunks of byte[] and store several structs inside this. FSTStructAllocator allows to set the chunksize measured in number of Objects or absolute bytes (may create unused bytes at the end of each chunk).
 
 https://fast-serialization.googlecode.com/files/chunked.PNG
+
+the byte array will be freed if all access wrapper objects pointing to it are freed.
+
+*Note:* while the top-level access wrapper object feels like a normal object, references to its substructures are volatile.
+{{{
+
+   ComplexObject myobject = allocator.newStruct();
+   normalHashMap.put( myobject, "this is ok");
+
+   javautilHashMap.put( myobject.getString(), "WRONG !!! volatile pointer stored");
+
+   //right:
+   StructString tmp = myobject.getString();
+   tmp.detach();
+   javautilHashMap.put( myobject.getString(), "now that's better");
+
+
+}}}
