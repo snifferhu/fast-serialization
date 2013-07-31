@@ -7,7 +7,7 @@ I migtht provide a ByteBuffer backed version later on, but currently the differe
 This is not for beginners and some C background might help. Ensure you understand the basic concepts before throwing this at your code.
 Pls don't hesitate to file an Issue in case you detect problems, errors or missing sanity checks. This will help me getting this bugfree.*
 
-= Introduction =
+== Introduction ==
 
 _In C++, one needs to sacrifice performance in order to get convenience, in Java one needs to sacrifice convenience in order to get performance_
 
@@ -298,7 +298,7 @@ It is slightly slower than {{{HashMap}}} when doing micro benchmarks, however in
 *{{{StructInt}}}*
 present to be able to use integer keys in {{{StructMap}}}
 
-== Allocator and allocation patterns ==
+== FSTStructAllocator and allocation patterns ==
 
 Let's look on a object on the heap
 
@@ -306,3 +306,14 @@ https://fast-serialization.googlecode.com/files/comlexheapobject.PNG
 
 Usually an object contains several subobjects. E.g. a String which in turn contains a character array etc. .
 This can be transformed to a FSTStruct backed by a single byte array and an accesswrapper which 'acts' like the objects (with slightly different semantics, see section 'volatile access wrapper').
+
+https://fast-serialization.googlecode.com/files/comlexheapobject.PNG
+
+One can choose to create an access wrapper ('pointer) for each struct allocated, this will save instances in case the flattened Object has at least 2 subobjects (e. one String+its char[]). With this use case you can treat the "complex Object" like any other object, synchronize on it, put it to on-heap collections etc. . The underlying byte array then will be freed when the wrapper is GC'ed.
+
+https://fast-serialization.googlecode.com/files/singlebyte.PNG
+
+
+Another option is to allocate larger chunks of byte[] and store several structs inside this. FSTStructAllocator allows to set the chunksize measured in number of Objects or absolute bytes (may create unused bytes at the end of each cunk).
+
+https://fast-serialization.googlecode.com/files/chunked.PNG
