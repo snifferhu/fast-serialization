@@ -1,4 +1,4 @@
-<p lign=right>_FST - Fast Serialization_</p>
+<p lign=right>_FST - Structs </p>
 ----
 
 *Disclaimer:
@@ -7,6 +7,8 @@ This library uses unsafe and direct memory access. There are some sanity checks,
 I migtht provide a ByteBuffer backed version later on, but currently the difference in performance inbetween a "safe" and an "unsafe" implementation is too big.
 This is not for beginners and some C background might help. Ensure you understand the basic concepts before throwing this at your code.
 Pls don't hesitate to file an Issue in case you detect problems, errors or missing sanity checks. This will help me getting this bugfree.*
+
+Doing low-level, unsafe Java coding is less errorprone and more portable than mixing in C/C++ via JNI. Additionally JITs have become very sophisticated, so low-level Java often performs better than a C/JNI mix in.
 
 == Introduction ==
 
@@ -25,6 +27,7 @@ While there are a lot compromises to be made (a clean, orthogonal implementation
   * use memory mapped files to virtually enlarge your memory, as it is possible to control memory layout of your data
   * faster iteration of complex data structures compared to On-Heap due to control over in-memory layout (locality!) and "pointer-alike" memory access patterns
   * data structures can be de/encoded easy from external languages
+  * nearby allocation free code for extreme requirements (e.g. latency).
 
 see my blog for some research regarding effects of instance saving and locality on GC:
 
