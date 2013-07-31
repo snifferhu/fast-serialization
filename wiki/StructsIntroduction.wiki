@@ -215,7 +215,9 @@ class .. extends FSTStruct {
 
 }}}
 
-in this case all elements in the array will be initialized with a copy of the first element. To define larger array size consider something like:
+in this case all elements in the array will be initialized with a copy of the first element. 
+
+To define larger array size consider something like:
 
 {{{
 class MyStruct extends FSTStruct {
