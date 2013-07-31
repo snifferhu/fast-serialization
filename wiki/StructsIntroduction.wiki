@@ -293,7 +293,7 @@ is faster than
 
 *{{{StructMap}}}* is a fixed size open addressed Hashmap implementation (no remove operation) operating completely inside the off heap. It does not like polymorphic key/values so keep key class and value class constant. 
 Can be used to flatten hashmaps. Additionally this is a proof of concept as there is actually some code operating on the structs underlying byte array.
-It is slightly slower than HashMap when doing micro benchmarks, however in a real application it performs way better as locality (CPU cache) is maintained, while a HashMap's keys and values are likely cluttered al over the heap (cache misses).
+It is slightly slower than {{{HashMap}}} when doing micro benchmarks, however in a real application it performs way better as locality (CPU cache) is maintained, while a {{{HashMap}}}'s keys and values are likely cluttered all over the heap (cache misses).
 
 *{{{StructInt}}}*
 present to be able to use integer keys in {{{StructMap}}}
