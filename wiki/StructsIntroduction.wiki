@@ -285,11 +285,11 @@ is faster than
    }
 }}}
 
-== Built in StructTypes ==
+== Built in Struct Types ==
 
 *{{{StructString}}}* is a mutable String which can be used inside FSTStructs. One could add a lot more methods to this for convenience, however i was too lazy to do this, contributions are welcome.
 
-*{{{StructArray}}}* is a fixed-size ArrayList alike. Mostly used as top level to allocate arrays of structs.
+*{{{StructArray}}}* is a fixed-size {{{ArrayList}}} alike. Mostly used as top level to allocate arrays of structs.
 
 *{{{StructMap}}}* is a fixed size open addressed Hashmap implementation (no remove operation) operating completely inside the off heap. It does not like polymorphic key/values so keep key class and value class constant. 
 Can be used to flatten hashmaps. Additionally this is a proof of concept as there is actually some code operating on the structs underlying byte array.
