@@ -282,7 +282,7 @@ for (..) {
 }
 }}}
 
-a note on performance: if you set an object (field or array element), the content of the given object is copied in place of the previous object. Its faster, if you create an of heap instance of the object to set ((memCopy). Additionally you need fewer object allocations.
+a note on performance: if you set an object (field or array element), the content of the given object is copied in place of the previous object. Its faster, if you create an offheap instance of the object to set ((memCopy). Additionally you need fewer object allocations.
 {{{
    StructString tmp = allocator.newStruct(new StructString(20));
    for ( int i = 0; .. ) {
