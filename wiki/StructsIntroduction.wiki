@@ -292,7 +292,6 @@ a note on performance: if you set an object (field or array element), the conten
 }}}
 is faster than
 {{{
-   StructString tmp = new StructString(20);
    for ( int i = 0; .. ) {
       mystruct.array(i,new StructString("count "+i));
    }
