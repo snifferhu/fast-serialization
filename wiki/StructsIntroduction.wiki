@@ -350,7 +350,19 @@ the byte array will be freed if all access wrapper objects pointing to it are fr
 
 }}}
 
+most common case is probably create arrays with only one access object:
 
+https://fast-serialization.googlecode.com/files/array.PNG
+
+== Warning regarding persistence, IPC, messaging of FSTStructs ==
+
+For each struct class an Id is assigned at runtime in the order structs are accessed. If you want to send a Struct to a remote VM or store them to disk, you need to manually define the id mapping, else process A might think {{{1 = MyStruct.class}}} while process 2 thinks {{{1 = MyVeryOtherStruct.class}}}.
+
+You can define the id mapping by adding something like
+
+{{{FSTStructFactory.getInstance().registerClz(MyStruct.class, MyOtherStruct.class, MySubStruct.class,... )}}}
+
+ALL structs must be registered for all processes in the exact same order, else you might be hit by access violations which is probably a new experience when programming java ;-) .
 
 == "Volatile" accessors ==
 
