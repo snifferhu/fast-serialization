@@ -10,6 +10,8 @@ Pls don't hesitate to file an Issue in case you detect problems, errors or missi
 
 Doing low-level, unsafe Java coding is less errorprone and more portable than mixing in C/C++ via JNI. Additionally JITs have become very sophisticated, so low-level Java often performs better than a C/JNI mix in.
 
+*You are encouraged to at least read every heading of this document, trial-and-error will not work that good for this library*
+
 == Introduction ==
 
 _In C++, one needs to sacrifice performance in order to get convenience, in Java one needs to sacrifice convenience in order to get performance_
