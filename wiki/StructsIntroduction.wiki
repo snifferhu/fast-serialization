@@ -390,10 +390,21 @@ Details Pending ..
 
 == Code examples ==
 
+Struct class example:
+
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/structs/TestData.java
+
+Struct test:
+
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/structs/StructTest.java
+
+more complex struct structure classes examples:
+
+http://code.google.com/p/fast-serialization/source/browse/#svn%2Ftrunk%2Fsrc%2Ftest%2Fjava%2Fde%2Fruedigermoeller%2Fheapofftest%2Fstructs%253Fstate%253Dclosed
+
 benchmark accessing structs:
 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java
-
 
 another freestyle bench (uses internal classes, no cut and paste stuff)
 
