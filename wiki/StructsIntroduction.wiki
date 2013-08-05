@@ -364,6 +364,8 @@ You can define the id mapping by adding something like
 
 {{{FSTStructFactory.getInstance().registerClz(MyStruct.class, MyOtherStruct.class, MySubStruct.class,... )}}}
 
+*before* doing any struct stuff.
+
 ALL structs must be registered for all processes in the exact same order, else you might be hit by access violations which is probably a new experience when programming java ;-) .
 
 == "Volatile" accessors ==
