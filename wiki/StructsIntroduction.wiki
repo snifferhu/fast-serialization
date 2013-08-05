@@ -380,3 +380,22 @@ in the example above, actually the same object is returned, but the hidden {{{__
 
 
 In short: whenever you want to keep a reference on an embedded struct, call detach on it.
+
+
+== Performance ==
+
+By using C-ish pointer moving is superior to usual on heap structures, if one uses the convenience layer performance of data access degrades with the nesting depth of substructures. Primitive fields on first level e.g. {{{mystruct.getInt()}}} are as fast as normal object field access after the JIT kicked in. {{{mystruct.getSubstructure().getInt()}}} is 2 to 3 times slower.
+
+Details Pending ..
+
+== Code examples ==
+
+benchmark accessing structs:
+
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java
+
+
+
+another freestyle bench (uses internal interface, no cut and paste stuff)
+
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java
