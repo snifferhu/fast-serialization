@@ -351,6 +351,7 @@ the byte array will be freed if all access wrapper objects pointing to it are fr
 }}}
 
 
+
 == "Volatile" accessors ==
 
 As explained above, a struct consists of a "pointer" to the top level struct objects. Once subelements like arrays or embedded substrucures are accessed, additional access object need to be created for those substructures. As new creation would bog down access performance a lot, FST caches an access wrapper object for each struct class *per thread*.
@@ -367,4 +368,15 @@ As explained above, a struct consists of a "pointer" to the top level struct obj
 in the example above, actually the same object is returned, but the hidden {{{___offset}}} variable points to another position in the underlying byte array.
 {{{tmp1.detach()}}} actually the pointer instance from the thread local cache, so one can obtain a permanent reference to a struct or part of it. Note each 'detach' call has a cost of a obejct creation.
 
-In short: whenever you want to keep a reference on an embedded struct, call detach.
+{{{
+   ComplexObject myobject = allocator.newStruct();
+
+   StructString tmp1 = myobject.getString();
+   StructString tmp2 = myobject.getOtherString();
+
+   tmp1.detach();
+   // tmp1 != tmp2
+}}}
+
+
+In short: whenever you want to keep a reference on an embedded struct, call detach on it.
