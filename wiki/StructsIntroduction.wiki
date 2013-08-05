@@ -386,6 +386,10 @@ In short: whenever you want to keep a reference on an embedded struct, call deta
 
 By using C-ish pointer moving is superior to usual on heap structures, if one uses the convenience layer performance of data access degrades with the nesting depth of substructures. Primitive fields on first level e.g. {{{mystruct.getInt()}}} are as fast as normal object field access after the JIT kicked in. {{{mystruct.getSubstructure().getInt()}}} is 2 to 3 times slower.
 
+Benchmark iterating arrays of structs vs. arrays of on heap objects.
+
+http://fast-serialization.googlecode.com/files/structiter.html
+
 Details Pending ..
 
 == Code examples ==
