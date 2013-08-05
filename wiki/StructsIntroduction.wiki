@@ -392,10 +392,9 @@ Details Pending ..
 
 benchmark accessing structs:
 
-http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java
+http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/structs/BenchStructIter.java
 
 
-
-another freestyle bench (uses internal interface, no cut and paste stuff)
+another freestyle bench (uses internal classes, no cut and paste stuff)
 
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/BenchStructs.java
