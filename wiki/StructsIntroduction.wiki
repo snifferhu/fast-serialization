@@ -53,8 +53,8 @@ Code Examples:
         
         // build template
         TestInstrument template = new TestInstrument();
-        // max 4 legs
         template.legs = new TestInstrumentLeg[] { new TestInstrumentLeg(), null, null, null };
+        // use template to allocate 'byte-packed' instances
         FSTStructAllocator<TestInstrument> allocator = 
              new FSTStructAllocator<TestInstrument>(template,SIZE);
 
