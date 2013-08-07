@@ -388,9 +388,9 @@ in the example above, actually the same object is returned, but the hidden {{{__
    ComplexObject myobject = allocator.newStruct();
 
    StructString tmp1 = myobject.getString();
+   tmp1.detach();
    StructString tmp2 = myobject.getOtherString();
 
-   tmp1.detach();
    // tmp1 != tmp2
 }}}
 
