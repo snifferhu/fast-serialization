@@ -1,4 +1,3 @@
-#labels Featured
 <p lign=right>_FST - Fast Serialization_</p>
 ----
 
