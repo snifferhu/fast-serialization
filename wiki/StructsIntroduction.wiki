@@ -93,7 +93,8 @@ https://fast-serialization.googlecode.com/files/structiter.html
   * a structable class has to inherit FSTStruct
   * no direct public field access possible. You need to use getter/setter methods. This does not apply for member methods.
   * a structable class can only contain fields that reference FSTStruct and subclasses or primitives. It is not possible to have references from within a struct to a heap object.
-  * all fields and methods must be non-final public or proteced. (required to enable instrumentation)
+  * all fields and methods must be non-final public or protected. (required to enable instrumentation)
+  * Valid structs cannot be inner classes of other FSTStruct classes.
   * no direct references to embedded arrays are allowed. You have to create array accessor methods following a defined naming pattern.
   * no support for arrays of arrays (multidimensional) within structs 
   * all sizings are determined at instantiation time, this also applies to strings. {{{StructStrings}}} are fixed size.
