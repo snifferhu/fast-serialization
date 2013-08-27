@@ -218,7 +218,8 @@ a serializer is registered at the {{{FSTConfiguration}}} Object:
    ...
 }}}
 
-(ofc you have to use exactly this configuration later on in the {{{FSTObjectIn/OutputStream}}})
+(ofc you have to use exactly this configuration later on in the {{{FSTObjectIn/OutputStream}}}).
+
 The point of having 3 methods (read, write, intantiate) allows to read from the sream *before* creating the object (e.g. to decide which class to create). Common case is to just override and implement read/write, however there are cases where read is empty and the full object is created and read in the instantiate method.
 
 ==== Unsafe / Byte Order Issues ====
