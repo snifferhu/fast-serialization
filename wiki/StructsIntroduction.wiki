@@ -463,6 +463,59 @@ Depending on naming pattern, instrumentation can provide low level information s
 
 Struct class example:
 
+Example of fast packet processing without any deserialization and copying required
+
+({{{DatagramPacket}}} is a FST-Struct http://code.google.com/p/fast-cast/source/browse/trunk/src/de/ruedigermoeller/fastcast/packeting/DataPacket.java
+
+{{{
+private void receiveDatagram(DatagramPacket p) throws IOException {
+        if ( trans.receive(p) ) {
+            receivedPacket.baseOn(p.getData(), receivedPacket.bufoff + p.getOffset(), receivedPacket.___fac);
+
+            boolean sameCluster = receivedPacket.getCluster().equals(clusterName);
+            boolean selfSent = receivedPacket.getSender().equals(nodeId);
+
+            if ( sameCluster && ! selfSent) {
+
+                int topic = receivedPacket.getTopic();
+                if ( topic > MAX_SCOPE || topic < 0 ) {
+                    FCLog.get().warn("foreign traffic");
+                    return;
+                }
+                if ( receiver[topic] == null && sender[topic] == null) {
+                    return;
+                }
+
+                Class type = receivedPacket.getPointedClass();
+                StructString receivedPacketReceiver = receivedPacket.getReceiver();
+                if ( type == DataPacket.class ) {
+                    if ( receiver[topic] == null )
+                        return;
+                    if (
+                        ( receivedPacketReceiver == null || receivedPacketReceiver.getLen() == 0 ) ||
+                        ( receivedPacketReceiver.equals(nodeId) )
+                       )
+                    {
+                        dispatchDataPacket(receivedPacket, topic);
+                    }
+                } else if ( type == RetransPacket.class ) {
+                    if ( sender[topic] == null )
+                        return;
+                    if ( receivedPacketReceiver.equals(nodeId) ) {
+                        dispatchRetransmissionRequest(receivedPacket, topic);
+                    }
+                } else if (type == ControlPacket.class ) {
+                    ControlPacket control = (ControlPacket) receivedPacket.cast();
+                    if ( control.getType() == ControlPacket.DROPPED ) {
+                        receiver[topic].getTopicEntry().getService().droppedFromReceiving();
+                        receiver[topic] = null;
+                    }
+                }
+            }
+        }
+    }
+}}}
+
 http://code.google.com/p/fast-serialization/source/browse/trunk/src/test/java/de/ruedigermoeller/heapofftest/structs/TestData.java
 
 Struct test:
