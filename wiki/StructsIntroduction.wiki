@@ -465,7 +465,7 @@ Struct class example:
 
 Example of fast packet processing without any deserialization and copying required
 
-({{{DatagramPacket}}} is a FST-Struct http://code.google.com/p/fast-cast/source/browse/trunk/src/de/ruedigermoeller/fastcast/packeting/DataPacket.java
+({{{DataPacket}}} is a FST-Struct http://code.google.com/p/fast-cast/source/browse/trunk/src/de/ruedigermoeller/fastcast/packeting/DataPacket.java
 
 {{{
 private void receiveDatagram(DatagramPacket p) throws IOException {
