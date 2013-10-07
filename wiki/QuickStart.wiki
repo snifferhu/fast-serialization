@@ -214,7 +214,8 @@ The point of having 3 methods (read, write, intantiate) allows to read from the 
 
 ==== Unsafe / Byte Order Issues ====
 
-Since version 1.23 makes use of unsafe operations to read/write Object fields, usage of Unsafe can be disabled by calling {{{"System.setProperty("fst.unsafe","false")"}}} *prior to referencing any FST class*. A better approach is to switch Unsafe usage at command line like {{{java -Dfst.unsafe=true ...}}} when starting your program.
+Since version 1.23 FST makes use of unsafe operations to read/write Object fields. It has been proven to be reliable across machines, JDK version and operating systems (WinX,Linux) in production systems. Additonally by default unsafe use is used only for reading/writing of fields.
+Usage of Unsafe can be disabled by calling {{{"System.setProperty("fst.unsafe","false")"}}} *prior to referencing any FST class*. A better approach is to switch Unsafe usage at command line like {{{java -Dfst.unsafe=true ...}}} when starting your program.
 
 If you use FST in client server applications or heterogenous networks you might run into byte order issues, as the byteorder of an x86 and (RIP) Solaris SPARC machine are different.
 
