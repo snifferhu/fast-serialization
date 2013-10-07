@@ -214,9 +214,13 @@ The point of having 3 methods (read, write, intantiate) allows to read from the 
 
 ==== Unsafe / Byte Order Issues ====
 
-By default FST does not make use of unsafe operations, usage of Unsafe must be enabled by calling {{{"System.setProperty("fst.unsafe","true")"}}} *prior to referencing any FST class*. A better approach is to switch Unsafe usage at command line like {{{java -Dfst.unsafe=true ...}}} when starting your program.
-The usage of Unsafe can improve performance significantly (see bechnmark), however if you use FST in client server applications or heterogenous networks you might run into byte order issues, as the byteorder of an x86 and (RIP) Solaris SPARC machine are different.
+Since version 1.23 makes use of unsafe operations to read/write Object fields, usage of Unsafe can be disabled by calling {{{"System.setProperty("fst.unsafe","false")"}}} *prior to referencing any FST class*. A better approach is to switch Unsafe usage at command line like {{{java -Dfst.unsafe=true ...}}} when starting your program.
 
-In contradiction to standard Java IO, FST always assumes x86 byte order even when Unsafe is turned off, this means you can decode from an x86 server with Unsafe enabled and decode on a Client with another processor architecture as long Unsafe on the Client is disabled.
+If you use FST in client server applications or heterogenous networks you might run into byte order issues, as the byteorder of an x86 and (RIP) Solaris SPARC machine are different.
+
+In contradiction to standard Java IO, FST always assumes x86 byte order even when Unsafe is turned off, this means you can encode from an x86 server with Unsafe enabled and decode on a Client with another processor architecture as long Unsafe on the Client is disabled.
 
 So on Big Endian platforms, never turn on Unsafe usage wether its a client or server machine. Ofc this does not hold true if ALL machines de/encoding FST Objects are Big Endian.
+
+Clarification: Disable unsafe on all Big Endian Platforms (non-x86), except when all machines (client+server) are Big Endian. 
+You can enable Unsafe always Little Endian (x86) machines.
