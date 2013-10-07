@@ -18,11 +18,10 @@ System.out.println("Read:"+conf.calcObjectReadTimeNotAUtility(1000000, ex));
 
 Note that these methods are not intended for usage at runtime ever ! The times are given in microseconds else it would be hard to measure the duration of small objects. In case you test smallish Objects (e.g. 5..10 variables, no collections) consider creating a temporary array of 50 or so instances of your object, else the measuring will be skewed by the time required to initialize the objectstreams itself. However if you play around with {{{@EqualnessIsBinary}}} this might skew the Object size :).
 
+*FSTConfiguration*
 
-*Unsafe*
-
-{{{System.setProperty("fst.unsafe","true");}}} enables use of unsafe memory operations (speeds up up to 30%). Note that this flag must be initialized before any call to FSTConfiguration.createXX. If in doubt, consider  
-{{{ static { System.setProperty("fst.unsafe","true"); } }}} in your main class to ensure the options is set before FST builds up any metainformation.
+for tiny object graphs a big performance gain can be achieved by turning off tracking of identical objects inside the object graph ({{{FSTConfiguration.setShareReferences}}}). However this requires all serialized objects to be cycle free (most useful when serializing arguments e.g. marhalling RPC's).
+A better approach is, to define this per-class using the @Flat annotation.
 
 *{{{@Compress}}}*
 
