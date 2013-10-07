@@ -227,5 +227,5 @@ In contradiction to standard Java IO, FST always assumes x86 byte order even whe
 
 So on Big Endian platforms, never turn on Unsafe usage wether its a client or server machine. Ofc this does not hold true if ALL machines de/encoding FST Objects are Big Endian.
 
-Clarification: Disable unsafe on all Big Endian Platforms (non-x86), except when all machines (client+server) are Big Endian. 
+*Clarification:* Disable unsafe on all Big Endian Platforms (non-x86), except when all machines (client+server) are Big Endian. 
 You can enable Unsafe always on Little Endian (x86) machines.
