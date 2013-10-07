@@ -65,7 +65,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOExcep
 
 ==== Recommended threadsafe Use ====
 
-In order optimize object reusing and thread safety, FSTConfiguration provides 2 simple factory methods to obtain input/outputstream instances:
+In order to optimize object reuse and thread safety, FSTConfiguration provides 2 simple factory methods to obtain input/outputstream instances:
 
 {{{
 ...
