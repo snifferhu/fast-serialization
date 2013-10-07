@@ -1,0 +1,15 @@
+====Test Class: {{{FrequentPrimitives[]}}}====
+
+A class with a typical distribution of primitve fields: 2 short Strings, 3 boolean, 6 ints, 2 long, one double.
+
+Read Time (micros)
+
+=================== - FST (preferSpeed=true) (58)
+
+======================= - Kryo 2.2.2 UnsafeIn/Output (71)
+
+================= - FST (51)
+
+======================== - Kryo 2.2.2 (73)
+
+========================================== - Java built in (127)
