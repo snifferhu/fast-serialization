@@ -24,14 +24,9 @@ Content:
 
 Basically you just replace the {{{ObjectOutputStream, ObjectInputStream}}} with {{{FSTObjectOutput,FSTObjectInput}}}.
 {{{
-...
-// ! reuse this Object, it caches metadata. Performance degrades massively
-// if you create a new Configuration Object with each serialization !
-static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-...
 public MyClass myreadMethod( InputStream stream ) throws IOException, ClassNotFoundException 
 {
-    FSTObjectInput in = new FSTObjectInput(stream,conf);
+    FSTObjectInput in = new FSTObjectInput(stream);
     MyClass result = (MyClass)in.readObject();
     in.close(); // required !
     return result;
@@ -39,7 +34,7 @@ public MyClass myreadMethod( InputStream stream ) throws IOException, ClassNotFo
 
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOException 
 {
-    FSTObjectOutput out = new FSTObjectOutput(stream,conf);
+    FSTObjectOutput out = new FSTObjectOutput(stream);
     out.writeObject( toWrite );
     out.close(); // required !
 }
@@ -47,14 +42,9 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOExcep
 
 if you know the type of the Object (saves some bytes for the class name of the initial Object) you can do:
 {{{
-...
-// ! reuse this Object, it caches metadata. Performance degrades massively
-// if you create a new Configuration Object with each serialization !
-static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-...
 public MyClass myreadMethod(InputStream stream) throws IOException, ClassNotFoundException
 {
-    FSTObjectInput in = new FSTObjectInput(stream,conf);
+    FSTObjectInput in = new FSTObjectInput(stream);
     MyClass result = in.readObject(MyClass.class);
     in.close();
     return result;
@@ -62,14 +52,14 @@ public MyClass myreadMethod(InputStream stream) throws IOException, ClassNotFoun
 
 public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOException 
 {
-    FSTObjectOutput out = new FSTObjectOutput(stream, conf);
+    FSTObjectOutput out = new FSTObjectOutput(stream);
     out.writeObject( toWrite, MyClass.class );
     out.close();
 }
 }}}
 *!* Note that if you write with a type, you also have to read with the same type.
 
-*!* Note that if you create an instance with each serialization you *have to close* the FSTStream, because behind the scenes some datastructures are cached and reused. If this fails, you might cause a pretty nasty performance hit (too much object creation going on), especially if you encode smallish objects.
+*!* Note that if you create an instance with each serialization you *should close* the FSTStream, because behind the scenes some datastructures are cached and reused. If this fails, you might observe a a performance hit (too much object creation going on), especially if you encode lots of smallish objects.
 
 
 
@@ -87,7 +77,7 @@ public MyClass myreadMethod(InputStream stream) throws IOException, ClassNotFoun
 {
     FSTObjectInput in = conf.getObjectInput(stream);
     MyClass result = in.readObject(MyClass.class);
-    // DON'T: in.close(); prevents reuse and will result in an exception      
+    // DON'T: in.close(); here prevents reuse and will result in an exception      
     stream.close();
     return result;
 }
@@ -96,7 +86,7 @@ public void mywriteMethod( OutputStream stream, MyClass toWrite ) throws IOExcep
 {
     FSTObjectOutput out = conf.getObjectOutput(stream);
     out.writeObject( toWrite, MyClass.class );
-    // DON'T out.close();
+    // DON'T out.close() when using factory method;
     out.flush();
     stream.close();
 }
