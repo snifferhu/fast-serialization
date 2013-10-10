@@ -29,6 +29,9 @@ import java.io.ObjectOutput;
  */
 public class BlogBenchExternalizable implements Externalizable {
 
+    public BlogBenchExternalizable() {
+    }
+
     public BlogBenchExternalizable(int index) {
         // avoid benchmarking identity references instead of StringPerf
         str = "Some Value "+index;

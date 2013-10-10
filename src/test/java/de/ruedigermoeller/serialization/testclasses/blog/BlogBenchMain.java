@@ -1,5 +1,6 @@
 package de.ruedigermoeller.serialization.testclasses.blog;
 
+import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
 
@@ -51,8 +52,10 @@ public class BlogBenchMain {
         long startTim = System.currentTimeMillis();
         for ( int i = 0; i < iterations; i++ ) {
             bout.reset(); // very cheap
-            if ( type == 0)
-                writeTest(new FSTObjectOutput(bout), toWrite );
+            if ( type == 0) {
+                FSTObjectOutput out = FSTConfiguration.getDefaultConfiguration().getObjectOutput(bout);
+                writeTest(out, toWrite );
+            }
             else
                 writeTest(new ObjectOutputStream(bout), toWrite);
         }
@@ -66,7 +69,8 @@ public class BlogBenchMain {
         startTim = System.currentTimeMillis();
         for ( int i = 0; i < iterations; i++ ) {
             if ( type == 0) {
-                FSTObjectInput in = new FSTObjectInput(bin);
+//                FSTObjectInput in = new FSTObjectInput(bin);
+                FSTObjectInput in = FSTConfiguration.getDefaultConfiguration().getObjectInput(bin);
                 readTest(in);
             }
             else
@@ -82,32 +86,49 @@ public class BlogBenchMain {
 
     protected void readTest(ObjectInput in) throws Exception {
         in.readObject();
-        in.close();
+//        in.flush();
     }
 
     protected void writeTest(ObjectOutput out, Object toWrite) throws Exception {
         out.writeObject(toWrite);
-        out.close();
+        out.flush();
     }
 
     public static void main(String args[]) throws Exception {
 
-        int iterations = 1000000;
-        Object test = new BlogBench(13);
+        int iterations = 3000000;
 
         BlogBenchMain fst = new BlogBenchMain(0,iterations);
         BlogBenchMain jdk = new BlogBenchMain(1,iterations);
 
+        Object test = new BlogBench(13);
+
         // warm up
-        jdk.run(test);
+//        jdk.run(test);
         fst.run(test);
 
         //test
         fst.run(test);
-        fst.dumpRes("FST");
+        fst.dumpRes("FST - Plain Serializable");
 
-        jdk.run(test);
-        jdk.dumpRes("JDK");
+//        jdk.run(test);
+        jdk.dumpRes("JDK - Plain Serializable ");
+
+        test = new BlogBenchExternalizable(13);
+        //test
+        fst.run(test);
+        fst.dumpRes("FST - Externalizable");
+
+//        jdk.run(test);
+        jdk.dumpRes("JDK - Externalizable");
+
+        test = new BlogBenchAnnotated(13);
+        //test
+        fst.run(test);
+        fst.dumpRes("FST - Annotated");
+
+//        jdk.run(test);
+//        jdk.dumpRes("JDK - Externalizable");
 
     }
 }
