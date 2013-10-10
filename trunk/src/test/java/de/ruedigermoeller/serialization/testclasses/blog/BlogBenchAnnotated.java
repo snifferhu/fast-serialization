@@ -1,9 +1,6 @@
 package de.ruedigermoeller.serialization.testclasses.blog;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.Serializable;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -24,12 +21,12 @@ import java.io.ObjectOutput;
  * MA 02110-1301  USA
  * <p/>
  * Date: 10.10.13
- * Time: 19:30
+ * Time: 21:26
  * To change this template use File | Settings | File Templates.
  */
-public class BlogBenchExternalizable implements Externalizable {
+public class BlogBenchAnnotated  implements Serializable {
 
-    public BlogBenchExternalizable(int index) {
+    public BlogBenchAnnotated(int index) {
         // avoid benchmarking identity references instead of StringPerf
         str = "Some Value "+index;
         str1 = "Very Other Value "+index;
@@ -56,39 +53,5 @@ public class BlogBenchExternalizable implements Externalizable {
     private long l2 = 0l;
     private double d = 122.33;
 
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(str);
-        out.writeUTF(str1);
-        out.writeUTF(str2);
-        out.writeBoolean(b0);
-        out.writeBoolean(b1);
-        out.writeBoolean(b2);
-        out.writeInt(test1);
-        out.writeInt(test2);
-        out.writeInt(test3);
-        out.writeInt(test4);
-        out.writeInt(test5);
-        out.writeInt(test6);
-        out.writeLong(l1);
-        out.writeLong(l2);
-        out.writeDouble(d);
-    }
-
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        str = in.readUTF();
-        str1 = in.readUTF();
-        str2 = in.readUTF();
-        b0 = in.readBoolean();
-        b1 = in.readBoolean();
-        b2 = in.readBoolean();
-        test1 = in.readInt();
-        test2 = in.readInt();
-        test3 = in.readInt();
-        test4 = in.readInt();
-        test5 = in.readInt();
-        test6 = in.readInt();
-        l1 = in.readLong();
-        l2 = in.readLong();
-        d = in.readDouble();
-    }
 }
+

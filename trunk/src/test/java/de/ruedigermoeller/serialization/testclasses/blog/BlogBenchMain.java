@@ -93,7 +93,7 @@ public class BlogBenchMain {
     public static void main(String args[]) throws Exception {
 
         int iterations = 1000000;
-        Object test = new BlogBench();
+        Object test = new BlogBench(13);
 
         BlogBenchMain fst = new BlogBenchMain(0,iterations);
         BlogBenchMain jdk = new BlogBenchMain(1,iterations);
