@@ -85,7 +85,7 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
     static final byte HANDLE = -7;
     static final byte ENUM = -6;
     static final byte ARRAY = -5;
-//    static final byte STRING = -4;
+    //    static final byte STRING = -4;
     static final byte TYPED = -3; // var class == object written class
     //static final byte PRIMITIVE_ARRAY = -2;
     static final byte NULL = -1;
@@ -298,35 +298,6 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
             return;
         }
         final Class clazz = toWrite.getClass();
-        if ( clazz == Integer.class ) {
-            writeFByte(BIG_INT);
-            writeCInt(((Integer) toWrite).intValue());
-            return;
-        } else
-        if ( clazz == Long.class ) {
-            writeFByte(BIG_LONG);
-            writeCLong(((Long) toWrite).longValue());
-            return;
-        } else
-        if ( clazz == Boolean.class ) {
-            if (((Boolean) toWrite).booleanValue()) {
-                writeFByte(BIG_BOOLEAN_TRUE);
-            } else {
-                writeFByte(BIG_BOOLEAN_FALSE);
-            }
-            return;
-        } else
-        if (clazz.isArray()) {
-            writeFByte(ARRAY);
-            writeArray(referencee, toWrite);
-            return;
-        } else if ( toWrite instanceof Enum ) {
-            writeFByte(ENUM);
-            writeClass(toWrite);
-            writeCInt(((Enum) toWrite).ordinal());
-            return;
-        }
-
         String[] oneOf = referencee.getOneOf();
         if ( oneOf != null ) {
             for (int i = 0; i < oneOf.length; i++) {
@@ -338,14 +309,39 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 }
             }
         }
-
-        FSTClazzInfo serializationInfo = getFstClazzInfo(referencee, clazz);
-
-        // check for identical / equal objects
+        if ( clazz == Boolean.class ) {
+            if (((Boolean) toWrite).booleanValue()) {
+                writeFByte(BIG_BOOLEAN_TRUE);
+            } else {
+                writeFByte(BIG_BOOLEAN_FALSE);
+            }
+            return;
+        } else
+        if ( clazz == Integer.class ) {
+            writeFByte(BIG_INT);
+            writeCInt(((Integer) toWrite).intValue());
+            return;
+        } else
+        if ( clazz == Long.class ) {
+            writeFByte(BIG_LONG);
+            writeCLong(((Long) toWrite).longValue());
+            return;
+        }
+        FSTClazzInfo serializationInfo = null;
+        synchronized (referencee) {
+            if ( referencee.lastInfo != null && referencee.lastInfo.getClazz() == clazz ) {
+                serializationInfo = referencee.lastInfo;
+            } else {
+                serializationInfo = getClassInfoRegistry().getCLInfo(clazz);
+                referencee.lastInfo = serializationInfo;
+            }
+        }
+        // check for custom serializer
         FSTObjectSerializer ser = serializationInfo.getSer();
-        if ( ! referencee.isFlat() && ! serializationInfo.isFlat() && ( ser == null || !ser.alwaysCopy() ) ) {
+        int handle = Integer.MIN_VALUE;
+        if ( ! referencee.isFlat() && ! serializationInfo.isFlat() && (ser == null || !ser.alwaysCopy() ) ) {
             boolean needsEqualMap = serializationInfo.isEqualIsBinary() || serializationInfo.isEqualIsIdentity();
-            int handle = objects.registerObjectForWrite(toWrite, !needsEqualMap, written, serializationInfo, tmp);
+            handle = objects.registerObjectForWrite(toWrite, !needsEqualMap, written, serializationInfo, tmp);
             // determine class header
             if ( handle >= 0 ) {
                 final boolean isIdentical = tmp[0] == 0; //objects.getReadRegisteredObject(handle) == toWrite;
@@ -361,11 +357,18 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                 }
             }
         }
-
-        if ( ser == null ) {
-
-            // handle write replace
-            if ( serializationInfo.getWriteReplaceMethod() != null ) {
+        if (clazz.isArray()) {
+            writeFByte(ARRAY);
+            writeArray(referencee, toWrite);
+//        } else if ( toWrite instanceof String ) {
+//            writeFByte(STRING);
+//            writeStringUTF((String) toWrite);
+        } else if ( toWrite instanceof Enum ) {
+            writeFByte(ENUM);
+            writeClass(toWrite);
+            writeCInt(((Enum) toWrite).ordinal());
+        } else {
+            if ( ser == null && serializationInfo.getWriteReplaceMethod() != null ) {
                 Object replaced = null;
                 try {
                     replaced = serializationInfo.getWriteReplaceMethod().invoke(toWrite);
@@ -380,37 +383,21 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
                     // fixme: update object map
                 }
             }
-
-            // clazz uses some JDK special stuff (frequently slow)
-            if ( serializationInfo.useCompatibleMode() ) {
+            if (ser == null && serializationInfo.useCompatibleMode() ) {
                 writeObjectCompatible(referencee, toWrite, serializationInfo);
-                return;
+            } else {
+                // Object header (nothing written till here)
+                int pos = written;
+                writeObjectHeader(serializationInfo, referencee, toWrite);
+
+                // write object depending on type (custom, externalizable, serializable/java, default)
+                if ( ser != null ) {
+                    ser.writeObject(this, toWrite, serializationInfo, referencee, pos);
+                } else {
+                    defaultWriteObject(toWrite, serializationInfo);
+                }
             }
-
-            writeObjectHeader(serializationInfo, referencee, toWrite);
-            defaultWriteObject(toWrite, serializationInfo);
-        } else {
-            // Object header (nothing written till here)
-            int pos = written;
-            writeObjectHeader(serializationInfo, referencee, toWrite);
-            // write object depending on type (custom, externalizable, serializable/java, default)
-            ser.writeObject(this, toWrite, serializationInfo, referencee, pos);
         }
-    }
-
-    /**
-     * if class is same as last referenced, returned cached clzinfo, else do a lookup
-     */
-    private FSTClazzInfo getFstClazzInfo(FSTClazzInfo.FSTFieldInfo referencee, Class clazz) {
-        FSTClazzInfo serializationInfo = null;
-        FSTClazzInfo lastInfo = referencee.lastInfo;
-        if ( lastInfo != null && lastInfo.getClazz() == clazz ) {
-            serializationInfo = lastInfo;
-        } else {
-            serializationInfo = getClassInfoRegistry().getCLInfo(clazz);
-            referencee.lastInfo = serializationInfo;
-        }
-        return serializationInfo;
     }
 
     public void defaultWriteObject(Object toWrite, FSTClazzInfo serializationInfo) throws IOException {
@@ -859,8 +846,8 @@ public final class FSTObjectOutput extends DataOutputStream implements ObjectOut
         if ( unsafe != null && UNSAFE_MEMCOPY_ARRAY_LONG) {
             writeFLongArrayUnsafe(arr);
         } else {
-        for ( int i = 0; i < arr.length; i++ )
-            writeFLong(arr[i]);
+            for ( int i = 0; i < arr.length; i++ )
+                writeFLong(arr[i]);
         }
     }
 

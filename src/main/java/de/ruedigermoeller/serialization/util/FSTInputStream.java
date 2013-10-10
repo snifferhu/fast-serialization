@@ -32,7 +32,8 @@ import java.io.InputStream;
 public final class FSTInputStream extends InputStream {
 
     // fixme: useless speed opt =>
-    public int chunk_size = 64000;
+    public int chunk_size = 1000;
+    public static ThreadLocal<byte[]> cachedBuffer = new ThreadLocal<byte[]>();
     public byte buf[];
     public  int pos;
     public  int off;
@@ -46,7 +47,10 @@ public final class FSTInputStream extends InputStream {
     public void initFromStream(InputStream in) throws IOException {
         this.in = in;
         if (buf==null) {
-            buf = new byte[chunk_size];
+            buf = cachedBuffer.get();
+            if ( buf == null )
+                buf = new byte[chunk_size];
+            cachedBuffer.set(buf);
         }
         int read = in.read(buf);
         count+=read;
@@ -66,6 +70,7 @@ public final class FSTInputStream extends InputStream {
             byte newBuf[] = new byte[siz];
             System.arraycopy(buf,0,newBuf,0,buf.length);
             buf = newBuf;
+            cachedBuffer.set(buf);
         }
     }
 
