@@ -28,10 +28,6 @@ import java.io.Serializable;
  */
 public class BlogBench implements Serializable {
 
-    public BlogBench()
-    {
-    }
-
     public BlogBench(int index) {
         // avoid benchmarking identity references instead of StringPerf
         str = "Some Value "+index;
