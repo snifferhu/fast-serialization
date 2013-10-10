@@ -1,5 +1,9 @@
 package de.ruedigermoeller.serialization.testclasses.blog;
 
+import de.ruedigermoeller.serialization.annotations.Flat;
+import de.ruedigermoeller.serialization.annotations.OneOf;
+import de.ruedigermoeller.serialization.annotations.Predict;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +28,7 @@ import java.io.Serializable;
  * Time: 21:26
  * To change this template use File | Settings | File Templates.
  */
+@Flat @Predict(BlogBenchAnnotated.class)
 public class BlogBenchAnnotated  implements Serializable {
 
     public BlogBenchAnnotated(int index) {
@@ -37,9 +42,10 @@ public class BlogBenchAnnotated  implements Serializable {
         }
     }
 
-    private String str;
-    private String str1;
-    private String str2;
+    @Flat private String str;
+    @Flat private String str1;
+    @OneOf({"Default Value","Other Default Value"})
+    @Flat private String str2;
     private boolean b0 = true;
     private boolean b1 = false;
     private boolean b2 = true;
