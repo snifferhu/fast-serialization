@@ -2,6 +2,7 @@
 ----
 ==Optimization==
 
+see also my blog post:
 http://java-is-the-new-c.blogspot.de/2013/10/still-using-externalizable-to-get.html
 
 FST defines a set of annotations which influence the en/decoding of objects at runtime. Note that default FST (no annotations) is optimized the most. So prepare for a tradeoff speed <=> serialization size. However frequently it is more important to minimize the size of an object because of bandwith considerations, further processing (remoting in a cluster) etc.
