@@ -30,6 +30,11 @@ import java.io.*;
  */
 public class BlogBenchMain {
 
+    static final int JDK_SER = 0;
+    static final int FST_DROPIN = 1;
+    static final int FST_FACTORY = 2;
+    static final int FST_REUSE = 3;
+
     public ByteArrayOutputStream bout = new ByteArrayOutputStream(100000);
     ByteArrayInputStream bin;
     public long timWrite;
@@ -49,15 +54,22 @@ public class BlogBenchMain {
 
         System.gc(); // clean heap
         System.out.println("write ..");
+        FSTConfiguration fstConf = FSTConfiguration.getDefaultConfiguration();
         long startTim = System.currentTimeMillis();
         for ( int i = 0; i < iterations; i++ ) {
             bout.reset(); // very cheap
-            if ( type == 0) {
-                FSTObjectOutput out = FSTConfiguration.getDefaultConfiguration().getObjectOutput(bout);
-                writeTest(out, toWrite );
+            switch ( type ) {
+                case FST_FACTORY:
+                    writeTest(fstConf.getObjectOutput(bout), toWrite, type );
+                    break;
+                case JDK_SER:
+                    writeTest(new ObjectOutputStream(bout), toWrite, type);
+                    break;
+                case FST_DROPIN:
+                    writeTest(new FSTObjectOutput(bout), toWrite, type);
+                    break;
             }
-            else
-                writeTest(new ObjectOutputStream(bout), toWrite);
+
         }
         timWrite = System.currentTimeMillis()-startTim;
         byte[] bytes = bout.toByteArray();
@@ -68,13 +80,17 @@ public class BlogBenchMain {
         System.out.println("read ..");
         startTim = System.currentTimeMillis();
         for ( int i = 0; i < iterations; i++ ) {
-            if ( type == 0) {
-//                FSTObjectInput in = new FSTObjectInput(bin);
-                FSTObjectInput in = FSTConfiguration.getDefaultConfiguration().getObjectInput(bin);
-                readTest(in);
+            switch ( type ) {
+                case FST_FACTORY:
+                    readTest(fstConf.getObjectInput(bin), type);
+                    break;
+                case JDK_SER:
+                    readTest(new ObjectInputStream(bin), type);
+                    break;
+                case FST_DROPIN:
+                    readTest(new FSTObjectInput(bin), type);
+                    break;
             }
-            else
-                readTest(new ObjectInputStream(bin));
             bin.reset();
         }
         timRead = System.currentTimeMillis()-startTim;
@@ -84,51 +100,62 @@ public class BlogBenchMain {
         System.out.println(type+"  Size:" + length + ",  TimeRead: " + (timRead * 1000 * 1000 / iterations) + " nanoseconds,   TimeWrite: " + (timWrite * 1000 * 1000 / iterations) + " nanoseconds");
     }
 
-    protected void readTest(ObjectInput in) throws Exception {
+    protected void readTest(ObjectInput in, int type) throws Exception {
         in.readObject();
-//        in.flush();
+        if ( type != FST_FACTORY)
+            in.close();
     }
 
-    protected void writeTest(ObjectOutput out, Object toWrite) throws Exception {
+    protected void writeTest(ObjectOutput out, Object toWrite, int type) throws Exception {
         out.writeObject(toWrite);
-        out.flush();
+        if ( type == FST_FACTORY)
+            out.flush();
+        else
+            out.close();
     }
 
     public static void main(String args[]) throws Exception {
 
-        int iterations = 3000000;
+        int iterations = 30000000;
 
-        BlogBenchMain fst = new BlogBenchMain(0,iterations);
-        BlogBenchMain jdk = new BlogBenchMain(1,iterations);
+        BlogBenchMain fst0 = new BlogBenchMain(FST_DROPIN,iterations);
+        BlogBenchMain fst1 = new BlogBenchMain(FST_FACTORY,iterations);
+        BlogBenchMain jdk = new BlogBenchMain(JDK_SER,iterations);
 
         Object test = new BlogBench(13);
 
         // warm up
-//        jdk.run(test);
-        fst.run(test);
+        jdk.run(test);
+        fst0.run(test);
+//        fst1.run(test); unfair double warmup
 
         //test
-        fst.run(test);
-        fst.dumpRes("FST - Plain Serializable");
+        fst1.run(test);
+        fst1.dumpRes("FST Factory - Plain Serializable");
 
-//        jdk.run(test);
+        //test
+        fst0.run(test);
+        fst0.dumpRes("FST Dropin - Plain Serializable");
+
+        jdk.run(test);
         jdk.dumpRes("JDK - Plain Serializable ");
 
         test = new BlogBenchExternalizable(13);
-        //test
-        fst.run(test);
-        fst.dumpRes("FST - Externalizable");
+        fst1.run(test);
+        fst1.dumpRes("FST Factory - Externalizable");
 
-//        jdk.run(test);
-        jdk.dumpRes("JDK - Externalizable");
+        fst0.run(test);
+        fst0.dumpRes("FST Dropin - Externalizable");
+
+        jdk.run(test);
+        jdk.dumpRes("JDK - Externalizable ");
 
         test = new BlogBenchAnnotated(13);
-        //test
-        fst.run(test);
-        fst.dumpRes("FST - Annotated");
+        fst1.run(test);
+        fst1.dumpRes("FST Factory - Annotated");
 
-//        jdk.run(test);
-//        jdk.dumpRes("JDK - Externalizable");
+        fst0.run(test);
+        fst0.dumpRes("FST Dropin - Annotated");
 
     }
 }

@@ -31,7 +31,6 @@ import java.io.InputStream;
  */
 public final class FSTInputStream extends InputStream {
 
-    // fixme: useless speed opt =>
     public int chunk_size = 1000;
     public static ThreadLocal<byte[]> cachedBuffer = new ThreadLocal<byte[]>();
     public byte buf[];
