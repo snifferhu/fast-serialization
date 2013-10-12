@@ -7,9 +7,14 @@ version="1.27"
 
 jar.baseName='fst'
 
+repositories {
+    mavenCentral()
+}
+
+
 dependencies {
     compile fileTree("src/test/lib")
-    compile fileTree("lib")
+    compile group: 'org.javassist', name: 'javassist', version: '3.18.1-GA'
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
@@ -28,11 +33,19 @@ task testJar(type: Jar, dependsOn:classes) {
 
 task allJar(type: Jar, dependsOn:jar) {
     archiveName = 'fst-'+version+"-onejar.jar"
-    from zipTree('lib/javassist.jar').matching { true }
+    from zipTree('lib/javassist-3.18.1-GA.jar').matching { true }
     from zipTree('build/libs/fst-'+version+'.jar').matching { true }
 }
 
 task release(type: Jar, dependsOn:allJar) {
+
+    copy {
+        from configurations.compile.resolve()
+        into "lib"
+        exclude '**/fst*'
+        exclude '**/kryo*'
+    }
+
     archiveName = 'fst-'+version+".zip"
 
     into('src/main/java') {
@@ -43,6 +56,8 @@ task release(type: Jar, dependsOn:allJar) {
         from 'build/libs/fst-'+version+'.jar'
         from 'build/libs/fst-'+version+'-onejar.jar'
     }
+
+
 }
 
 compileJava {
