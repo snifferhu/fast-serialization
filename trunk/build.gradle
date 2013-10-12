@@ -2,7 +2,7 @@ import java.util.zip.ZipFile
 
 apply plugin: 'java'
 apply plugin: 'maven'
-version="1.26"
+version="1.27"
 
 
 jar.baseName='fst'
