@@ -23,7 +23,6 @@
 package de.ruedigermoeller.heapoff;
 
 import de.ruedigermoeller.serialization.FSTConfiguration;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -160,7 +159,7 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
 
                         @Override
                         public V setValue(V value) {
-                            throw new NotImplementedException();
+                            throw new RuntimeException("not implemented");
                         }
 
                         @Override
@@ -187,13 +186,13 @@ public class FSTOffHeapMap<K,V> extends AbstractMap<K,V> {
 
                 @Override
                 public void remove() {
-                    throw new NotImplementedException();
+                    throw new RuntimeException("not implemented");
                 }
             };
         }
 
         public boolean remove(Object o) {
-            throw new NotImplementedException();
+            throw new RuntimeException("not implemented");
         }
 
         public int size() {

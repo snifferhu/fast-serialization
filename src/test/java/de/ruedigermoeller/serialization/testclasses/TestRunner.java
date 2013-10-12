@@ -168,7 +168,7 @@ public class TestRunner {
         );
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 50000; SerTest.Run = 50000;
+        SerTest.WarmUP = 500; SerTest.Run = 500;
         runner.runAll(FrequentPrimitives.getArray(200));
 //        runner.runAll(FrequentPrimitivesExternalizable.getArray(200));
         runner.runAll(new FrequentCollections());

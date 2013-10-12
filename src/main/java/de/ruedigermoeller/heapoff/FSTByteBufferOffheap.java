@@ -26,7 +26,6 @@ import de.ruedigermoeller.serialization.*;
 import de.ruedigermoeller.serialization.annotations.Conditional;
 import de.ruedigermoeller.serialization.annotations.Flat;
 import de.ruedigermoeller.serialization.annotations.Predict;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -345,7 +344,7 @@ public class FSTByteBufferOffheap {
 
         @Override
         public void remove() {
-            throw new NotImplementedException();
+            throw new RuntimeException("not implemented");
         }
 
     }
