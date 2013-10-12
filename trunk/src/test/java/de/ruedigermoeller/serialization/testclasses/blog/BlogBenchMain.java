@@ -55,6 +55,7 @@ public class BlogBenchMain {
         System.gc(); // clean heap
         System.out.println("write ..");
         FSTConfiguration fstConf = FSTConfiguration.getDefaultConfiguration();
+        ObjectOutputStream jdkOut = null;
         long startTim = System.currentTimeMillis();
         for ( int i = 0; i < iterations; i++ ) {
             bout.reset(); // very cheap
@@ -102,13 +103,13 @@ public class BlogBenchMain {
 
     protected void readTest(ObjectInput in, int type) throws Exception {
         in.readObject();
-        if ( type != FST_FACTORY)
+        if ( type != FST_FACTORY )
             in.close();
     }
 
     protected void writeTest(ObjectOutput out, Object toWrite, int type) throws Exception {
         out.writeObject(toWrite);
-        if ( type == FST_FACTORY)
+        if ( type == FST_FACTORY )
             out.flush();
         else
             out.close();
@@ -116,7 +117,7 @@ public class BlogBenchMain {
 
     public static void main(String args[]) throws Exception {
 
-        int iterations = 30000000;
+        int iterations = 1000000;
 
         BlogBenchMain fst0 = new BlogBenchMain(FST_DROPIN,iterations);
         BlogBenchMain fst1 = new BlogBenchMain(FST_FACTORY,iterations);
@@ -156,6 +157,42 @@ public class BlogBenchMain {
 
         fst0.run(test);
         fst0.dumpRes("FST Dropin - Annotated");
+
+        FSTConfiguration.getDefaultConfiguration().registerClass(BlogBenchAnnotated.class);
+
+        fst0.run(test);
+        fst0.dumpRes("FST Dropin - Annotated class registered");
+
+        test = new BlogBenchAnnotated[] {
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13),
+                new BlogBenchAnnotated(13)
+        };
+
+        fst0.run(test);
+        fst0.dumpRes("FST Dropin - Annotated class registered bulk 10");
+
+        test = new BlogBenchExternalizable[] {
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13),
+                new BlogBenchExternalizable(13)
+        };
+        jdk.run(test);
+        jdk.dumpRes("JDK Externlizable bulk 10");
 
     }
 }
