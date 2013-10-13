@@ -3,6 +3,16 @@
 ----
 ==Short Guide==
 
+*Maven*
+
+{{{
+<dependency>
+    <groupId>de.ruedigermoeller</groupId>
+    <artifactId>fst</artifactId>
+    <version>1.27</version>
+</dependency>
+}}}
+
 Content:
 
 [#Plain_ObjectOutputStream_Replacement Simple ObjectOutputStream Replacement]
