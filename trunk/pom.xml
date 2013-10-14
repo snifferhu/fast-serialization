@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.ruedigermoeller</groupId>
     <artifactId>fst</artifactId>
-    <version>1.27</version>
+    <version>1.28-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.javassist</groupId>
