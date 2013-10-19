@@ -96,6 +96,10 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
     URL on1 = null;
     File on2 = null;
 
+    Object exceptions[] = {
+        null, new RuntimeException("test"), new ArrayIndexOutOfBoundsException(), new RuntimeException(new IllegalArgumentException("Blub"))
+    };
+
     public Primitives() {
     }
 
@@ -109,6 +113,11 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
         st5 = st+"1"+num;
         st6 = "Some english, text; fragment. "+num;
         st7 = st6+" paokasd 1";
+        try {
+            throw new IOException();
+        } catch (Exception ex) {
+            exceptions[0] = ex;
+        }
     }
 
     // to avoid measurement of pure stream init performance
