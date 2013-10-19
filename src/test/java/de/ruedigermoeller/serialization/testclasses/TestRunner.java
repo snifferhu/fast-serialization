@@ -56,11 +56,11 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest, defser };
+//        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest, defser };
 //        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest};
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
 //        SerTest tests[] = { speedFST, kryoUnsTest };
-//        SerTest tests[] = { defFST };
+        SerTest tests[] = { defFST };
 //        SerTest tests[] = { defFST, kryotest };
 //        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
@@ -169,19 +169,19 @@ public class TestRunner {
 
 //        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
         SerTest.WarmUP = 500; SerTest.Run = 500;
-        runner.runAll(FrequentPrimitives.getArray(200));
+//        runner.runAll(FrequentPrimitives.getArray(200));
 //        runner.runAll(FrequentPrimitivesExternalizable.getArray(200));
-        runner.runAll(new FrequentCollections());
-        runner.runAll(new LargeNativeArrays());
-        runner.runAll(new StringPerformance());
+//        runner.runAll(new FrequentCollections());
+//        runner.runAll(new LargeNativeArrays());
+//        runner.runAll(new StringPerformance());
         runner.runAll(new Primitives(0).createPrimArray());
-        runner.runAll(new PrimitiveArrays().createPrimArray());
-        runner.runAll(new CommonCollections());
-        runner.runAll(Trader.generateTrader(101, true));
-        runner.runAll(ManyClasses.getArray() );
-        runner.runAll(new ExternalizableTest());
-        runner.runAll(new BigObject());
-        runner.runAll(HeavyNesting.createNestedObject(1000));
+//        runner.runAll(new PrimitiveArrays().createPrimArray());
+//        runner.runAll(new CommonCollections());
+//        runner.runAll(Trader.generateTrader(101, true));
+//        runner.runAll(ManyClasses.getArray() );
+//        runner.runAll(new ExternalizableTest());
+//        runner.runAll(new BigObject());
+//        runner.runAll(HeavyNesting.createNestedObject(1000));
         runner.charter.closeDoc();
         FSTTestApp.main(new String[0]);
     }
