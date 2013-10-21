@@ -56,8 +56,26 @@ public class SpecialsTest {
         }
     }
 
+    public static void exceptionTest(FSTConfiguration conf) throws IOException, ClassNotFoundException {
+        FSTObjectOutput out = conf.getObjectOutput(null);
+        Exception e;
+        try {
+            throw new Exception("Test");
+        } catch (Exception ex) {
+            e = ex;
+        }
+        out.writeObject(e);
+        out.flush();
+        FSTObjectInput in = new FSTObjectInput(conf);
+        in.resetForReuseUseArray(out.getBuffer(),0,out.getWritten());
+        Object ex = in.readObject();
+        System.out.println("BREAK");
+    }
+
     public static void main(String[]s) throws IOException, ClassNotFoundException {
         FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+        exceptionTest(conf);
+
 
         ToWrite w = new ToWrite("bla");
 

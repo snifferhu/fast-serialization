@@ -152,9 +152,8 @@ public final class FSTObjectRegistry {
         } else if ( clzInfo.isFlat() ) {
             return Integer.MIN_VALUE;
         }
-        int handle = // objects.get(o);
-                objects.putOrGet(o,streamPosition);
-        if ( handle > 0 ) {
+        int handle = objects.putOrGet(o,streamPosition);
+        if ( handle >= 0 ) {
 //            if ( idToObject.get(handle) == null ) { // (*) (can get improved)
 //                idToObject.add(handle, o);
 //            }

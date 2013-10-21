@@ -97,7 +97,7 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
     File on2 = null;
 
     Object exceptions[] = {
-        null, new RuntimeException("test"), new ArrayIndexOutOfBoundsException(), new RuntimeException(new IllegalArgumentException("Blub"))
+        null, new Exception("test"), new ArrayIndexOutOfBoundsException(), new RuntimeException(new IllegalArgumentException("Blub"))
     };
 
     public Primitives() {
