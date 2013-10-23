@@ -1,10 +1,10 @@
 package de.ruedigermoeller.serialization.testclasses.libtests;
 
-import com.software.util.DeepEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+
+import com.cedarsoftware.util.DeepEquals;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.

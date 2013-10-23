@@ -1,7 +1,16 @@
 package de.ruedigermoeller.serialization.testclasses.docusample;
 
-import com.software.util.DeepEquals;
-import de.ruedigermoeller.serialization.FSTConfiguration;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.cedarsoftware.util.DeepEquals;
+
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
 import de.ruedigermoeller.serialization.testclasses.basicstuff.FrequentCollections;
@@ -9,11 +18,6 @@ import de.ruedigermoeller.serialization.testclasses.basicstuff.LargeNativeArrays
 import de.ruedigermoeller.serialization.testclasses.basicstuff.PrimitiveArrays;
 import de.ruedigermoeller.serialization.testclasses.basicstuff.Primitives;
 import de.ruedigermoeller.serialization.testclasses.enterprise.Trader;
-
-import java.io.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
