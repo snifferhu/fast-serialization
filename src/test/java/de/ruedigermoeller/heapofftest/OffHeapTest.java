@@ -1,6 +1,5 @@
 package de.ruedigermoeller.heapofftest;
 
-import com.software.util.DeepEquals;
 import de.ruedigermoeller.heapoff.FSTByteBufferOffheap;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.annotations.Flat;
@@ -12,6 +11,8 @@ import java.lang.reflect.Field;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
+
+import com.cedarsoftware.util.DeepEquals;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
