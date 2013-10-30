@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.ruedigermoeller</groupId>
     <artifactId>fst</artifactId>
-    <version>1.33-SNAPSHOT</version>
+    <version>1.34-SNAPSHOT</version>
 
     <description>a fast java serialization drop in-replacement + some serialization based utils (Structs, OffHeap Memory)</description>
     <url>https://code.google.com/p/fast-serialization/</url>
@@ -24,9 +24,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</connection>
-        <developerConnection>scm:svn:https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</developerConnection>
-        <url>https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</url>
+        <connection>scm:svn:https://fast-serialization.googlecode.com/svn/trunk/fast-serialization-read-only</connection>
+        <developerConnection>scm:svn:https://fast-serialization.googlecode.com/svn/trunk/</developerConnection>
+        <url>https://fast-serialization.googlecode.com/svn/trunk/</url>
     </scm>
 
     <!--
