@@ -266,14 +266,14 @@ public class FSTStruct implements Serializable {
         return unsafe.getDouble(___bytes,___offset);
     }
 
-    public void getBytes(byte[] target, int startIndex) {
+    public void getBytes(byte[] target, int startIndexInTarget) {
         if ( ! isOffHeap() ) {
             throw new RuntimeException("must be offheap to call this");
         }
-        if ( target.length+startIndex > getByteSize() ) {
-            throw new RuntimeException("ArrayIndexOutofBounds byte len:"+target.length+" start+size:"+(startIndex+getByteSize()));
+        if ( target.length+startIndexInTarget > getByteSize() ) {
+            throw new RuntimeException("ArrayIndexOutofBounds byte len:"+target.length+" start+size:"+(startIndexInTarget+getByteSize()));
         }
-        unsafe.copyMemory(___bytes,___offset, target,bufoff, target.length);
+        unsafe.copyMemory(___bytes,___offset, target, bufoff+startIndexInTarget, target.length);
     }
 
     public void setBytes(byte[] source, int sourceIndex, int len ) {
