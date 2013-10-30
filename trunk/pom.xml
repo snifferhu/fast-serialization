@@ -24,9 +24,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://fast-serialization.googlecode.com/svn/trunk/fast-serialization-read-only</connection>
-        <developerConnection>scm:svn:https://fast-serialization.googlecode.com/svn/trunk/</developerConnection>
-        <url>https://fast-serialization.googlecode.com/svn/trunk/</url>
+        <connection>scm:svn:https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</connection>
+        <developerConnection>scm:svn:https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</developerConnection>
+        <url>https://fast-serialization.googlecode.com/svn/tags/fst-1.33-SNAPSHOT</url>
     </scm>
 
     <!--
