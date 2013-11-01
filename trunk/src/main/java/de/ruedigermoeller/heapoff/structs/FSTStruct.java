@@ -37,6 +37,7 @@ public class FSTStruct implements Serializable {
     transient public byte[] ___bytes;
     transient public FSTStructFactory ___fac;
     transient public int ___elementSize;
+    transient public FSTChangeTracker tracker;
 
     protected Unsafe getUnsafe() {
         return unsafe;
