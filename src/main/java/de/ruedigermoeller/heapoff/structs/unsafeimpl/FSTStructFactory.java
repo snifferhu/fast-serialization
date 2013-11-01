@@ -251,6 +251,7 @@ public class FSTStructFactory {
         proxyLoader.delegateLoadingOf(Serializable.class.getName());
         proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
         proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
+        proxyLoader.delegateLoadingOf(FSTChangeTracker.class.getName());
 //        proxyLoader.delegateLoadingOf(StructArray.class.getName());
 //        proxyLoader.delegateLoadingOf(StructArray.StructArrIterator.class.getName());
         ccClz = proxyLoader.loadClass(cc.getName());
