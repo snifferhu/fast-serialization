@@ -417,7 +417,11 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             } else { // object ref
                 String typeString = type.getName();
                 f.replace("{ int tmpIdx = unsafe.getInt(___bytes, "+off+" + ___offset); if (tmpIdx <= 0) return null;" +
-                        "long __tmpOff = ___offset + tmpIdx; $_ = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); }");
+                        "long __tmpOff = ___offset + tmpIdx; " +
+                        ""+typeString+" tmp = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); " +
+                        "tmp.tracker = tracker; " +
+                        "$_ = tmp; " +
+                        "}");
 //                f.replace("{ Object _o = unsafe.toString(); $_ = _o; }");
             }
         } catch (Exception ex) {

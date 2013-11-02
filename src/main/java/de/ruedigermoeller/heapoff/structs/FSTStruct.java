@@ -37,7 +37,7 @@ public class FSTStruct implements Serializable {
     transient public byte[] ___bytes;
     transient public FSTStructFactory ___fac;
     transient public int ___elementSize;
-    transient public FSTChangeTracker tracker;
+    transient public FSTStructChange tracker;
 
     protected Unsafe getUnsafe() {
         return unsafe;
@@ -297,5 +297,21 @@ public class FSTStruct implements Serializable {
         return ___fac.createStructWrapper(b,0);
     }
 
+    /**
+     * works only if change tracking is enabled
+     */
+    public void startChangeTracking() {
+        tracker = new FSTStructChange();
+    }
+
+    /**
+     * works only if change tracking is enabled
+     */
+    public FSTStructChange finishChangeTracking() {
+        tracker.snapshotChanges(getOffset(),getBase());
+        FSTStructChange res = tracker;
+        tracker = null;
+        return res;
+    }
 
 }
