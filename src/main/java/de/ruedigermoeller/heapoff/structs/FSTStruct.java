@@ -28,6 +28,10 @@ import java.io.Serializable;
  * Time: 20:20
  * To change this template use File | Settings | File Templates.
  */
+ /**
+ * Base class of all structs. Inherit this to define your own structs.
+ * Refer to the documentation in the wiki regarding limitations of struct classes/members
+ */
 public class FSTStruct implements Serializable {
 
     public static Unsafe unsafe = FSTUtil.getUnsafe();
