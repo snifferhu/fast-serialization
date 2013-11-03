@@ -22,6 +22,7 @@ package de.ruedigermoeller.serialization.util;
 import sun.misc.Unsafe;
 import sun.reflect.ReflectionFactory;
 
+import java.io.IOException;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
 import java.lang.reflect.*;
@@ -247,5 +248,18 @@ public class FSTUtil {
             return (Unsafe)f.get(null);
         } catch (Exception e) { /* ... */ }
         return null;
+    }
+
+    public static int writeSignedVarInt(int value, byte out[], int index) {
+        return writeUnsignedVarInt((value << 1) ^ (value >> 31), out, index);
+    }
+
+    public static int writeUnsignedVarInt(int value, byte[] out, int index) {
+        while ((value & 0xFFFFFF80) != 0L) {
+            out[index++]= (byte) ((value & 0x7F) | 0x80);
+            value >>>= 7;
+        }
+        out[index++]= (byte) (value & 0x7F);
+        return index;
     }
 }
