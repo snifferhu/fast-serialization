@@ -318,4 +318,7 @@ public class FSTStruct implements Serializable {
         return res;
     }
 
-}
+     public boolean isChangeTracking() {
+         return tracker != null;
+     }
+ }
