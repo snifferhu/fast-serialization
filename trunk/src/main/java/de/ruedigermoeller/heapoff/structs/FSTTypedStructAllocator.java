@@ -52,7 +52,7 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
      */
     public static <C extends FSTStruct> C newPointer(Class<C> clazz) {
         try {
-            return (C)FSTStructFactory.getInstance().getProxyClass(clazz).newInstance();
+            return (C)allocInstance(clazz);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

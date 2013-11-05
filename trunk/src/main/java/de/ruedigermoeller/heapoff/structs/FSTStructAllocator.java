@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapoff.structs;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
+import de.ruedigermoeller.serialization.util.FSTUtil;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -69,10 +70,15 @@ public class FSTStructAllocator {
      */
     public static <C extends FSTStruct> C newPointer(Class<C> clazz) {
         try {
-            return (C)FSTStructFactory.getInstance().getProxyClass(clazz).newInstance();
+            return (C) allocInstance(clazz);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected static <C extends FSTStruct> Object allocInstance(Class<C> clazz) throws Exception {
+        return FSTUtil.getUnsafe().allocateInstance(FSTStructFactory.getInstance().getProxyClass(clazz));
+//        return FSTStructFactory.getInstance().getProxyClass(clazz).newInstance();
     }
 
     /**
