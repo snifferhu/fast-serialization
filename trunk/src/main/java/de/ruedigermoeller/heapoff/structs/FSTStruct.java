@@ -150,7 +150,26 @@ public class FSTStruct implements Serializable {
         return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;
     }
 
-    public boolean isOffHeap() {
+     @Override
+     public boolean equals(Object obj) {
+         if (obj instanceof FSTStruct) {
+             FSTStruct other = (FSTStruct) obj;
+             final int len = getByteSize();
+             if (other.getByteSize() == len) {
+                 int ix = getOffset();
+                 int ox = other.getOffset();
+                 for ( int i=0; i < len; i++) {
+                     if ( ___bytes[i+ix] != other.___bytes[i+ox] )
+                         return false;
+                 }
+                 return true;
+             } else
+                return false;
+         }
+         return super.equals(obj);
+     }
+
+     public boolean isOffHeap() {
         return ___fac != null;
     }
 
