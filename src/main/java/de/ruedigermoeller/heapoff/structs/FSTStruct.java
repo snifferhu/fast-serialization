@@ -4,7 +4,7 @@ import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import sun.misc.Unsafe;
 
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Base class of all structs. Inherit this to define your own structs.
  * Refer to the documentation in the wiki regarding limitations of struct classes/members
  */
-public class FSTStruct implements Serializable {
+public class FSTStruct implements Externalizable {
 
     public static Unsafe unsafe = FSTUtil.getUnsafe();
     public static long bufoff = FSTUtil.bufoff;
@@ -323,8 +323,9 @@ public class FSTStruct implements Serializable {
     /**
      * works only if change tracking is enabled
      */
-    public void startChangeTracking() {
+    public FSTStruct startChangeTracking() {
         tracker = new FSTStructChange();
+        return this;
     }
 
     /**
@@ -339,5 +340,25 @@ public class FSTStruct implements Serializable {
 
      public boolean isChangeTracking() {
          return tracker != null;
+     }
+
+     // FIXME: provide FSTExternalizable for speedup
+     @Override
+     public void writeExternal(ObjectOutput out) throws IOException {
+        if ( isOffHeap() ) {
+            int byteSize = getByteSize();
+            out.writeInt(byteSize);
+            out.write(getBase(), getOffset(), byteSize );
+        } else {
+            throw new RuntimeException("cannot serialize on heap struct");
+        }
+     }
+
+     @Override
+     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+         int len = in.readInt();
+         ___bytes = new byte[len];
+         ___offset = len+bufoff;
+         ___fac = FSTStructFactory.getInstance();
      }
  }
