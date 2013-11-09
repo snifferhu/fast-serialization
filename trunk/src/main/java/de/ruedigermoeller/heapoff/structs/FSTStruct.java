@@ -150,6 +150,16 @@ public class FSTStruct implements Externalizable {
         return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;
     }
 
+     public int hashCode() {
+         if ( !isOffHeap() )
+             return onHeapHashcode();
+        return unsafe.getInt(___bytes,___offset)^unsafe.getInt(___bytes,___offset+getByteSize()-4);
+     }
+
+     public int onHeapHashcode() {
+         return super.hashCode();
+     }
+
      @Override
      public boolean equals(Object obj) {
          if (obj instanceof FSTStruct) {
