@@ -28,7 +28,7 @@ import javassist.expr.FieldAccess;
  */
 public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
 
-    public static boolean trackChanges = false;
+    public static boolean trackChanges = true;
 
     @Override
     public FSTStructGeneration newInstance() {

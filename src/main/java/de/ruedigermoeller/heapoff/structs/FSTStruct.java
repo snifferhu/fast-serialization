@@ -32,7 +32,7 @@ import java.io.*;
  * Base class of all structs. Inherit this to define your own structs.
  * Refer to the documentation in the wiki regarding limitations of struct classes/members
  */
-public class FSTStruct implements Externalizable {
+public class FSTStruct implements Serializable {
 
     public static Unsafe unsafe = FSTUtil.getUnsafe();
     public static long bufoff = FSTUtil.bufoff;
@@ -353,22 +353,28 @@ public class FSTStruct implements Externalizable {
      }
 
      // FIXME: provide FSTExternalizable for speedup
-     @Override
-     public void writeExternal(ObjectOutput out) throws IOException {
-        if ( isOffHeap() ) {
-            int byteSize = getByteSize();
-            out.writeInt(byteSize);
-            out.write(getBase(), getOffset(), byteSize );
-        } else {
-            throw new RuntimeException("cannot serialize on heap struct");
-        }
-     }
+//     @Override
+//     public void writeExternal(ObjectOutput out) throws IOException {
+//        if ( isOffHeap() ) {
+//            int byteSize = getByteSize();
+//            out.writeInt(byteSize);
+//            out.write(getBase(), getOffset(), byteSize );
+//        } else {
+//            throw new RuntimeException("cannot serialize on heap struct "+getClass().getName());
+//        }
+//     }
+//
+//     @Override
+//     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+//         int len = in.readInt();
+//         ___bytes = new byte[len];
+//         ___offset = len+bufoff;
+//         ___fac = FSTStructFactory.getInstance();
+//     }
 
-     @Override
-     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-         int len = in.readInt();
-         ___bytes = new byte[len];
-         ___offset = len+bufoff;
-         ___fac = FSTStructFactory.getInstance();
+     public FSTStruct toOffHeap() {
+         if ( isOffHeap() )
+             return this;
+         return FSTStructFactory.getInstance().toStruct(this);
      }
  }

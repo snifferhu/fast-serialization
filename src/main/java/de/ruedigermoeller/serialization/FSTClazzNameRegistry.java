@@ -246,6 +246,12 @@ public class FSTClazzNameRegistry {
         return res;
     }
 
+    public void registerClazzFromOtherLoader( Class cl ) {
+        while( ! classCacheLock.compareAndSet(false,true) );
+        classCache.put(cl.getName(),cl);
+        classCacheLock.set(false);
+    }
+
     private String getSnippetFromId(int snippetId) {
         String res = null;
         if ( parent != null ) {
