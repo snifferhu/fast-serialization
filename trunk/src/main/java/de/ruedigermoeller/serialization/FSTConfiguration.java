@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization;
 
+import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.serialization.serializers.*;
 
 import java.awt.*;
@@ -125,6 +126,7 @@ public final class FSTConfiguration {
         reg.putSerializer(HashMap.class, new FSTMapSerializer(), false); // subclass should register manually
         reg.putSerializer(Hashtable.class, new FSTMapSerializer(), false); // subclass should register manually
         reg.putSerializer(ConcurrentHashMap.class, new FSTMapSerializer(), false); // subclass should register manually
+        reg.putSerializer(FSTStruct.class, new FSTStructSerializer(), true); // subclasses also use this
         return conf;
     }
 
