@@ -12,6 +12,7 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class FSTStringSerializer extends FSTBasicObjectSerializer {
+
     @Override
     public void writeObject(FSTObjectOutput out, Object toWrite, FSTClazzInfo clzInfo, FSTClazzInfo.FSTFieldInfo referencedBy, int streamPosition) throws IOException {
         if ( referencedBy.isCompressed() ) {
