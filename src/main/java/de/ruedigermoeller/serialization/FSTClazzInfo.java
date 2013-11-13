@@ -141,13 +141,22 @@ public final class FSTClazzInfo {
         }
         for (int i = 0; i < res.size(); i++) {
             Field field = res.get(i);
-            if ( Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers()) )
+            if ( Modifier.isStatic(field.getModifiers()) || isTransient(c,field) )
             {
                 res.remove(i);
                 i--;
             }
         }
         return getAllFields(c.getSuperclass(), res);
+    }
+
+    private boolean isTransient(Class c, Field field) {
+        if ( Modifier.isTransient(field.getModifiers()) )
+            return true;
+        while ( c.getName().indexOf("$") >= 0 ) {
+            c = c.getSuperclass(); // patch fuer reallive queries
+        }
+        return (c.getAnnotation(Transient.class) != null && field.getAnnotation(Serialize.class) == null);
     }
 
     public final FSTFieldInfo[] getFieldInfo() {
