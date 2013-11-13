@@ -386,6 +386,8 @@ public class FSTStructFactory {
         if ( offset < FSTStruct.bufoff ) {
             return null;
         }
+        if ( b.length < offset-FSTStruct.bufoff+8 )
+            throw new RuntimeException("array to short "+b.length+" offset "+offset);
         int clzId = unsafe.getInt(b, offset+4);
         int ptr = unsafe.getInt(b, offset);
         if (clzId <= 0) {
