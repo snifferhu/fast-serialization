@@ -137,7 +137,7 @@ public class FSTStructAllocator {
             return (S)aTemplate.createCopy();
         int byteSize = aTemplate.getByteSize();
         synchronized (this) {
-            if (chunk == null || chunkIndex+ byteSize > chunk.length) {
+            if (chunk == null || chunkIndex+byteSize >= chunk.length) {
                 chunk = new byte[chunkSize];
                 chunkIndex = 0;
             }
