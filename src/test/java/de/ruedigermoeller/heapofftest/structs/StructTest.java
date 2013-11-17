@@ -6,6 +6,7 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
+import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -41,6 +42,7 @@ public class StructTest {
         FSTTypedStructAllocator<StructString> strAlloc = new FSTTypedStructAllocator<StructString>( new StructString(10), 10 );
 
         System.out.println("size td:"+alloc.getTemplateSize()+" str:"+strAlloc.getTemplateSize());
+
 
         check(alloc.newStruct(new TestData()).getDataStructArray() == null);
         check(alloc.newStruct(new TestData()).getNested() == null);
@@ -166,6 +168,12 @@ public class StructTest {
         TestData objTest = alloc.newStruct();
         check(objTest.getString().charsLen() == 50);
 
+        objTest.getString().setString("X");
+        check(objTest.getString().toString().equals("X"));
+
+        objTest.setString( new StructString("Test") );
+        check( objTest.getString().toString().equals("Test") );
+
         objTest.setString(null);
         check( objTest.getString() == null );
 
@@ -245,8 +253,18 @@ public class StructTest {
         if ( data.getG() !=data1.getG() )
             throw new RuntimeException();
 
-        for ( int i = 0; i < data.arrBoolLen(); i++ ) {
-            if ( data1.arrBool(i) != data.arrBool(i) ) {
+        for ( int i = 0; i < data.arrcLen(); i++ ) {
+            if ( data1.arrc(i) != data.arrc(i) ) {
+                throw new RuntimeException();
+            }
+        }
+        for ( int i = 0; i < data.arrbLen(); i++ ) {
+            if ( data1.arrb(i) != data.arrb(i) ) {
+                throw new RuntimeException("at elem "+i);
+            }
+        }
+        for ( int i = 0; i < data.arrdLen(); i++ ) {
+            if ( data1.arrd(i) != data.arrd(i) ) {
                 throw new RuntimeException();
             }
         }
@@ -255,24 +273,21 @@ public class StructTest {
                 throw new RuntimeException();
             }
         }
-        for ( int i = 0; i < data.arrbLen(); i++ ) {
-            if ( data1.arrb(i) != data.arrb(i) ) {
-                throw new RuntimeException();
-            }
-        }
-        for ( int i = 0; i < data.arrcLen(); i++ ) {
-            if ( data1.arrc(i) != data.arrc(i) ) {
-                throw new RuntimeException();
-            }
-        }
-        for ( int i = 0; i < data.arrdLen(); i++ ) {
-            if ( data1.arrd(i) != data.arrd(i) ) {
-                throw new RuntimeException();
-            }
-        }
         for ( int i = 0; i < data.arrgLen(); i++ ) {
             if ( data1.arrg(i) != data.arrg(i) ) {
                 throw new RuntimeException();
+            }
+        }
+        for ( int i = 0; i < data.arrBoolLen(); i++ ) {
+            if ( data1.arrBool(i) != data.arrBool(i) ) {
+                for ( int ii = 0; ii < data.arrBoolLen(); ii++ ) {
+                    System.out.println(""+ii+" "+data.arrBool(ii));
+                }
+                for ( int ii = 0; ii < data.arrBoolLen(); ii++ ) {
+                    System.out.println(""+ii+" "+data1.arrBool(ii));
+                }
+                System.out.println("0:"+data+" 1:"+data1);
+                throw new RuntimeException("len "+data.arrBoolLen());
             }
         }
     }

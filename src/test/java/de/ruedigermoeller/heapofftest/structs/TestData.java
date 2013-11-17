@@ -8,6 +8,8 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructInt;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
 
+import java.util.Arrays;
+
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
  * <p/>
@@ -32,19 +34,33 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructString;
  */
 public class TestData extends FSTStruct {
 
-    protected TestData nested;
-    protected StructString string = new StructString(50);
-    protected StructArray<TestData> dataStructArray;
-    protected StructMap<StructInt,StructString> structMap = new StructMap<StructInt, StructString>(new StructInt(0),new StructString(10),10);
-
     protected boolean bool;
-    protected byte a = 0;
+    protected byte a = -1;
     protected short b = 11111;
     protected char c = 22222;
     protected int d = 333333333;
     protected long e = 444444444444l;
     protected float f = 5555555555.55f;
     protected double g = 66666666666.66;
+
+    @Override
+    public String toString() {
+        return "TestData{" +
+                ", a=" + a +
+                ", b=" + b +
+                ", c=" + c +
+                ", d=" + d +
+                ", e=" + e +
+                ", f=" + f +
+                ", g=" + g +
+                ", string=" + getString() +
+                '}';
+    }
+
+    protected StructString string = new StructString("Hallo",50);
+    protected StructArray<TestData> dataStructArray;
+    protected StructMap<StructInt,StructString> structMap = new StructMap<StructInt, StructString>(new StructInt(0),new StructString(10),10);
+    protected TestData nested;
 
     public byte getA() {
         return a;
@@ -82,7 +98,6 @@ public class TestData extends FSTStruct {
         return g;
     }
 
-    protected boolean[] arrBool = {true,false,true,false};
     protected byte[] arrA = "blablablablabla".getBytes();
     protected short[] arrb = { 11111, 22222, 3333 };
     protected char[] arrc = { 22221, 22221, 22222, 1 };
@@ -90,6 +105,7 @@ public class TestData extends FSTStruct {
     protected long[] arre = { 444444444441l, 444444444442l, 444444444443l, 1,1 ,1 };
     protected float[] arrf = { 5555555555.51f, 5555555555.52f, 5555555555.53f, 1,1,1,1 };
     protected double[] arrg = { 66666666666.61, 66666666666.62,66666666666.63,1,1,1,1,1};
+    protected boolean[] arrBool = {true,false,true,false};
     @Align(8)
     protected FSTStruct objArray[] = new FSTStruct[] { null, new StructString(5), null, new StructString(20), new StructInt(17), null };
     @Templated protected FSTStruct templatedObjArray[] = new FSTStruct[] { new StructString("Oh",5), null, null, null };
