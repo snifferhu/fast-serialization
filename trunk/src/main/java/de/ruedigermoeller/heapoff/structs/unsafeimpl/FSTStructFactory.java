@@ -1,5 +1,8 @@
 package de.ruedigermoeller.heapoff.structs.unsafeimpl;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
+import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
+import de.ruedigermoeller.heapoff.bytez.onheap.HeapBytezAllocator;
 import de.ruedigermoeller.heapoff.structs.*;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
@@ -56,13 +59,14 @@ public class FSTStructFactory {
     }
 
     public static final int MAX_CLASSES = 1000;
-    static Unsafe unsafe = FSTUtil.unFlaggedUnsafe;
     static FSTConfiguration conf = FSTConfiguration.createStructConfiguration();
     static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
     boolean autoRegister = true;
+
+    BytezAllocator allocator = new HeapBytezAllocator();
 
     public FSTStructFactory() {
         registerClz(FSTStruct.class);
@@ -242,20 +246,18 @@ public class FSTStructFactory {
         return null;
     }
 
-    private <T> Class loadProxyClass(Class<T> clazz, ClassPool pool, CtClass cc) throws ClassNotFoundException {
+    private <T> Class loadProxyClass(Class<T> clazz, ClassPool pool, final CtClass cc) throws ClassNotFoundException {
         Class ccClz;
-        proxyLoader.delegateLoadingOf(Unsafe.class.getName());
-        proxyLoader.delegateLoadingOf(clazz.getName());
-        proxyLoader.delegateLoadingOf(Externalizable.class.getName());
-        proxyLoader.delegateLoadingOf(FSTUtil.class.getName());
-        proxyLoader.delegateLoadingOf(Serializable.class.getName());
-        proxyLoader.delegateLoadingOf(FSTStructFactory.class.getName());
-        proxyLoader.delegateLoadingOf(FSTStruct.class.getName());
-        proxyLoader.delegateLoadingOf(StructString.class.getName());
-        proxyLoader.delegateLoadingOf(FSTStructChange.class.getName());
-//        proxyLoader.delegateLoadingOf(StructArray.class.getName());
-//        proxyLoader.delegateLoadingOf(StructArray.StructArrIterator.class.getName());
-        ccClz = proxyLoader.loadClass(cc.getName());
+        Loader cl = new Loader(clazz.getClassLoader(), pool) {
+            protected Class loadClassByDelegation(String name)
+                    throws ClassNotFoundException
+            {
+                if ( name.equals(cc.getName()) )
+                    return null;
+                return delegateToParent(name);
+            }
+        };
+        ccClz = cl.loadClass(cc.getName());
         return ccClz;
     }
 
@@ -270,10 +272,10 @@ public class FSTStructFactory {
         }
     }
 
-    public <T extends FSTStruct> T createWrapper(Class<T> onHeap, byte bytes[], int index) throws Exception {
+    public <T extends FSTStruct> T createWrapper(Class<T> onHeap, Bytez bytes, int index) throws Exception {
         Class proxy = getProxyClass(onHeap);
-        T res = (T) unsafe.allocateInstance(proxy);
-        res.baseOn(bytes, FSTStruct.bufoff+index, this);
+        T res = (T) FSTUtil.getUnsafe().allocateInstance(proxy);
+        res.baseOn(bytes, index, this);
         return res;
     }
 
@@ -284,8 +286,8 @@ public class FSTStructFactory {
      * @param index
      * @return
      */
-    public FSTStruct createStructWrapper(byte b[], int index) {
-        int clzId = unsafe.getInt(b, FSTStruct.bufoff + index + 4);
+    public FSTStruct createStructWrapper(Bytez b, int index) {
+        int clzId = b.getInt(index + 4);
         return createStructPointer(b, index, clzId);
     }
 
@@ -297,7 +299,7 @@ public class FSTStructFactory {
      * @param index
      * @return
      */
-    public FSTStruct createStructPointer(byte[] b, int index, int clzId) {
+    public FSTStruct createStructPointer(Bytez b, int index, int clzId) {
         synchronized (this) {
             Class clazz = mIntToClz.get(clzId);
             if (clazz==null)
@@ -310,38 +312,38 @@ public class FSTStructFactory {
         }
     }
 
-    public FSTStruct createTypedArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
-        int arrayElementZeroindex = unsafe.getInt(base, objectBaseOffset + arrayStructIndex);
-        int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
-        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
-        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
+    public FSTStruct createTypedArrayBasePointer(Bytez base, long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = base.getInt(objectBaseOffset + arrayStructIndex);
+        int elemSiz = base.getInt(objectBaseOffset+arrayStructIndex+8);
+        int len = base.getInt(objectBaseOffset+arrayStructIndex+4);
+        int clId = base.getInt(objectBaseOffset+arrayStructIndex+12);
         FSTStruct structPointer = null;
         if ( clId <= 0 ) { // untyped array
             structPointer = new FSTStruct();
             structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
         } else {
-            structPointer = createStructPointer(base, (int) (objectBaseOffset+arrayElementZeroindex- FSTStruct.bufoff), clId);
+            structPointer = createStructPointer(base, (int) (objectBaseOffset+arrayElementZeroindex), clId);
         }
         structPointer.___elementSize = elemSiz;
         return structPointer;
     }
 
-    public void fillTypedArrayBasePointer(FSTStruct result, byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
-        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
-        int elemSiz = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+8);
+    public void fillTypedArrayBasePointer(FSTStruct result, Bytez base, long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = base.getInt(objectBaseOffset+arrayStructIndex);
+        int elemSiz = base.getInt(objectBaseOffset+arrayStructIndex+8);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
 //        int clId = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+12);
         result.baseOn(base, objectBaseOffset + arrayElementZeroindex, this);
         result.___elementSize = elemSiz;
     }
 
-    public void fillPrimitiveArrayBasePointer(FSTStruct result, byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
-        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+    public void fillPrimitiveArrayBasePointer(FSTStruct result, Bytez base, long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = base.getInt(objectBaseOffset+arrayStructIndex);
         result.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
     }
 
-    public FSTStruct createPrimitiveArrayBasePointer(byte base[], long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
-        int arrayElementZeroindex = unsafe.getInt(base,objectBaseOffset+arrayStructIndex);
+    public FSTStruct createPrimitiveArrayBasePointer(Bytez base, long objectBaseOffset /*offset of object containing array*/, int arrayStructIndex /*position of array header in struct*/) {
+        int arrayElementZeroindex = base.getInt(objectBaseOffset+arrayStructIndex);
 //        int len = unsafe.getInt(base,objectBaseOffset+arrayStructIndex+4);
         FSTStruct structPointer = new FSTStruct();
         structPointer.baseOn(base,objectBaseOffset+arrayElementZeroindex,this);
@@ -358,7 +360,7 @@ public class FSTStructFactory {
             return onHeap;
         }
         try {
-            byte b[] = toByteArray(onHeap);
+            Bytez b = toByteArray(onHeap);
             return (T)createWrapper(onHeap.getClass(),b,0);
         } catch (Exception e) {
             if ( e instanceof RuntimeException )
@@ -382,14 +384,11 @@ public class FSTStructFactory {
             cachedWrapperMap.get()[id] = null;
     }
 
-    public FSTStruct getStructPointerByOffset(byte b[], long offset) {
-        if ( offset < FSTStruct.bufoff ) {
-            return null;
-        }
-        if ( b.length < offset-FSTStruct.bufoff+8 )
-            throw new RuntimeException("array to short "+b.length+" offset "+offset);
-        int clzId = unsafe.getInt(b, offset+4);
-        int ptr = unsafe.getInt(b, offset);
+    public FSTStruct getStructPointerByOffset(Bytez b, long offset) {
+        if ( b.length() < offset+8 )
+            throw new RuntimeException("array to short "+b.length()+" offset "+offset);
+        int clzId = b.getInt(offset+4);
+        int ptr = b.getInt(offset);
         if (clzId <= 0) {
             return null;
         }
@@ -399,7 +398,7 @@ public class FSTStructFactory {
             ((FSTStruct)res).baseOn(b, offset, this);
             return (FSTStruct) res;
         }
-        res = createStructPointer(b, (int) (offset - FSTStruct.bufoff), clzId);
+        res = createStructPointer(b, (int) (offset), clzId);
         wrapperMap[clzId] = res;
         return (FSTStruct) res;
     }
@@ -410,8 +409,8 @@ public class FSTStructFactory {
      * @param index
      * @return
      */
-    public FSTStruct getStructPointer(byte b[], int index) {
-        return getStructPointerByOffset(b,FSTStruct.bufoff+index);
+    public FSTStruct getStructPointer(Bytez b, int index) {
+        return getStructPointerByOffset(b,index);
     }
 
     public static int align(int val, int align) {
@@ -443,7 +442,7 @@ public class FSTStructFactory {
                         throw new RuntimeException("nested arrays not supported");
                     }
                     // if array is @aligned, add align-1 to size (overestimation), because I don't know the exact position of the array data here
-                    // embedded object data, is currently not aligned, only the header position respects the @align
+                    // embedded object data is currently not aligned, only the header position respects the @align
                     if ( fi.isIntegral() ) { // prim array
                         Object objectValue = fi.getObjectValue(onHeapStruct);
                         if ( objectValue == null ) {
@@ -539,10 +538,10 @@ public class FSTStructFactory {
         return mIntToClz.get(clzId);
     }
 
-    public byte[] toByteArray(FSTStruct onHeapStruct) {
+    public Bytez toByteArray(FSTStruct onHeapStruct) {
         try {
             int sz = align(calcStructSize(onHeapStruct),SIZE_ALIGN);
-            byte b[] = new byte[sz];
+            Bytez b = allocator.alloc(sz);
             toByteArray(onHeapStruct,b,0);
             return b;
         } catch (Exception e) {
@@ -568,19 +567,20 @@ public class FSTStructFactory {
     }
 
 
-    public int toByteArray(FSTStruct onHeapStruct, byte bytes[], int index) throws Exception {
+    public int toByteArray(FSTStruct onHeapStruct, Bytez bytes, int index) throws Exception {
         ArrayList<ForwardEntry> positions = new ArrayList<ForwardEntry>();
         if ( onHeapStruct == null ) {
             return index;
         }
         if (onHeapStruct.isOffHeap()) {
-            unsafe.copyMemory(onHeapStruct.___bytes,onHeapStruct.___offset,bytes,FSTStruct.bufoff+index,onHeapStruct.getByteSize());
+//            unsafe.copyMemory(onHeapStruct.___bytes,onHeapStruct.___offset,bytes,FSTStruct.bufoff+index,onHeapStruct.getByteSize());
+            onHeapStruct.___bytes.copyTo(bytes, index, onHeapStruct.___offset, onHeapStruct.getByteSize());
             return onHeapStruct.getByteSize();
         }
         int initialIndex =index;
         Class<? extends FSTStruct> aClass = onHeapStruct.getClass();
         int clzId = getClzId(aClass);
-        unsafe.putInt(bytes,FSTStruct.bufoff+index+4,clzId);
+        bytes.putInt(index+4,clzId);
         index+=8;
         FSTClazzInfo clInfo = conf.getClassInfo(aClass);
         FSTClazzInfo.FSTFieldInfo fis[] = clInfo.getFieldInfo();
@@ -600,7 +600,7 @@ public class FSTStructFactory {
                 } else { // object array
                     Object objArr[] = (Object[]) fi.getObjectValue(onHeapStruct);
                     if ( objArr == null ) {
-                        unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
+                        bytes.putInt(index, -1);
                         index+=fi.getStructSize();
                     } else {
                         Templated takeFirst = fi.getField().getAnnotation(Templated.class);
@@ -611,7 +611,7 @@ public class FSTStructFactory {
                         positions.add(fe);
                         index += fi.getStructSize();
                         int elemSiz = computeElemSize(onHeapStruct,objArr,fi);
-                        unsafe.putInt(bytes, FSTStruct.bufoff+index-8,elemSiz);
+                        bytes.putInt(index-8,elemSiz);
                     }
                 }
             } else if ( fi.isIntegral() ) { // && ! array
@@ -621,28 +621,28 @@ public class FSTStructFactory {
                     throw new RuntimeException("internal error. please file an issue");
                 }
                 if ( type == boolean.class ) {
-                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) (fi.getBooleanValue(onHeapStruct)?1:0));
+                    bytes.putBool(index, fi.getBooleanValue(onHeapStruct));
                 } else
                 if ( type == byte.class ) {
-                    unsafe.putByte(bytes, FSTStruct.bufoff + index, (byte) fi.getByteValue(onHeapStruct));
+                    bytes.put(index, (byte) fi.getByteValue(onHeapStruct));
                 } else
                 if ( type == char.class ) {
-                    unsafe.putChar(bytes, FSTStruct.bufoff + index, (char) fi.getCharValue(onHeapStruct));
+                    bytes.putChar(index, (char) fi.getCharValue(onHeapStruct));
                 } else
                 if ( type == short.class ) {
-                    unsafe.putShort(bytes, FSTStruct.bufoff + index, (short) fi.getShortValue(onHeapStruct));
+                    bytes.putShort(index, (short) fi.getShortValue(onHeapStruct));
                 } else
                 if ( type == int.class ) {
-                    unsafe.putInt( bytes, FSTStruct.bufoff+index, fi.getIntValue(onHeapStruct) );
+                    bytes.putInt(index, fi.getIntValue(onHeapStruct));
                 } else
                 if ( type == long.class ) {
-                    unsafe.putLong( bytes, FSTStruct.bufoff+index, fi.getLongValue(onHeapStruct) );
+                    bytes.putLong( index, fi.getLongValue(onHeapStruct) );
                 } else
                 if ( type == float.class ) {
-                    unsafe.putFloat(bytes, FSTStruct.bufoff + index, fi.getFloatValue(onHeapStruct));
+                    bytes.putFloat(index, fi.getFloatValue(onHeapStruct));
                 } else
                 if ( type == double.class ) {
-                    unsafe.putDouble(bytes, FSTStruct.bufoff + index, fi.getDoubleValue(onHeapStruct));
+                    bytes.putDouble(index, fi.getDoubleValue(onHeapStruct));
                 } else {
                     throw new RuntimeException("this is an error");
                 }
@@ -654,8 +654,8 @@ public class FSTStructFactory {
                     throw new RuntimeException("internal error. please file an issue");
                 }
                 if ( obj == null ) {
-                    unsafe.putInt(bytes, FSTStruct.bufoff + index, -1);
-                    unsafe.putInt(bytes, FSTStruct.bufoff + index+4, -1);
+                    bytes.putInt(index, -1);
+                    bytes.putInt(index+4, -1);
                     index+=fi.getStructSize();
                 } else {
                     Object objectValue = fi.getObjectValue(onHeapStruct);
@@ -680,77 +680,84 @@ public class FSTStructFactory {
                 long siz = 0;
                 if ( c == byte[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTStruct.bufoff, bytes, FSTStruct.bufoff+index, siz);
+                    bytes.set(index,(byte[])o,0, (int) siz);
                 } else if ( c == boolean[].class ) {
                     siz = Array.getLength(o);
-                    unsafe.copyMemory(o,FSTStruct.bufoff, bytes, FSTStruct.bufoff+index, siz);
+                    bytes.setBoolean(index, (boolean[]) o, 0, (int) siz);
                 } else if ( c == char[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o);
+                    bytes.setChar(index, (char[]) o, 0, (int) siz);
+                    siz *= 2;
                 } else if ( c == short[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.chscal;
-                    unsafe.copyMemory(o,FSTUtil.choff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o); // * FSTUtil.chscal;
+                    bytes.setShort(index, (short[]) o, 0, (int) siz);
+                    siz *= 2;
                 } else if ( c == int[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.intscal;
-                    unsafe.copyMemory(o,FSTUtil.intoff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o); // * FSTUtil.intscal;
+                    bytes.setInt(index, (int[]) o, 0, (int) siz);
+                    siz *= 4;
                 } else if ( c == long[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.longscal;
-                    unsafe.copyMemory(o,FSTUtil.longoff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o); // * FSTUtil.longscal;
+                    bytes.setLong(index, (long[]) o, 0, (int) siz);
+                    siz *= 8;
                 } else if ( c == float[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.floatscal;
-                    unsafe.copyMemory(o,FSTUtil.floatoff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o); // * FSTUtil.floatscal;
+                    bytes.setFloat(index, (float[]) o, 0, (int) siz);
+                    siz *= 4;
                 } else if ( c == double[].class ) {
-                    siz = Array.getLength(o) * FSTUtil.doublescal;
-                    unsafe.copyMemory(o,FSTUtil.doubleoff, bytes, FSTStruct.bufoff+index, siz);
+                    siz = Array.getLength(o); // * FSTUtil.doublescal;
+                    bytes.setDouble(index, (double[]) o, 0, (int) siz);
+                    siz *= 8;
                 } else {
                     Object[] objArr = (Object[]) o;
-                    int elemSiz = unsafe.getInt(bytes, FSTStruct.bufoff+en.pointerPos+8);
+                    int elemSiz = bytes.getInt(en.pointerPos+8);
                     siz = Array.getLength(o) * elemSiz;
                     int tmpIndex = index;
-                    byte templatearr[] = null;
+                    Bytez templatearr = null;
                     boolean hasClzId = false;
                     if ( onHeapStruct instanceof FSTArrayElementSizeCalculator ) {
                         Class elemClz = ((FSTArrayElementSizeCalculator)onHeapStruct).getElementType(en.fi.getField(),this);
                         if ( elemClz != null ) {
                             int clid = getClzId(elemClz);
-                            unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, clid );
+                            bytes.putInt(en.pointerPos + 12, clid);
                             hasClzId = true;
                         }
                     }
                     if (en.template != null) {
                         templatearr = toByteArray(en.template); // fixme: unnecessary alloc
                         if ( ! hasClzId ) {
-                            unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, getClzId( en.template.getClass() ) );
+                            bytes.putInt(en.pointerPos + 12, getClzId(en.template.getClass()));
                             hasClzId = true;
                         }
                     }
                     for (int j = 0; j < objArr.length; j++) {
                         Object objectValue = objArr[j];
                         if ( templatearr != null ) {
-                            unsafe.copyMemory(templatearr,FSTStruct.bufoff,bytes,FSTStruct.bufoff+tmpIndex,templatearr.length);
+//                            unsafe.copyMemory(templatearr,FSTStruct.bufoff,bytes,FSTStruct.bufoff+tmpIndex,templatearr.length);
+                            templatearr.copyTo(bytes,tmpIndex,0,templatearr.length());
                             tmpIndex+=elemSiz;
                         } else {
                             if ( objectValue == null ) {
-                                unsafe.putInt(bytes, FSTStruct.bufoff + tmpIndex+4, -1);
+                                bytes.putInt(tmpIndex + 4, -1);
                                 tmpIndex += elemSiz;
                             } else {
                                 toByteArray((FSTStruct) objectValue, bytes, tmpIndex);
-                                unsafe.putInt( bytes,FSTStruct.bufoff+tmpIndex, elemSiz ); // need to patch size in case of smaller objects in obj array
+                                bytes.putInt(tmpIndex, elemSiz); // need to patch size in case of smaller objects in obj array
                                 tmpIndex += elemSiz;
                                 if ( !hasClzId ) {
-                                    unsafe.putInt(bytes,FSTStruct.bufoff+en.pointerPos+12, getClzId( en.fi.getArrayType() ) );
+                                    bytes.putInt(en.pointerPos + 12, getClzId(en.fi.getArrayType()));
                                     hasClzId = true;
                                 }
                             }
                         }
                     }
                 }
-                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos, index-initialIndex );
-                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos+4, Array.getLength(o) );
+                bytes.putInt(en.pointerPos, index - initialIndex); // offset to real data
+                bytes.putInt(en.pointerPos + 4, Array.getLength(o)); // array len
                 index+=siz;
             } else { // object ref or objarray elem
                 int newoffset = toByteArray((FSTStruct) o, bytes, index);
-                unsafe.putInt(bytes, FSTStruct.bufoff+en.pointerPos, index-initialIndex );
+                bytes.putInt(en.pointerPos, index - initialIndex);
                 index = newoffset;
             }
         }
@@ -758,7 +765,7 @@ public class FSTStructFactory {
             FSTEmbeddedBinary embeddedBinary = (FSTEmbeddedBinary) onHeapStruct;
             index = embeddedBinary.insertEmbedded(this, bytes, index);
         }
-        unsafe.putInt(bytes,FSTStruct.bufoff+initialIndex,index-initialIndex); // set object size
+        bytes.putInt(initialIndex, index - initialIndex); // set object size
         return index;
     }
 

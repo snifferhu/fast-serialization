@@ -46,7 +46,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 insert = "Volatile";
             }
             if ( type == CtPrimitiveType.booleanType ) {
-                final String body = "unsafe.putByte" + insert + "(___bytes," + off + "+___offset,$1?(byte)1:(byte)0);";
+                final String body = "___bytes.putBool" + insert + "((long)" + off + "+___offset, $1 );";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -57,7 +57,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.byteType ) {
-                final String body = "unsafe.putByte"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.put"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -68,7 +68,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.charType ) {
-                final String body = "unsafe.putChar"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putChar"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -79,7 +79,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.shortType ) {
-                final String body = "unsafe.putShort"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putShort"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -90,7 +90,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.intType ) {
-                final String body = "unsafe.putInt"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putInt"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -101,7 +101,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.longType ) {
-                final String body = "unsafe.putLong"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putLong"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -112,7 +112,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.floatType ) {
-                final String body = "unsafe.putFloat"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putFloat"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -123,7 +123,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             } else
             if ( type == CtPrimitiveType.doubleType ) {
-                final String body = "unsafe.putDouble"+insert+"(___bytes,"+off+"+___offset,$1);";
+                final String body = "___bytes.putDouble"+insert+"("+off+"+___offset,$1);";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
@@ -136,20 +136,21 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             {
                 String code =
                 "{"+
-                    "long tmpOff = ___offset + unsafe.getInt(___bytes, "+off+" + ___offset);"+
+                    "long tmpOff = ___offset + ___bytes.getInt("+off+" + ___offset);"+
                     "if ( $1 == null ) { " +
-                        "unsafe.putInt(___bytes,tmpOff+4,-1); " +
+                        "___bytes.putInt(tmpOff+4,-1); " +
                         "return; " +
                     "}"+
-                    "int obj_len=unsafe.getInt(___bytes,tmpOff); "+
+                    "int obj_len=___bytes.getInt(tmpOff); "+
                     "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$1;"+
                     "if ( !struct.isOffHeap() ) {"+
                     "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
                     "}"+
                     "if (struct.getByteSize() > obj_len ) throw new RuntimeException(\"object too large to be written\");"+
                     (trackChanges ? "if (tracker!=null) tracker.addChange(tmpOff,struct.getByteSize()); ":"") +
-                    "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,tmpOff,(long)struct.getByteSize());"+
-                    "unsafe.putInt(___bytes,tmpOff, obj_len);"+ // rewrite original size
+//                    "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,tmpOff,(long)struct.getByteSize());"+
+                    "struct.___bytes.copyTo(___bytes,tmpOff,struct.___offset,(long)struct.getByteSize());"+
+                    "___bytes.putInt(tmpOff, obj_len);"+ // rewrite original size
                 "}";
                 f.replace(code);
             }
@@ -176,8 +177,8 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         try {
             Class arrayType = fieldInfo.getArrayType();
             int off = fieldInfo.getStructOffset();
-            String prefix ="{ int _st_off=___offset + unsafe.getInt(___bytes,"+off+"+___offset);"+ // array base offset in byte arr
-                    "int _st_len=unsafe.getInt(___bytes,"+off+"+4+___offset); "+
+            String prefix ="{ long _st_off=___offset + ___bytes.getInt("+off+"+___offset);"+ // array base offset in byte arr
+                    "int _st_len=___bytes.getInt("+off+"+4+___offset); "+
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException(\"index:\"+$1+\" len:\"+_st_len);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 String record = "";
@@ -185,56 +186,56 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1,1);";
                     }
-                    method.setBody(prefix+"unsafe.putByte"+insert+"(___bytes, _st_off+$1,$2?(byte)1:(byte)0);"+record+"}");
+                    method.setBody(prefix+"___bytes.putBool"+insert+"( _st_off+$1,$2);"+record+"}");
                 } else
                 if ( arrayType == byte.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1,1);";
+                        record = "if (tracker!=null) tracker.addChange((long)_st_off+$1,1);";
                     }
-                    method.setBody(prefix+"unsafe.putByte"+insert+"(___bytes, _st_off+$1,$2);"+record+"}");
+                    method.setBody(prefix+"___bytes.put"+insert+"( _st_off+$1,$2);"+record+"}");
                 } else
                 if ( arrayType == char.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2);";
                     }
-                    method.setBody(prefix+"unsafe.putChar"+insert+"(___bytes, _st_off+$1*2,$2);"+record+"}");
+                    method.setBody(prefix+"___bytes.putChar"+insert+"( _st_off+$1*2,$2);"+record+"}");
                 } else
                 if ( arrayType == short.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2);";
                     }
-                    method.setBody(prefix+" unsafe.putShort"+insert+"(___bytes, _st_off+$1*2,$2);"+record+"}");
+                    method.setBody(prefix+" ___bytes.putShort"+insert+"( _st_off+$1*2,$2);"+record+"}");
                 } else
                 if ( arrayType == int.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4);";
                     }
-                    method.setBody(prefix+" unsafe.putInt"+insert+"(___bytes, _st_off+$1*4,$2);"+record+"}");
+                    method.setBody(prefix+" ___bytes.putInt"+insert+"(_st_off+$1*4,$2);"+record+"}");
                 } else
                 if ( arrayType == long.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8);";
                     }
-                    method.setBody(prefix+"unsafe.putLong"+insert+"(___bytes, _st_off+$1*8,$2);"+record+"}");
+                    method.setBody(prefix+"___bytes.putLong"+insert+"( _st_off+$1*8,$2);"+record+"}");
                 } else
                 if ( arrayType == double.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8);";
                     }
-                    method.setBody(prefix+"unsafe.putDouble"+insert+"(___bytes, _st_off+$1*8,$2);"+record+"}");
+                    method.setBody(prefix+"___bytes.putDouble"+insert+"( _st_off+$1*8,$2);"+record+"}");
                 } else
                 if ( arrayType == float.class ) {
                     if (trackChanges) {
                         record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4);";
                     }
-                    method.setBody(prefix+"unsafe.putFloat"+insert+"(___bytes, _st_off+$1*4,$2);"+record+"}");
+                    method.setBody(prefix+"___bytes.putFloat"+insert+"(_st_off+$1*4,$2);"+record+"}");
                 } else {
                     method.setBody(
                     prefix+
-                        "int _elem_len=unsafe.getInt(___bytes,"+off+"+8+___offset); "+
+                        "int _elem_len=___bytes.getInt("+off+"+8+___offset); "+
                         "de.ruedigermoeller.heapoff.structs.FSTStruct struct = (de.ruedigermoeller.heapoff.structs.FSTStruct)$2;"+
                         "if ( struct == null ) { " +
-                            "unsafe.putInt(___bytes,(long)_st_off+$1*_elem_len+4,-1); " +
+                            "___bytes.putInt((long)_st_off+$1*_elem_len+4,-1); " +
                             "return; " +
                         "}"+
                         "if ( !struct.isOffHeap() ) {"+
@@ -243,38 +244,40 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                         "if ( _elem_len < struct.getByteSize() )"+
                         "    throw new RuntimeException(\"Illegal size when rewriting object array value. elem size:\"+_elem_len+\" new object size:\"+struct.getByteSize()+\"\");"+
                         (trackChanges ? "if (tracker!=null) tracker.addChange(_st_off+$1*_elem_len, struct.getByteSize()); ":"") +
-                        "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,(long)_st_off+$1*_elem_len,(long)struct.getByteSize());"+
+//                        "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,(long)_st_off+$1*_elem_len,(long)struct.getByteSize());"+
+                        "struct.___bytes.copyTo(___bytes,(long)_st_off+$1*_elem_len,struct.___offset,(long)struct.getByteSize());"+
                     "}"
                     );
                 }
             } else { // read access
                 if ( arrayType == boolean.class ) {
-                    method.setBody(prefix+"return unsafe.getByte"+insert+"(___bytes, _st_off+$1)!=0;}");
+                    String src = prefix + "return ___bytes.getBool" + insert + "( (long)_st_off+$1); }";
+                    method.setBody(src);
                 } else
                 if ( arrayType == byte.class ) {
-                    method.setBody(prefix+"return unsafe.getByte"+insert+"(___bytes, _st_off+$1);}");
+                    method.setBody(prefix+"return ___bytes.get"+insert+"( (long)_st_off+$1);}");
                 } else
                 if ( arrayType == char.class ) {
-                    method.setBody(prefix+"return unsafe.getChar"+insert+"(___bytes, _st_off+$1*2); }");
+                    method.setBody(prefix+"return ___bytes.getChar"+insert+"( (long)_st_off+$1*2); }");
                 } else
                 if ( arrayType == short.class ) {
-                    method.setBody(prefix+"return unsafe.getShort"+insert+"(___bytes, _st_off+$1*2);}");
+                    method.setBody(prefix+"return ___bytes.getShort"+insert+"( (long)_st_off+$1*2);}");
                 } else
                 if ( arrayType == int.class ) {
-                    method.setBody(prefix+"return unsafe.getInt"+insert+"(___bytes, _st_off+$1*4);}");
+                    method.setBody(prefix+"return ___bytes.getInt"+insert+"( (long)_st_off+$1*4);}");
                 } else
                 if ( arrayType == long.class ) {
-                    method.setBody(prefix+"return unsafe.getLong"+insert+"(___bytes, _st_off+$1*8);}");
+                    method.setBody(prefix+"return ___bytes.getLong"+insert+"( (long)_st_off+$1*8);}");
                 } else
                 if ( arrayType == double.class ) {
-                    method.setBody(prefix+"return unsafe.getDouble"+insert+"(___bytes, _st_off+$1*8);}");
+                    method.setBody(prefix+"return ___bytes.getDouble"+insert+"( (long)_st_off+$1*8);}");
                 } else
                 if ( arrayType == float.class ) {
-                    method.setBody(prefix+"return unsafe.getFloat"+insert+"(___bytes, _st_off+$1*4);}");
+                    method.setBody(prefix+"return ___bytes.getFloat"+insert+"( (long)_st_off+$1*4);}");
                 } else { // object array
                     String meth =
                     prefix+
-                        "int _elem_len=unsafe.getInt(___bytes,"+off+"+8+___offset); "+
+                        "int _elem_len=___bytes.getInt("+off+"+8+___offset); "+
                         "return ("+fieldInfo.getArrayType().getName()+")___fac.getStructPointerByOffset(___bytes,(long)_st_off+$1*_elem_len);"+
                     "}";
                     method.setBody(meth);
@@ -296,10 +299,10 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         }
         try {
             if ( casAcc.getType() == int.class ) {
-                method.setBody("return unsafe.compareAndSwapInt(___bytes,"+off+"+___offset,$1,$2);");
+                method.setBody("return ___bytes.compareAndSwapInt("+off+"+___offset,$1,$2);");
             } else
             if ( casAcc.getType() == int.class ) {
-                method.setBody("return unsafe.compareAndSwapLong(___bytes,"+off+"+___offset,$1,$2);");
+                method.setBody("return ___bytes.compareAndSwapLong("+off+"+___offset,$1,$2);");
             } else {
                 throw new RuntimeException("CAS access only applicable to int and long.");
             }
@@ -313,7 +316,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineArrayElementSize(FSTClazzInfo.FSTFieldInfo indexfi, FSTClazzInfo clInfo, CtMethod method) {
         int off = indexfi.getStructOffset();
         try {
-            method.setBody("{ return unsafe.getInt(___bytes,"+off+"+8+___offset); }");
+            method.setBody("{ return ___bytes.getInt("+off+"+8+___offset); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }
@@ -324,7 +327,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineArrayIndex(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
         int index = fieldInfo.getStructOffset();
         try {
-            method.setBody("{ return (int) (unsafe.getInt(___bytes, ___offset+"+index+")+___offset-bufoff); }");
+            method.setBody("{ return (int) (___bytes.getInt( ___offset+"+index+")+___offset); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }
@@ -365,7 +368,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     public void defineArrayLength(FSTClazzInfo.FSTFieldInfo fieldInfo, FSTClazzInfo clInfo, CtMethod method) {
         int off = fieldInfo.getStructOffset();
         try {
-            method.setBody("{ return unsafe.getInt(___bytes,"+off+"+4+___offset); }");
+            method.setBody("{ return ___bytes.getInt("+off+"+4+___offset); }");
         } catch (CannotCompileException e) {
             throw new RuntimeException(e);
         }
@@ -392,33 +395,34 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
         int off = fieldInfo.getStructOffset();
         try {
             if ( type == CtPrimitiveType.booleanType ) {
-                f.replace("$_ = unsafe.getBoolean"+insert+"(___bytes,"+off+"+___offset) != 0;");
+                f.replace("$_ = ___bytes.getBool"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.byteType ) {
-                f.replace("$_ = unsafe.getByte"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.get"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.charType ) {
-                f.replace("$_ = unsafe.getChar"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getChar"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.shortType ) {
-                f.replace("$_ = unsafe.getShort"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getShort"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.intType ) {
-                f.replace("$_ = unsafe.getInt"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getInt"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.longType ) {
-                f.replace("$_ = unsafe.getLong"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getLong"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.floatType ) {
-                f.replace("$_ = unsafe.getFloat"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getFloat"+insert+"("+off+"+___offset);");
             } else
             if ( type == CtPrimitiveType.doubleType ) {
-                f.replace("$_ = unsafe.getDouble"+insert+"(___bytes,"+off+"+___offset);");
+                f.replace("$_ = ___bytes.getDouble"+insert+"("+off+"+___offset);");
             } else { // object ref
                 String typeString = type.getName();
-                f.replace("{ int tmpIdx = unsafe.getInt(___bytes, "+off+" + ___offset); if (tmpIdx <= 0) return null;" +
+                f.replace("{ int tmpIdx = ___bytes.getInt( "+off+" + ___offset); if (tmpIdx < 0) return null;" +
                         "long __tmpOff = ___offset + tmpIdx; " +
                         ""+typeString+" tmp = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); " +
+                        "if ( tmp == null ) return null;"+
                         "tmp.tracker = tracker; " +
                         "$_ = tmp; " +
                         "}");

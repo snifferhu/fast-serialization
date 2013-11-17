@@ -1,5 +1,9 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
+import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
+import de.ruedigermoeller.heapoff.bytez.malloc.MallocBytezAllocator;
+import de.ruedigermoeller.heapoff.bytez.onheap.HeapBytezAllocator;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
@@ -29,8 +33,10 @@ import de.ruedigermoeller.serialization.util.FSTUtil;
  */
 public class FSTStructAllocator {
     protected int chunkSize;
-    protected byte chunk[];
+    protected Bytez chunk;
     protected int chunkIndex;
+    BytezAllocator alloc = new HeapBytezAllocator();
+//    BytezAllocator alloc = new MallocBytezAllocator();
 
     protected FSTStructAllocator() {
 
@@ -41,8 +47,8 @@ public class FSTStructAllocator {
      * @param index
      * @return a new allocated pointer matching struct type stored in b[]
      */
-    public static FSTStruct createStructPointer(byte b[], int index) {
-        return FSTStructFactory.getInstance().getStructPointerByOffset(b, FSTStruct.bufoff + index).detach();
+    public static FSTStruct createStructPointer(Bytez b, int index) {
+        return FSTStructFactory.getInstance().getStructPointerByOffset(b, index).detach();
     }
 
     /**
@@ -59,8 +65,8 @@ public class FSTStructAllocator {
      * @param index
      * @return a pointer matching struct type stored in b[] from the thread local cache
      */
-    public static FSTStruct getVolatileStructPointer(byte b[], int index) {
-        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, FSTStruct.bufoff + index);
+    public static FSTStruct getVolatileStructPointer(Bytez b, int index) {
+        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, index);
     }
 
     /**
@@ -137,11 +143,12 @@ public class FSTStructAllocator {
             return (S)aTemplate.createCopy();
         int byteSize = aTemplate.getByteSize();
         synchronized (this) {
-            if (chunk == null || chunkIndex+byteSize >= chunk.length) {
-                chunk = new byte[chunkSize];
+            if (chunk == null || chunkIndex+byteSize >= chunk.length()) {
+                chunk = alloc.alloc(chunkSize);
                 chunkIndex = 0;
             }
-            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTStruct.bufoff + chunkIndex, byteSize);
+//            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTStruct.bufoff + chunkIndex, byteSize);
+            aTemplate.___bytes.copyTo(chunk, chunkIndex, aTemplate.___offset, byteSize);
             S res = (S) getFactory().createStructWrapper(chunk, chunkIndex );
             chunkIndex+=byteSize;
             return res;

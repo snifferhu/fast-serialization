@@ -1,12 +1,12 @@
 package de.ruedigermoeller.serialization.serializers;
 
+import de.ruedigermoeller.heapoff.bytez.onheap.HeapBytez;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.serialization.FSTBasicObjectSerializer;
 import de.ruedigermoeller.serialization.FSTClazzInfo;
 import de.ruedigermoeller.serialization.FSTObjectInput;
 import de.ruedigermoeller.serialization.FSTObjectOutput;
-import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.IOException;
 
@@ -68,7 +68,9 @@ public class FSTStructSerializer extends FSTBasicObjectSerializer {
             }
             str.___offset = base;
         } else {
-            out.write( str.getBase(), str.getOffset(), byteSize);
+            byte b[] = new byte[byteSize]; // fixme: cache threadlocal
+            str.getBase().getArr(str.getOffset(), b, 0, byteSize);
+            out.write( b, 0, byteSize);
         }
     }
 
@@ -104,9 +106,10 @@ public class FSTStructSerializer extends FSTBasicObjectSerializer {
         } else {
             in.read(bytes);
         }
+        HeapBytez hb = new HeapBytez(bytes);
         // need to patch clzId as it may differ from clz id in remote vm
         int clzId = FSTStructFactory.getInstance().getClzId(serializationInfo.getClazz());
-        FSTUtil.getUnsafe().putInt(bytes, FSTStruct.bufoff + 4, clzId);
-        return FSTStructFactory.getInstance().createStructWrapper(bytes, 0);
+        hb.putInt(4, clzId);
+        return FSTStructFactory.getInstance().createStructWrapper(hb, 0);
     }
 }

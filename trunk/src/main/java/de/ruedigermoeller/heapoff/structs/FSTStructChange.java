@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * Time: 14:17
  * To change this template use File | Settings | File Templates.
  */
+// FIXME: move to long indizies
 public class FSTStructChange implements Serializable {
 
     int changeOffsets[];
@@ -62,7 +64,7 @@ public class FSTStructChange implements Serializable {
      * @param originBase
      * @param origin
      */
-    public void snapshotChanges(int originBase, byte[] origin) {
+    public void snapshotChanges(int originBase, Bytez origin) {
         int sumLen = 0;
         for (int i = 0; i < curIndex; i++) {
             sumLen += changeLength[i];
@@ -73,33 +75,33 @@ public class FSTStructChange implements Serializable {
             int changeOffset = changeOffsets[i];
             int len = changeLength[i];
             for ( int ii = 0; ii < len; ii++) {
-                snapshot[targetIdx++] = origin[changeOffset+ii];
+                snapshot[targetIdx++] = origin.get(changeOffset+ii);
             }
         }
         rebase(originBase);
     }
 
     public void applySnapshot(FSTStruct target) {
-        byte arr[] = target.getBase();
-        int baseIdx = target.getOffset();
+        Bytez arr = target.getBase();
+        int baseIdx = (int) target.getOffset();
         int snapIdx = 0;
         for (int i = 0; i < curIndex; i++) {
             int changeOffset = changeOffsets[i];
             int len = changeLength[i];
             for ( int ii = 0; ii < len; ii++) {
-                arr[baseIdx+changeOffset+ii] = snapshot[snapIdx++];
+                arr.put(baseIdx+changeOffset+ii,snapshot[snapIdx++]);
             }
         }
     }
 
     public void test_applyChangesTo(int originBase, byte[] origin, FSTStruct copy) {
-        byte arr[] = copy.getBase();
-        int baseIdx = copy.getOffset();
+        Bytez arr = copy.getBase();
+        int baseIdx = (int) copy.getOffset();
         for (int i = 0; i < curIndex; i++) {
             int changeOffset = changeOffsets[i];
             int len = changeLength[i];
             for ( int ii = 0; ii < len; ii++) {
-                arr[baseIdx+changeOffset-originBase+ii] = origin[changeOffset+ii];
+                arr.put(baseIdx+changeOffset-originBase+ii,origin[changeOffset+ii]);
             }
         }
     }
