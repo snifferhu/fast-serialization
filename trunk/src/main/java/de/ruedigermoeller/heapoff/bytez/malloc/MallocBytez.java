@@ -333,8 +333,15 @@ public class MallocBytez implements Bytez {
         unsafe.putDoubleVolatile(null, baseAdress + byteIndex, d);
     }
 
-    public void free() {
+    void free() {
         unsafe.freeMemory(baseAdress);
     }
 
+    public long getBaseAdress() {
+        return baseAdress;
+    }
+
+    public long getLength() {
+        return length;
+    }
 }

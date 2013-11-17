@@ -3,6 +3,8 @@ package de.ruedigermoeller.heapoff.bytez.malloc;
 import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
 
+import java.util.ArrayList;
+
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
  * <p/>
@@ -26,8 +28,30 @@ import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
  * To change this template use File | Settings | File Templates.
  */
 public class MallocBytezAllocator implements BytezAllocator {
+
+    ArrayList<MallocBytez> allocated = new ArrayList<MallocBytez>();
+
     @Override
     public Bytez alloc(long len) {
-        return new MallocBytez(MallocBytez.unsafe.allocateMemory(len),len);
+        MallocBytez mallocBytez = new MallocBytez(MallocBytez.unsafe.allocateMemory(len), len);
+        allocated.add(mallocBytez);
+        return mallocBytez;
+    }
+
+    @Override
+    public void free(Bytez bytes) {
+        if ( bytes instanceof MallocBytez && allocated.contains(bytes) ) {
+            allocated.remove(bytes);
+            ((MallocBytez) bytes).free();
+        }
+    }
+
+    @Override
+    public void freeAll() {
+        for (int i = 0; i < allocated.size(); i++) {
+            MallocBytez mallocBytez = allocated.get(i);
+            mallocBytez.free();
+        }
+        allocated.clear();
     }
 }

@@ -25,5 +25,7 @@ package de.ruedigermoeller.heapoff.bytez;
 public interface BytezAllocator {
 
     public Bytez alloc(long len);
+    public void free( Bytez bytes );
+    public void freeAll();
 
 }

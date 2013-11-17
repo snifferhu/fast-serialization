@@ -30,4 +30,14 @@ public class HeapBytezAllocator implements BytezAllocator {
     public Bytez alloc(long len) {
         return new HeapBytez(new byte[(int) len]);
     }
+
+    @Override
+    public void free(Bytez bytes) {
+
+    }
+
+    @Override
+    public void freeAll() {
+        // nothing to do, GC
+    }
 }

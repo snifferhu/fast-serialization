@@ -1,6 +1,7 @@
 package de.ruedigermoeller.heapoff.structs;
 
 import de.ruedigermoeller.heapoff.bytez.Bytez;
+import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
@@ -18,46 +19,6 @@ import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
 public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAllocator {
 
     T template;
-
-    /**
-     * @param b
-     * @param index
-     * @return a new allocated pointer matching struct type stored in b[]
-     */
-    public static FSTStruct createStructPointer(Bytez b, int index) {
-        return FSTStructFactory.getInstance().getStructPointerByOffset(b,index).detach();
-    }
-
-    /**
-     * @param onHeapTemplate
-     * @param <T>
-     * @return return a byte array based struct instance for given on-heap template. Allocates a new byte[] with each call
-     */
-    public static <T extends FSTStruct> T toStruct(T onHeapTemplate) {
-        return FSTStructFactory.getInstance().toStruct(onHeapTemplate);
-    }
-
-    /**
-     * @param b
-     * @param index
-     * @return a pointer matching struct type stored in b[] from the thread local cache
-     */
-    public static FSTStruct getVolatileStructPointer(Bytez b, int index) {
-        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, index);
-    }
-
-    /**
-     * @param clazz
-     * @param <C>
-     * @return a newly allocated pointer matching. use baseOn to point it to a meaningful location
-     */
-    public static <C extends FSTStruct> C newPointer(Class<C> clazz) {
-        try {
-            return (C)allocInstance(clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Create a Structallocator for the given template. Chunksize will be set to the size of one template struct,
@@ -89,6 +50,18 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
     public FSTTypedStructAllocator(int chunkSizeBytes, T template) {
         this(template);
         chunkSize = chunkSizeBytes;
+    }
+
+    /**
+     * see super class ..
+     *
+     * @param chunkSizeBytes
+     * @param template
+     * @param alloc
+     */
+    public FSTTypedStructAllocator(int chunkSizeBytes, T template, BytezAllocator alloc) {
+        super(chunkSizeBytes,alloc);
+        this.template = getFactory().toStruct(template);
     }
 
     /**
