@@ -84,14 +84,14 @@ public class StructMap<K extends FSTStruct,V  extends FSTStruct> extends FSTStru
         }
         if ( pointer != null /*?? special for instantiation ?*/ || isOffHeap() ) {
             long arrbase = ___offset+keysStructIndex();
-            int kvlen = unsafe.getInt(___bytes,arrbase+4);
-            int kelemsiz = unsafe.getInt(___bytes,arrbase+8);
+            int kvlen = ___bytes.getInt(arrbase+4);
+            int kelemsiz = ___bytes.getInt(arrbase+8);
             if ( pointer == null ) {
-                pointer = ___fac.createStructPointer(___bytes,0,unsafe.getInt(___bytes,arrbase+12) );
+                pointer = ___fac.createStructPointer(___bytes,0,___bytes.getInt(arrbase+12) );
             }
 
             int pos = ((key.hashCode() & 0x7FFFFFFF) % kvlen);
-            pointer.___offset = ___offset+unsafe.getInt(___bytes,arrbase)+pos*kelemsiz;
+            pointer.___offset = ___offset+___bytes.getInt(arrbase)+pos*kelemsiz;
             while ( pointer.getInt() > 0 )
             {
                 if (key.equals(pointer))
@@ -100,7 +100,7 @@ public class StructMap<K extends FSTStruct,V  extends FSTStruct> extends FSTStru
                 pointer.next(kelemsiz);
                 if ( pos >= kvlen ) {
                     pos = 0;
-                    pointer.___offset = ___offset+unsafe.getInt(___bytes,arrbase);
+                    pointer.___offset = ___offset+___bytes.getInt(arrbase);
                 }
             }
             return pos;

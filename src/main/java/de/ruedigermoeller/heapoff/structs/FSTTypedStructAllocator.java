@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructMap;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.heapoff.structs.structtypes.StructArray;
@@ -23,8 +24,8 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
      * @param index
      * @return a new allocated pointer matching struct type stored in b[]
      */
-    public static FSTStruct createStructPointer(byte b[], int index) {
-        return FSTStructFactory.getInstance().getStructPointerByOffset(b,FSTStruct.bufoff+index).detach();
+    public static FSTStruct createStructPointer(Bytez b, int index) {
+        return FSTStructFactory.getInstance().getStructPointerByOffset(b,index).detach();
     }
 
     /**
@@ -41,8 +42,8 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
      * @param index
      * @return a pointer matching struct type stored in b[] from the thread local cache
      */
-    public static FSTStruct getVolatileStructPointer(byte b[], int index) {
-        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, FSTStruct.bufoff + index);
+    public static FSTStruct getVolatileStructPointer(Bytez b, int index) {
+        return (FSTStruct) FSTStructFactory.getInstance().getStructPointerByOffset(b, index);
     }
 
     /**

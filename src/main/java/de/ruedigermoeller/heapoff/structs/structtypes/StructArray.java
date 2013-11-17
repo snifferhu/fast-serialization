@@ -1,5 +1,6 @@
 package de.ruedigermoeller.heapoff.structs.structtypes;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.NoAssist;
 import de.ruedigermoeller.heapoff.structs.Templated;
@@ -151,7 +152,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
     @NoAssist
     public int getStructElemSize() {
         if (isOffHeap())
-            return unsafe.getInt( ___bytes, bufoff+elemsStructIndex()+8 );
+            return ___bytes.getInt( elemsStructIndex()+8 );
         else
             return -1;
     }
@@ -159,7 +160,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
     @NoAssist
     public int getStructElemClassId() {
         if (isOffHeap())
-            return unsafe.getInt( ___bytes, bufoff+elemsStructIndex()+12 );
+            return ___bytes.getInt( elemsStructIndex()+12 );
         else
             return -1;
     }
@@ -184,7 +185,7 @@ public class StructArray<E extends FSTStruct> extends FSTStruct {
         T current;
         final long maxPos;
         final int eSiz;
-        final byte[] bytes;
+        final Bytez bytes;
         boolean hasNextElem = true;
 
         StructArrIterator() {

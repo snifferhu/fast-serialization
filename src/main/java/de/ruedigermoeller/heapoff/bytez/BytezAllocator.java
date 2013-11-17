@@ -1,7 +1,4 @@
-package de.ruedigermoeller.heapoff.structs;
-
-import de.ruedigermoeller.heapoff.bytez.Bytez;
-import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
+package de.ruedigermoeller.heapoff.bytez;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -21,11 +18,12 @@ import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * <p/>
- * Date: 07.07.13
- * Time: 17:01
+ * Date: 16.11.13
+ * Time: 12:37
  * To change this template use File | Settings | File Templates.
  */
-public interface FSTEmbeddedBinary {
-    public int getEmbeddedSizeAdditon(FSTStructFactory fstStructFactory);
-    public int insertEmbedded(FSTStructFactory fac, Bytez base, int targetIndex);
+public interface BytezAllocator {
+
+    public Bytez alloc(long len);
+
 }

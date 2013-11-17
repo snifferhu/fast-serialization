@@ -1,8 +1,8 @@
 package de.ruedigermoeller.heapoff.structs;
 
+import de.ruedigermoeller.heapoff.bytez.Bytez;
+import de.ruedigermoeller.heapoff.bytez.onheap.HeapBytez;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
-import de.ruedigermoeller.serialization.util.FSTUtil;
-import sun.misc.Unsafe;
 
 import java.io.*;
 
@@ -34,18 +34,11 @@ import java.io.*;
  */
 public class FSTStruct implements Serializable {
 
-    public static Unsafe unsafe = FSTUtil.getUnsafe();
-    public static long bufoff = FSTUtil.bufoff;
-
     transient public long ___offset;
-    transient public byte[] ___bytes;
+    transient public Bytez ___bytes;
     transient public FSTStructFactory ___fac;
     transient public int ___elementSize;
     transient public FSTStructChange tracker;
-
-    protected Unsafe getUnsafe() {
-        return unsafe;
-    }
 
     /**
      * must include bytearray offset in case of unsafe use
@@ -65,16 +58,16 @@ public class FSTStruct implements Serializable {
     /**
      * @return the start index of this struct within the underlying byte array. getByteSize returns len
      */
-    public int getOffset() {
-        return (int) (___offset - bufoff);
+    public long getOffset() {
+        return (___offset);
     }
 
     /**
      * @deprecated use getOffset
      * see getOffset
      */
-    public int getIndexInBase() {
-        return (int) (___offset - bufoff);
+    public long getIndexInBase() {
+        return (___offset);
     }
 
     /**
@@ -84,7 +77,7 @@ public class FSTStruct implements Serializable {
         if ( !isOffHeap() ) {
             return 0;
         }
-        return unsafe.getInt(___bytes,___offset);
+        return ___bytes.getInt( ___offset);
     }
 
     public Class getPointedClass() {
@@ -100,7 +93,7 @@ public class FSTStruct implements Serializable {
     public int getClzId() {
         if ( ! isOffHeap() )
             throw new RuntimeException("cannot call on heap");
-        return unsafe.getInt(___bytes,___offset+4);
+        return ___bytes.getInt(___offset+4);
     }
 
     public boolean pointsToNull() {
@@ -111,14 +104,14 @@ public class FSTStruct implements Serializable {
         ___offset+=off;
     }
 
-    protected void setBase(byte[] base) {
+    protected void setBase(Bytez base) {
         ___bytes = base;
     }
 
     /**
      * @return the underlying byte array.
      */
-    public byte[] getBase() {
+    public Bytez getBase() {
         return ___bytes;
     }
 
@@ -132,8 +125,12 @@ public class FSTStruct implements Serializable {
      * @param offset direct offset to byte array element (=FSTStruct.bufoff+array index)
      */
     public void baseOn( byte base[], long offset, FSTStructFactory fac) {
-        ___bytes = base; ___offset = offset; ___fac = fac;
+        ___bytes = new HeapBytez(base); ___offset = offset; ___fac = fac;
     }
+
+     public void baseOn( Bytez base, long offset, FSTStructFactory fac) {
+         ___bytes = base; ___offset = offset; ___fac = fac;
+     }
 
     /**
      * set this struct pointer to base array at given index
@@ -141,19 +138,25 @@ public class FSTStruct implements Serializable {
      * @param index
      */
     public void baseOn( byte base[], int index ) {
-        ___bytes = base; ___offset = bufoff+index;
+        ___bytes = new HeapBytez(base); ___offset = index;
         if ( ___fac == null )
             ___fac = FSTStructFactory.getInstance();
     }
 
+     public void baseOn( Bytez base, int index ) {
+         ___bytes = base; ___offset = index;
+         if ( ___fac == null )
+             ___fac = FSTStructFactory.getInstance();
+     }
+
     public boolean isIdenticTo(FSTStruct other) {
-        return other.getBase() == ___bytes && other.getAbsoluteOffset() == ___offset;
+        return other.getBase().equals(___bytes) && other.getAbsoluteOffset() == ___offset;
     }
 
      public int hashCode() {
          if ( !isOffHeap() )
              return onHeapHashcode();
-        return unsafe.getInt(___bytes,___offset)^unsafe.getInt(___bytes,___offset+getByteSize()-4);
+        return ___bytes.getInt(___offset)^___bytes.getInt(___offset+getByteSize()-4);
      }
 
      public int onHeapHashcode() {
@@ -166,10 +169,10 @@ public class FSTStruct implements Serializable {
              FSTStruct other = (FSTStruct) obj;
              final int len = getByteSize();
              if (other.getByteSize() == len) {
-                 int ix = getOffset();
-                 int ox = other.getOffset();
+                 long ix = getOffset();
+                 long ox = other.getOffset();
                  for ( int i=0; i < len; i++) {
-                     if ( ___bytes[i+ix] != other.___bytes[i+ox] )
+                     if ( ___bytes.get(i+ix) != other.___bytes.get(i+ox) )
                          return false;
                  }
                  return true;
@@ -209,7 +212,7 @@ public class FSTStruct implements Serializable {
     }
 
     /**
-     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     *  Warning: no bounds checking. Moving the pointer outside the underlying Bytez will cause access violations
      */
     public final void next() {
         if ( ___elementSize > 0 )
@@ -219,14 +222,14 @@ public class FSTStruct implements Serializable {
     }
 
     /**
-     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     *  Warning: no bounds checking. Moving the pointer outside the underlying Bytez will cause access violations
      */
     public final void next(int offset) {
         ___offset += offset;
     }
 
     /**
-     *  Warning: no bounds checking. Moving the pointer outside the underlying byte[] will cause access violations
+     *  Warning: no bounds checking. Moving the pointer outside the underlying Bytez will cause access violations
      */
     public final void previous() {
         if ( ___elementSize > 0 )
@@ -239,7 +242,7 @@ public class FSTStruct implements Serializable {
         int clzId = ___fac.getClzId(to);
         if ( this.getClass().getSuperclass() == to )
             return (T) this;
-        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset - bufoff), clzId);
+        FSTStruct res = ___fac.createStructPointer(___bytes, (int) (___offset), clzId);
         res.___elementSize = ___elementSize;
         return (T) res;
     }
@@ -257,68 +260,77 @@ public class FSTStruct implements Serializable {
     }
 
     public byte getByte() {
-        return unsafe.getByte(___bytes,___offset);
+        return ___bytes.get(___offset);
     }
 
     public void setByte(byte i) {
-        unsafe.putByte(___bytes,___offset,i);
+        ___bytes.put(___offset,i);
     }
 
     public char getChar() {
-        return unsafe.getChar(___bytes, ___offset);
+        return ___bytes.getChar(___offset);
     }
 
     public short getShort() {
-        return unsafe.getShort(___bytes, ___offset);
+        return ___bytes.getShort(___offset);
     }
 
     public void setShort(short i) {
-        unsafe.putShort(___bytes, ___offset,i);
+        ___bytes.putShort(___offset,i);
     }
 
     public int getInt() {
-        return unsafe.getInt(___bytes,___offset);
+        return ___bytes.getInt(___offset);
     }
 
     public void setInt(int i) {
-        unsafe.putInt(___bytes,___offset,i);
+        ___bytes.putInt(___offset,i);
     }
 
     public long getLong() {
-        return unsafe.getLong(___bytes,___offset);
+        return ___bytes.getLong(___offset);
     }
 
     public void setLong(long i) {
-        unsafe.putLong(___bytes, ___offset, i);
+        ___bytes.putLong(___offset, i);
     }
 
     public float getFloat() {
-        return unsafe.getFloat(___bytes,___offset);
+        return ___bytes.getFloat(___offset);
     }
 
     public double getDouble() {
-        return unsafe.getDouble(___bytes,___offset);
+        return ___bytes.getDouble(___offset);
     }
 
-    public void getBytes(byte[] target, int startIndexInTarget) {
+    public void getBytes(Bytez target, int startIndexInTarget) {
         if ( ! isOffHeap() ) {
             throw new RuntimeException("must be offheap to call this");
         }
-        if ( target.length < startIndexInTarget+getByteSize() ) {
-            throw new RuntimeException("ArrayIndexOutofBounds byte len:"+target.length+" start+size:"+(startIndexInTarget+getByteSize()));
+        if ( target.length() < startIndexInTarget+getByteSize() ) {
+            throw new RuntimeException("ArrayIndexOutofBounds byte len:"+target.length()+" start+size:"+(startIndexInTarget+getByteSize()));
         }
-        unsafe.copyMemory(___bytes,___offset, target, bufoff+startIndexInTarget, getByteSize());
+//        unsafe.copyMemory(___bytes,___offset, target, bufoff+startIndexInTarget, getByteSize());
+        ___bytes.copyTo(target,startIndexInTarget,___offset, getByteSize());
     }
 
-    public void setBytes(byte[] source, int sourceIndex, int len ) {
+     public void setBytes(byte[] source, int sourceIndex, int len ) {
+         if ( ! isOffHeap() ) {
+             throw new RuntimeException("must be offheap to call this");
+         }
+         ___bytes.set(___offset,source,sourceIndex,len);
+     }
+
+    public void setBytes(Bytez source, int sourceIndex, int len ) {
         if ( ! isOffHeap() ) {
             throw new RuntimeException("must be offheap to call this");
         }
-        unsafe.copyMemory(source, bufoff+sourceIndex, ___bytes, ___offset, len);
+//        unsafe.copyMemory(source, bufoff+sourceIndex, ___bytes, ___offset, len);
+        source.copyTo(___bytes, ___offset, sourceIndex, len);
     }
 
     /**
-     * returns a complete copy of this object allocating a new byte[] capable of holding the data.
+     * returns a complete copy of this object allocating a new Bytez capable of holding the data.
      * @return
      */
     public FSTStruct createCopy() {
@@ -326,8 +338,9 @@ public class FSTStruct implements Serializable {
             throw new RuntimeException("must be offheap to call this");
         }
         byte b[] = new byte[getByteSize()];
-        getBytes(b,0);
-        return ___fac.createStructWrapper(b,0);
+        HeapBytez res = new HeapBytez(b);
+        getBytes(res,0);
+        return ___fac.createStructWrapper(res,0);
     }
 
     /**
@@ -342,7 +355,7 @@ public class FSTStruct implements Serializable {
      * works only if change tracking is enabled
      */
     public FSTStructChange finishChangeTracking() {
-        tracker.snapshotChanges(getOffset(),getBase());
+        tracker.snapshotChanges((int) getOffset(),getBase());
         FSTStructChange res = tracker;
         tracker = null;
         return res;
