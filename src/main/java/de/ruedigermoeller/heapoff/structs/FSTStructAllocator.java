@@ -88,12 +88,36 @@ public class FSTStructAllocator {
     }
 
     /**
-     * Create a Structallocator with given chunk size in bytes. If allocated structs are larger than the given size, a new bytearray is
+     * Create a Heap-Byte Array Structallocator with given chunk size in bytes. If allocated structs are larger than the given size, a new bytearray is
      * created for the allocation.
      * @param chunkSizeBytes
      */
     public FSTStructAllocator(int chunkSizeBytes) {
         this.chunkSize = chunkSizeBytes;
+    }
+
+    /**
+     * optionally uses another allocator (e.g. for Real Off Heap with MallocBytez)
+     *
+     * Warning: Currently there is not automatic free for OffHeap Bytez, so only use for
+     * statically allocated structures. You can call free() to release all offheap structures
+     * allocated by this instance, however you'll get crashes if there are still references
+     * from y<our application to the free'd memory.
+     * A good approach is to keep only large static structures OffHeap (refdata, buffers) so there is no need for freeing.
+     * Also IO related single big blobs apply for Off Heap.
+     *
+     * This does not apply for HeapBytez, which are handled by GC as usual. Here a chunk is freed, if there is no Struct
+     * Object in the Heap referencing the unerlying byte array. If you use large chunk sizes, this can be a problem
+     * because a single stuct can prevent a large chunk from being freed. So in general for On-Heap use as small
+     * as possible chunks, off heap use large chunk sizes and free manually.
+     *
+     * @param chunkSizeBytes - set to a reasonable size, memory is allocated in thes chunk sizes. If very small, each
+     *                       struct alloc will result in its individual chunk being allocated.
+     * @param allocator
+     */
+    public FSTStructAllocator(int chunkSizeBytes, BytezAllocator allocator ) {
+        this.chunkSize = chunkSizeBytes;
+        alloc = allocator;
     }
 
     /**
@@ -131,8 +155,8 @@ public class FSTStructAllocator {
     }
 
     /**
-     * allocate a Struct instance from an arbitrary template. This is provided to avoid having to construct tons
-     * of "allocator" instances.
+     * allocate a Struct instance from an arbitrary template instance.
+     *
      * @param aTemplate
      * @param <S>
      * @return

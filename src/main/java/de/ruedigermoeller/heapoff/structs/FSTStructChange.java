@@ -19,11 +19,11 @@ public class FSTStructChange implements Serializable {
     int changeLength[];
     int curIndex;
 
-    byte snapshot[]; // created by snapshotChanges
+    byte snapshot[]; // created by snapshotChanges, contains new byte values
 
     public FSTStructChange() {
-        changeLength = new int[10];
-        changeOffsets = new int[10];
+        changeLength = new int[4];
+        changeOffsets = new int[4];
     }
 
     public void addChange(int offset, int len) {
@@ -35,7 +35,6 @@ public class FSTStructChange implements Serializable {
     }
 
     public void addChange(long offset, long len) {
-        offset-=FSTUtil.bufoff;
         if ( curIndex > 0 && changeOffsets[curIndex-1]+changeLength[curIndex-1] == offset ) {
             changeLength[curIndex-1]+=len;
             return;

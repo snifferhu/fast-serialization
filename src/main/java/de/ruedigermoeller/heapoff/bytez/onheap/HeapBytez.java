@@ -1,6 +1,7 @@
 package de.ruedigermoeller.heapoff.bytez.onheap;
 
 import de.ruedigermoeller.heapoff.bytez.Bytez;
+import de.ruedigermoeller.heapoff.bytez.malloc.MallocBytez;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import sun.misc.Unsafe;
 
@@ -220,6 +221,9 @@ public class HeapBytez implements Bytez {
         if ( other instanceof HeapBytez) {
             HeapBytez hp = (HeapBytez) other;
             unsafe.copyMemory(base,off+myByteIndex,hp.base,hp.off+otherByteIndex,lenBytes);
+        } else if (other instanceof MallocBytez ) {
+            MallocBytez mb = (MallocBytez) other;
+            unsafe.copyMemory(base,off+myByteIndex,null,otherByteIndex+mb.getBaseAdress(),lenBytes);
         } else {
             for ( long i = 0; i < lenBytes; i++ ) {
                 other.put(otherByteIndex+i,get(myByteIndex+i));
