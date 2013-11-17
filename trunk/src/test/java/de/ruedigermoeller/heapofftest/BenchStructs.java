@@ -1,6 +1,7 @@
 package de.ruedigermoeller.heapofftest;
 
 import de.ruedigermoeller.heapoff.FSTCompressor;
+import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.structs.Align;
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
@@ -143,7 +144,7 @@ public class BenchStructs {
         }
     }
 
-    private static void benchIterAccess(FSTStructFactory fac, byte b[], final int structLen, final int max) {
+    private static void benchIterAccess(FSTStructFactory fac, Bytez b, final int structLen, final int max) {
         long tim;
         int sum;
 
@@ -439,11 +440,11 @@ public class BenchStructs {
         benchFullGC();
 
         TestStruct template = new TestStruct();
-        byte[] bytes = fac.toByteArray(template);
+        Bytez bytes = fac.toByteArray(template);
         tim = System.currentTimeMillis();
         for (int i = 0; i < structs.length; i++) {
-            byte b[] = new byte[bytes.length];
-            System.arraycopy(bytes,0,b,0,b.length);
+            Bytez b = bytes.newInstance(bytes.length());
+            bytes.copyTo(b, 0, 0, b.length());
             structs[i] = (TestStruct) fac.createStructWrapper(b,0);
         }
         System.out.println("instantiate off heap new byte[] per object "+(System.currentTimeMillis()-tim));
@@ -451,17 +452,17 @@ public class BenchStructs {
         benchFullGC();
 
         tim = System.currentTimeMillis();
-        byte hugeArray[] = new byte[bytes.length*structs.length];
+        Bytez hugeArray = bytes.newInstance(bytes.length()*structs.length);
         int off = 0;
         for (int i = 0; i < structs.length; i++) {
-            System.arraycopy(bytes,0,hugeArray,off,bytes.length);
+            bytes.copyTo(hugeArray,off,0,bytes.length());
             structs[i] = (TestStruct) fac.createStructWrapper(hugeArray,off);
-            off += bytes.length;
+            off += bytes.length();
         }
         System.out.println("instantiate off heap huge single byte array " + (System.currentTimeMillis() - tim));
         benchAccess(structs);
         benchFullGC();
-        int structLen = bytes.length;
+        int structLen = (int) bytes.length();
         int max = structs.length;
         structs = null;
 //        System.out.println("iterative access on huge array");
@@ -554,7 +555,7 @@ public class BenchStructs {
         benchFullGC();
 
 
-        System.out.println(bytes.length); // avoid opt
+        System.out.println(bytes.length()); // avoid opt
 //
 //        System.out.println("iarr oheap "+testStruct.intarray(0));
 //        System.out.println("iarr oheap "+testStruct.intarray(9));
