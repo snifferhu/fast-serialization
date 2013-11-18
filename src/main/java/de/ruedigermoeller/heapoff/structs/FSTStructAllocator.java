@@ -141,6 +141,13 @@ public class FSTStructAllocator {
     }
 
     /**
+     * frees associated offheap memory, in case making objects created INVALID (Access violation!).
+     * is a noop for on heap byte array allocator
+     */
+    public void free() {
+        alloc.freeAll();
+    }
+    /**
      * create a fixed size struct hashmap. Note it should be of fixed types for keys and values, as
      * the space for those is allocated directly. Additionally keys and values are stored 'in-place' without references.
      * (for allocation if templateless cosntructore has been used)
