@@ -126,6 +126,15 @@ public class FSTStructAllocator {
      * @return
      */
     public <X extends FSTStruct> StructArray<X> newArray(int size, X templ) {
+        return newArray(size,templ,alloc);
+    }
+
+    /**
+     * create a new struct array of same type as template
+     * @param size
+     * @return
+     */
+    public <X extends FSTStruct> StructArray<X> newArray(int size, X templ, BytezAllocator alloc) {
         StructArray<X> aTemplate = new StructArray<X>(size, templ);
         int siz = getFactory().calcStructSize(aTemplate);
         try {
@@ -169,6 +178,10 @@ public class FSTStructAllocator {
      * @return
      */
     public <S extends FSTStruct> S newStruct(S aTemplate) {
+        return newStruct(aTemplate,alloc);
+    }
+
+    public <S extends FSTStruct> S newStruct(S aTemplate, BytezAllocator alloc) {
         aTemplate = getFactory().toStruct(aTemplate);
         if (aTemplate.getByteSize()>=chunkSize)
             return (S)aTemplate.createCopy();
