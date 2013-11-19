@@ -132,7 +132,7 @@ public class FSTStructAllocator {
             if ( siz < chunkSize )
                 return newStruct(aTemplate);
             else {
-                return getFactory().toStruct(aTemplate);
+                return getFactory().toStruct(aTemplate,alloc);
             }
         } catch (Throwable e) {
             System.out.println("tried to allocate "+siz+" bytes. StructArray of "+size+" "+templ.getClass().getName());

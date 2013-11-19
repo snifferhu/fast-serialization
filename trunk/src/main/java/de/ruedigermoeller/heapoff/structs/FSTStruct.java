@@ -3,6 +3,7 @@ package de.ruedigermoeller.heapoff.structs;
 import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.bytez.onheap.HeapBytez;
 import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
+import de.ruedigermoeller.serialization.util.FSTUtil;
 
 import java.io.*;
 
@@ -301,6 +302,13 @@ public class FSTStruct implements Serializable {
 
     public double getDouble() {
         return ___bytes.getDouble(___offset);
+    }
+
+    public void getBytes(byte[] target, int startIndexInTarget, int len) {
+        if ( ! isOffHeap() ) {
+            throw new RuntimeException("must be offheap to call this");
+        }
+        ___bytes.getArr(___offset,target,startIndexInTarget,len);
     }
 
     public void getBytes(Bytez target, int startIndexInTarget) {

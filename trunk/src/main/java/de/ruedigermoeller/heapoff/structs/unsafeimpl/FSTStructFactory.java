@@ -356,11 +356,15 @@ public class FSTStructFactory {
     }
 
     public <T extends FSTStruct> T toStruct(T onHeap) {
+        return toStruct(onHeap,allocator);
+    }
+
+    public <T extends FSTStruct> T toStruct(T onHeap, BytezAllocator alloc) {
         if ( onHeap.isOffHeap() ) {
             return onHeap;
         }
         try {
-            Bytez b = toByteArray(onHeap);
+            Bytez b = toByteArray(onHeap, alloc);
             return (T)createWrapper(onHeap.getClass(),b,0);
         } catch (Exception e) {
             if ( e instanceof RuntimeException )
@@ -539,6 +543,10 @@ public class FSTStructFactory {
     }
 
     public Bytez toByteArray(FSTStruct onHeapStruct) {
+        return toByteArray(onHeapStruct,allocator);
+    }
+
+    public Bytez toByteArray(FSTStruct onHeapStruct, BytezAllocator allocator) {
         try {
             int sz = align(calcStructSize(onHeapStruct),SIZE_ALIGN);
             Bytez b = allocator.alloc(sz);
