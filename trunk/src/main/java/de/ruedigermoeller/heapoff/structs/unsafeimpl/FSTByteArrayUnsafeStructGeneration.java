@@ -162,7 +162,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
     void validateAnnotations(FSTClazzInfo.FSTFieldInfo fieldInfo, boolean vola) {
         if ( vola ) {
             if ( ! fieldInfo.isIntegral() )
-                throw new RuntimeException("@Volatile only applicable to primitive types");
+                throw new RuntimeException("volatile only applicable to primitive types");
         }
     }
 
