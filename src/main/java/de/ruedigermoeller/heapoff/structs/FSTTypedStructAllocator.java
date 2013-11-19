@@ -43,6 +43,19 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
     }
 
     /**
+     * Create a Structallocator for the given template. Chunksize will be set to contain 'objectsPerChunk' instances
+     * of the given struct template.
+     * @param ontpl
+     * @param objectsPerChunk
+     */
+    public FSTTypedStructAllocator(T ontpl, int objectsPerChunk, BytezAllocator alloc) {
+        super();
+        this.alloc = alloc;
+        this.template = getFactory().toStruct(ontpl);
+        chunkSize = objectsPerChunk * template.getByteSize();
+    }
+
+    /**
      * Create a Structallocator for the given template. Chunksize will be set directly
      * @param template
      * @param chunkSizeBytes
