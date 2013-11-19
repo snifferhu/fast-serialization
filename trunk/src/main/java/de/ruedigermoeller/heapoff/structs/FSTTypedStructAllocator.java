@@ -85,7 +85,7 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
     public StructArray<T> newArray(int size) {
         if ( template == null )
             throw new RuntimeException("need to specify a template in constructore in order to use this.");
-        return newArray(size,template);
+        return newArray(size,template,alloc);
     }
 
     /**
@@ -99,7 +99,7 @@ public class FSTTypedStructAllocator<T extends FSTStruct> extends FSTStructAlloc
     public <K extends FSTStruct> StructMap<K,T> newMap(int size, K keyTemplate) {
         if ( template == null )
             throw new RuntimeException("need to specify a template in constructore in order to use this.");
-        return newStruct( new StructMap<K, T>(keyTemplate,template,size) );
+        return newStruct( new StructMap<K, T>(keyTemplate,template,size), alloc );
     }
 
     public T newStruct() {

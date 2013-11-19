@@ -89,12 +89,12 @@ public class MallocBytez implements Bytez {
 
     @Override
     public void put(long byteIndex, byte value) {
-        unsafe.putByte(baseAdress +byteIndex,value);
+        unsafe.putByte(baseAdress + byteIndex, value);
     }
 
     @Override
     public void putBool(long byteIndex, boolean val) {
-        put(byteIndex,(byte) (val ? 1 : 0) );
+        put(byteIndex, (byte) (val ? 1 : 0));
     }
 
     @Override
@@ -104,22 +104,22 @@ public class MallocBytez implements Bytez {
 
     @Override
     public void putShort(long byteIndex, short s) {
-        unsafe.putShort( baseAdress + byteIndex, s);
+        unsafe.putShort(baseAdress + byteIndex, s);
     }
 
     @Override
     public void putInt(long byteIndex, int i) {
-        unsafe.putInt( baseAdress + byteIndex, i);
+        unsafe.putInt(baseAdress + byteIndex, i);
     }
 
     @Override
     public void putLong(long byteIndex, long l) {
-        unsafe.putLong( baseAdress + byteIndex, l);
+        unsafe.putLong(baseAdress + byteIndex, l);
     }
 
     @Override
     public void putFloat(long byteIndex, float f) {
-        unsafe.putFloat( baseAdress + byteIndex, f);
+        unsafe.putFloat(baseAdress + byteIndex, f);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class MallocBytez implements Bytez {
 
     @Override
     public boolean compareAndSwapInt(long offset, int expect, int newVal) {
-        return unsafe.compareAndSwapInt(null, baseAdress +offset,expect,newVal);
+        return unsafe.compareAndSwapInt(null, baseAdress + offset, expect, newVal);
     }
 
     @Override
@@ -237,7 +237,30 @@ public class MallocBytez implements Bytez {
     }
 
     @Override
+    public byte[] toBytes(int startIndex, int len) {
+        byte res[] = new byte[len];
+        unsafe.copyMemory(null,baseAdress+startIndex, res, FSTUtil.bufoff, len );
+        return res;
+    }
+
+    @Override
     public byte[] asByteArray() {
+        throw new RuntimeException("malloc bytez do not support this");
+    }
+
+    /**
+     * @return the start index inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    @Override
+    public int getBAOffsetIndex() {
+        throw new RuntimeException("malloc bytez do not support this");
+    }
+
+    /**
+     * @return the length inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    @Override
+    public int getBALength() {
         throw new RuntimeException("malloc bytez do not support this");
     }
 

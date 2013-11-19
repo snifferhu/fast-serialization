@@ -43,14 +43,20 @@ public class HeapBytez implements Bytez {
 
     byte[] base;
     long off;
+    long len;
 
     public HeapBytez(byte[] base) {
         this(base,0);
     }
 
     public HeapBytez(byte[] base, long off) {
+        this(base,off, base.length-off);
+    }
+
+    public HeapBytez(byte[] base, long off, long len) {
         this.base = base;
         this.off = byteoff+off;
+        this.len = len;
     }
 
     @Override
@@ -247,8 +253,31 @@ public class HeapBytez implements Bytez {
     }
 
     @Override
+    public byte[] toBytes(int startIndex, int len) {
+        byte res[] = new byte[len];
+        System.arraycopy(base, (int) (off- FSTUtil.bufoff),res,0,len);
+        return res;
+    }
+
+    @Override
     public byte[] asByteArray() {
         return base;
+    }
+
+    /**
+     * @return the start index inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    @Override
+    public int getBAOffsetIndex() {
+        return (int) (off- FSTUtil.bufoff);
+    }
+
+    /**
+     * @return the length inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    @Override
+    public int getBALength() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

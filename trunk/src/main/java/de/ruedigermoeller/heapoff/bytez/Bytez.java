@@ -90,5 +90,20 @@ public interface Bytez {
     public boolean compareAndSwapInt( long offset, int expect, int newVal);
     public boolean compareAndSwapLong( long offset, long expect, long newVal);
 
-    public byte[] asByteArray(); // return underlying as byte array if on heap, else throws Exception !
+    public byte[] toBytes(int startIndex, int len);
+    /**
+     * @return return underlying as byte array, not supported by MallocBytez. Use getArr to extract data instead.
+     */
+    public byte[] asByteArray();
+
+    /**
+     * @return the start index inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    public int getBAOffsetIndex();
+    /**
+     * @return the length inside the byte array returned by asByteArray, not supported by MallocBytez
+     */
+    public int getBALength();
+
+
 }
