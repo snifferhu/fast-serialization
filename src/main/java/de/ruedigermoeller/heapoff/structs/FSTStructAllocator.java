@@ -36,6 +36,7 @@ public class FSTStructAllocator {
     protected Bytez chunk;
     protected int chunkIndex;
     BytezAllocator alloc = new HeapBytezAllocator();
+    int chunkObjCount = 0;
 //    BytezAllocator alloc = new MallocBytezAllocator();
 
     protected FSTStructAllocator() {
@@ -190,11 +191,14 @@ public class FSTStructAllocator {
             if (chunk == null || chunkIndex+byteSize >= chunk.length()) {
                 chunk = alloc.alloc(chunkSize);
                 chunkIndex = 0;
+//                System.out.println("** allocated new chunk ** old contained "+chunkObjCount+" objects in "+chunkSize/1024/1024+" MB");
+                chunkObjCount = 0;
             }
 //            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTStruct.bufoff + chunkIndex, byteSize);
             aTemplate.___bytes.copyTo(chunk, chunkIndex, aTemplate.___offset, byteSize);
             S res = (S) getFactory().createStructWrapper(chunk, chunkIndex );
             chunkIndex+=byteSize;
+            chunkObjCount++;
             return res;
         }
     }
