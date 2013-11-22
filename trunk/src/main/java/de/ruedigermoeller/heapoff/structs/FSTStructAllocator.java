@@ -190,6 +190,7 @@ public class FSTStructAllocator {
         synchronized (this) {
             if (chunk == null || chunkIndex+byteSize >= chunk.length()) {
                 chunk = alloc.alloc(chunkSize);
+                System.out.println("[Allocator] sum allocated "+MallocBytezAllocator.alloced.get()/1024/1024+" MB");
                 chunkIndex = 0;
 //                System.out.println("** allocated new chunk ** old contained "+chunkObjCount+" objects in "+chunkSize/1024/1024+" MB");
                 chunkObjCount = 0;
