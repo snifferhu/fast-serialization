@@ -4,6 +4,7 @@ import de.ruedigermoeller.heapoff.bytez.Bytez;
 import de.ruedigermoeller.heapoff.bytez.BytezAllocator;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -29,12 +30,15 @@ import java.util.ArrayList;
  */
 public class MallocBytezAllocator implements BytezAllocator {
 
+    public static AtomicLong alloced = new AtomicLong(0);
+
     ArrayList<MallocBytez> allocated = new ArrayList<MallocBytez>();
 
     @Override
     public Bytez alloc(long len) {
         MallocBytez mallocBytez = new MallocBytez(MallocBytez.unsafe.allocateMemory(len), len);
         allocated.add(mallocBytez);
+        alloced.getAndAdd(len);
         return mallocBytez;
     }
 
@@ -42,6 +46,7 @@ public class MallocBytezAllocator implements BytezAllocator {
     public void free(Bytez bytes) {
         if ( bytes instanceof MallocBytez && allocated.contains(bytes) ) {
             allocated.remove(bytes);
+            alloced.getAndAdd(-bytes.length());
             ((MallocBytez) bytes).free();
         }
     }
