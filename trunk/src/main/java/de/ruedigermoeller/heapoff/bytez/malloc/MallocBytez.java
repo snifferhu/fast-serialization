@@ -358,6 +358,7 @@ public class MallocBytez implements Bytez {
 
     void free() {
         unsafe.freeMemory(baseAdress);
+        MallocBytezAllocator.alloced.addAndGet(-length);
     }
 
     public long getBaseAdress() {
