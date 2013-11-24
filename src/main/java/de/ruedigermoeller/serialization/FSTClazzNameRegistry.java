@@ -19,6 +19,7 @@
  */
 package de.ruedigermoeller.serialization;
 
+import de.ruedigermoeller.heapoff.structs.unsafeimpl.FSTStructFactory;
 import de.ruedigermoeller.serialization.util.FSTIdentity2IdMap;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTObject2IntMap;
@@ -235,8 +236,19 @@ public class FSTClazzNameRegistry {
             try {
                 res = Class.forName(clName, false, conf.getClassLoader() );
             } catch ( Throwable th ) {
-                System.out.println("CLASSNAME:"+clName);
-                throw new RuntimeException(th);
+                if ( clName.endsWith("_Struct") ) // hack to define struct proxys on the fly if sent from another process
+                {
+                    try {
+                        clName = clName.substring(0,clName.length()-"_Struct".length());
+                        Class onHeapStructClz = Class.forName(clName);
+                        res = FSTStructFactory.getInstance().getProxyClass(onHeapStructClz);
+                    } catch (Throwable th1) {
+                        throw new RuntimeException(th1);
+                    }
+                } else {
+                    System.out.println("CLASSNAME:"+clName);
+                    throw new RuntimeException(th);
+                }
             }
             if ( res != null ) {
                 classCache.put(clName, res);

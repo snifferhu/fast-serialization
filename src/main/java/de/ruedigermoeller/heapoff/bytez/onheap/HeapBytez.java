@@ -255,7 +255,7 @@ public class HeapBytez implements Bytez {
     @Override
     public byte[] toBytes(int startIndex, int len) {
         byte res[] = new byte[len];
-        System.arraycopy(base, (int) (off- FSTUtil.bufoff),res,0,len);
+        System.arraycopy(base, (int) (off-FSTUtil.bufoff)+startIndex,res,0,len);
         return res;
     }
 
