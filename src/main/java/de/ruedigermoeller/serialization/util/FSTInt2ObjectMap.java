@@ -230,4 +230,14 @@ public class FSTInt2ObjectMap<V>
             System.out.println("hmap read "+(System.currentTimeMillis()-tim));
         }
     }
+
+    public void dump() {
+        for (int i = 0; i < mKeys.length; i++) {
+            int mKey = mKeys[i];
+            if ( mKey > 0 )
+                System.out.println(""+mKey+" => "+mValues[i]);
+        }
+        if ( next != null )
+            next.dump();
+    }
 }
