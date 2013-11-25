@@ -431,4 +431,15 @@ public class FSTIdentity2IdMap
             }
         }
     }
+
+    public void dump() {
+        for (int i = 0; i < mKeys.length; i++) {
+            Object mKey = mKeys[i];
+            if ( mKey != null ) {
+                System.out.println(""+mKey+" => "+mValues[i]);
+            }
+        }
+        if ( next != null )
+            next.dump();
+    }
 }
