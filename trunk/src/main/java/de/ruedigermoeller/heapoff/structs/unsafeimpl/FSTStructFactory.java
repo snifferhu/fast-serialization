@@ -17,6 +17,7 @@ import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 import sun.misc.Unsafe;
 
+import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -64,6 +65,7 @@ public class FSTStructFactory {
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
+    ConcurrentHashMap<String,byte[]> rawByteClassDefs = new ConcurrentHashMap<String, byte[]>();
     boolean autoRegister = true;
 
     BytezAllocator allocator = new HeapBytezAllocator();
@@ -74,6 +76,10 @@ public class FSTStructFactory {
         registerClz(StructArray.class);
         registerClz(StructArray.StructArrIterator.class);
         registerClz(StructMap.class);
+    }
+
+    public void registerRawClass( String name, byte bytes[] ) {
+        rawByteClassDefs.put(name,bytes);
     }
 
     <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
@@ -92,7 +98,13 @@ public class FSTStructFactory {
             return present;
         ClassPool pool = ClassPool.getDefault();
         CtClass newClz = pool.makeClass(proxyName);
-        CtClass orig = pool.get(clazz.getName());
+        CtClass orig = pool.getOrNull(clazz.getName());
+        if ( orig == null ) {
+            if ( rawByteClassDefs.get(clazz.getName()) != null ) {
+                orig = pool.makeClass( new ByteArrayInputStream(rawByteClassDefs.get(clazz.getName())));
+            } else
+                throw new RuntimeException("unable to find class "+clazz.getName()+". Needs registering from remote");
+        }
         newClz.setSuperclass(orig);
 
         final FSTClazzInfo clInfo = conf.getClassInfo(clazz);
