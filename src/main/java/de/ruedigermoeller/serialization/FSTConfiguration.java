@@ -21,6 +21,7 @@ package de.ruedigermoeller.serialization;
 
 import de.ruedigermoeller.heapoff.structs.FSTStruct;
 import de.ruedigermoeller.serialization.serializers.*;
+import de.ruedigermoeller.serialization.util.FSTInputStream;
 
 import java.awt.*;
 import java.io.*;
@@ -262,6 +263,16 @@ public final class FSTConfiguration {
             }
         }
         return null;
+    }
+
+    /**
+     * clear cached softref's and ThreadLocal. Use if you won't read/write objects anytime soon.
+     */
+    public void clearCaches() {
+        FSTInputStream.cachedBuffer.set(null);
+        synchronized (cachedObjects) {
+            cachedObjects.clear();
+        }
     }
 
     FSTObjectCopy copier = new FSTObjectCopy() {
