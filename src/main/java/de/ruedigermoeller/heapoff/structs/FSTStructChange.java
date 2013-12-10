@@ -22,8 +22,8 @@ public class FSTStructChange implements Serializable {
     byte snapshot[]; // created by snapshotChanges, contains new byte values
 
     public FSTStructChange() {
-        changeLength = new int[4];
-        changeOffsets = new int[4];
+        changeLength = new int[2];
+        changeOffsets = new int[2];
     }
 
     public void addChange(int offset, int len) {
