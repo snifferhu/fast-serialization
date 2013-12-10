@@ -91,7 +91,7 @@ public final class FSTOutputStream extends OutputStream {
         // overflow-conscious code
         int oldCapacity = buf.length;
         int newCapacity = oldCapacity * 2;
-        if (newCapacity > 50*1024*1024) // for large object graphs, grow more carefully
+        if (oldCapacity > 50*1024*1024) // for large object graphs, grow more carefully
             newCapacity = minCapacity+1024*1024*20;
         else if ( oldCapacity < 1001 ) {
             newCapacity = 4000; // large step initially
