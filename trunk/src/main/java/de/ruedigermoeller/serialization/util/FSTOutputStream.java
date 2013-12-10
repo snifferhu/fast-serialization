@@ -91,13 +91,20 @@ public final class FSTOutputStream extends OutputStream {
         // overflow-conscious code
         int oldCapacity = buf.length;
         int newCapacity = oldCapacity * 2;
-        if ( oldCapacity < 1001 ) {
+        if (newCapacity > 50*1024*1024) // for large object graphs, grow more carefully
+            newCapacity = minCapacity+1024*1024*20;
+        else if ( oldCapacity < 1001 ) {
             newCapacity = 4000; // large step initially
         }
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;
 
-        buf = Arrays.copyOf(buf, newCapacity);
+        try {
+            buf = Arrays.copyOf(buf, newCapacity);
+        } catch (OutOfMemoryError ome) {
+            System.out.println("OME resize from "+buf.length+" to "+newCapacity+" clearing caches ..");
+            throw new RuntimeException(ome);
+        }
     }
 
     public void write(int b) throws IOException {
