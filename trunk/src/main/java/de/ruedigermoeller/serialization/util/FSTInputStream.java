@@ -69,7 +69,9 @@ public final class FSTInputStream extends InputStream {
             byte newBuf[] = new byte[siz];
             System.arraycopy(buf,0,newBuf,0,buf.length);
             buf = newBuf;
-            cachedBuffer.set(buf);
+            if ( siz < 10*1024*1024) { // issue 19, don't go overboard with buffer caching
+                cachedBuffer.set(buf);
+            }
         }
     }
 
