@@ -12,7 +12,7 @@ JSON was born out of the {{{JavaScript}}} syntax. A major issue in using it to s
  }
 }}}
 
-However since order of attributes is not guaranteed, a parser has to use an intermediate Map structure when reading, because the type of an object is not known prior to parsing. If used as a network protocol this can impose significant overhead.
+Since order of attributes is not guaranteed, a parser has to use an intermediate Map structure when reading, because the type of an object is not known prior to parsing. If used as a network protocol this can impose significant overhead.
 
 Yaml has a similar problem, but it can be solved using "!de.wombat.Wombat" style annotations. Unfortunately Yaml has a pretty large spec, so there are only few (very slow) implementations of this format. 
 
@@ -54,7 +54,9 @@ authreq {  # comment until to end of line
 }
 }}}
 
-Although this is a little change to JSON, it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. Additionally this way a set of classes can define your protocol/allowed attributes, so coding is less "stringy" and "casty".
+This is a little change to JSON, but it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. The Dson implementation of FST does not fully make use of all optimizations possible, however Strings and short/int/long values are directly decoded "into" an object's field. Since this these are frequently used types, it already has reasonable performance.
+
+Additionally this way a set of classes can define your protocol/allowed attributes, so coding is less "stringy" and "casty".
 
 Classes for the example above look like:
 
