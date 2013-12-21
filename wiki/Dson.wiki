@@ -1,0 +1,60 @@
+Dson is an extension of the popular JSON format. The FST Dson classes allow for easy and elegant mapping of text to object graphs. It can be used for language agnostic communication/data exchange or to have an easy way to provide and parse config files. 
+
+*Why yet another text based structured data flavour ?*
+
+JSON was born out of the JavaScript syntax. A major issue in using it to serialize arbitrary Java object graphs is the absence of type information/tagging. Frequently a special attribute can is used like
+
+{{{
+ {
+   "@type":"de.wombat.Wombat",
+   "attribute":"value",
+   ..
+ }
+}}}
+
+However since order of attributes is not guaranteed, so a parser has to use an intermediate Map structure when reading, because the type of an object is not known prior to parsing. If used as a network protocol this can impose significant overhead.
+
+Yaml has a similar problem, but it can be solved using "!de.wombat.Wombat" style annotations. Unfortunately Yaml has a pretty large spec, so there are only few (very slow) implementations of this format. 
+
+*Dson*
+
+differs from JSON in only a few aspects, so still keeps the minimalism for easy implementation.
+
+  * the key attribute name of an object structure has no double quotes.
+  * each object gets a name denoting the type of the object (not necessarily full qualified class names!)
+  * instead of ',' whitespace can be used as separator (optional).
+  * it adds comments
+
+All literal rules and escape sequences are identical to JSON.
+
+Dson example:
+
+{{{
+ugly.full.qualified.ClassName {
+  
+  user:"Me"
+  pwd:"usual"
+  array: [ 1,2,3,4 ]
+
+  nestedObject: other.ugly.full.qualified.ClassName { name: 'aName' age: 13 email: "Not@me.com" }
+
+}}}
+
+in order to eliminat full qualified classnames, an application can provide a mapping, so it then looks like this:
+
+{{{
+authreq {
+  
+  user:"Me"
+  pwd:"usual"
+  array: [ 1,2,3,4 ]
+
+  nestedObject: userdata { name: 'aName' age: 13 email: "Not@me.com" }
+
+}}}
+
+
+
+
+ 
+
