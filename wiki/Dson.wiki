@@ -12,7 +12,7 @@ JSON was born out of the {{{JavaScript}}} syntax. A major issue in using it to s
  }
 }}}
 
-However since order of attributes is not guaranteed, so a parser has to use an intermediate Map structure when reading, because the type of an object is not known prior to parsing. If used as a network protocol this can impose significant overhead.
+However since order of attributes is not guaranteed, a parser has to use an intermediate Map structure when reading, because the type of an object is not known prior to parsing. If used as a network protocol this can impose significant overhead.
 
 Yaml has a similar problem, but it can be solved using "!de.wombat.Wombat" style annotations. Unfortunately Yaml has a pretty large spec, so there are only few (very slow) implementations of this format. 
 
@@ -113,4 +113,5 @@ ex.map.put( "xyz", 345 );
 
 * State of project/test coverage *
 
+* Performance *
  
