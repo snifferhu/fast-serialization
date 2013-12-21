@@ -54,7 +54,7 @@ authreq {  # comment until to end of line
 }
 }}}
 
-This is a little change to JSON, but it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. The Dson implementation of FST does not fully make use of all optimizations possible, however Strings and short/int/long values are directly decoded "into" an object's field. Since this these are frequently used types, it already has reasonable performance.
+This is a little change to JSON, but it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. The Dson implementation of FST does not implement all optimizations possible, however Strings and short/int/long values are directly decoded "into" an object's field. Since this these are frequently used types, it already has reasonable performance.
 
 Additionally this way a set of classes can define your protocol/allowed attributes, so coding is less "stringy" and "casty".
 
