@@ -2,7 +2,7 @@ Dson is an extension of the popular JSON format. The FST Dson classes allow for 
 
 *Why yet another text based structured data flavour ?*
 
-JSON was born out of the JavaScript syntax. A major issue in using it to serialize arbitrary Java object graphs is the absence of type information/tagging. Frequently a special attribute can is used like
+JSON was born out of the {{{JavaScript}}} syntax. A major issue in using it to serialize arbitrary Java object graphs is the absence of type information/tagging. Frequently a special attribute is used like
 
 {{{
  {
@@ -37,24 +37,49 @@ ugly.full.qualified.ClassName {
   array: [ 1,2,3,4 ]
 
   nestedObject: other.ugly.full.qualified.ClassName { name: 'aName' age: 13 email: "Not@me.com" }
-
+}
 }}}
 
-in order to eliminat full qualified classnames, an application can provide a mapping, so it then looks like this:
+in order to eliminate full qualified classnames, an application can provide a mapping String<=>full qualified ClassName, so it looks like this:
 
 {{{
-authreq {
+authreq {  # comment until to end of line
   
+  # another comment
   user:"Me"
   pwd:"usual"
   array: [ 1,2,3,4 ]
 
   nestedObject: userdata { name: 'aName' age: 13 email: "Not@me.com" }
-
+}
 }}}
 
+Although this is a little change to JSON, it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. Additionally this way a set of classes can define your protocol/allowed attributes, so coding is less "stringy" and "casty".
+
+Classes for the example above look like:
+
+{{{
+  class AuthRequest {
+      String user;
+      String pwd;
+      int array[];
+      UserData nestedObject;
+  }
+
+  class UserData { String name; int age; String email; }
+}}}
+
+The FST Dson package allows to provide custom mappings during read/write. This way it is possible to e.g.
+
+  * map a string like "10/12/2013" to a Date and vice versa.
+  * map arrays to collections and vice versa.
+
+Date Mapping and collection/HashMap mapping is built in (see DsonTypeMapper). 
 
 
 
  
 
+
+
+ 
