@@ -105,8 +105,12 @@ ex.map.put( "you", new User("you", 23) );
 ex.map.put( "xyz", 345 );
 }}}
 
- 
+* Full Code Example *
 
+* Define Custom String type * 
 
+* Other languages *
+
+* State of project/test coverage *
 
  
