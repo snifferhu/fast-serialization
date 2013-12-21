@@ -78,7 +78,7 @@ Date Mapping and collection/{{{HashMap}}} mapping is built in (see {{{DsonTypeMa
 
 {{{
 class Example {
-    HashMap map;
+    HashMap map; //note: must be an Instantiatable type. Map would fail.
 }
 }}}
 
@@ -87,7 +87,15 @@ is mapped to an array with [key,value,key,value] order.
 {{{
 example { map: [ "you" user { name: "you" age: 23 } "xyz" 345 ] }
 }}}
-
+or humanized:
+{{{
+example { 
+  map: [ 
+    "you" : user { name: "you" age: 23 } 
+    "xyz" : 345  # ':' is optional
+  ] 
+}
+}}}
 is like
 
 {{{
