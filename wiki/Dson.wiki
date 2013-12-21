@@ -74,9 +74,28 @@ The FST Dson package allows to provide custom mappings during read/write. This w
   * map a string like "10/12/2013" to a Date and vice versa.
   * map arrays to collections and vice versa.
 
-Date Mapping and collection/HashMap mapping is built in (see DsonTypeMapper). 
+Date Mapping and collection/{{{HashMap}}} mapping is built in (see {{{DsonTypeMapper}}}). 
 
+{{{
+class Example {
+    HashMap map;
+}
+}}}
 
+is mapped to an array with [key,value,key,value] order.
+
+{{{
+example { map: [ "you" user { name: "you" age: 23 } "xyz" 345 ] }
+}}}
+
+is like
+
+{{{
+Example ex = new Example();
+ex.map = new HashMap();
+ex.map.put( "you", new User("you", 23) );
+ex.map.put( "xyz", 345 );
+}}}
 
  
 
