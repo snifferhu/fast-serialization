@@ -65,12 +65,12 @@ authreq {  # comment until to end of line
 now that's curly .. optionally one can ommit '{]' but signal the end of an object structure with ';'.
 
 {{{
-authreq # comment until to end of line
-  # another comment
-  user:"Me"
-  pwd:"usual"
+authreq
+  user:  "Me"
+  pwd:   "usual"
   array: [ 1,2,3,4 ]
-  nestedObject: userdata name: 'aName' age: 13 email: "Not@me.com";
+  nestedObject: 
+    userdata name: 'aName' age: 13 email: "Not@me.com";
 ;
 }}}
 
