@@ -72,7 +72,7 @@ authreq
 ;
 }}}
 
-[_oops .. looks like SmallTalk code .. one more year and FST will be the first serialization lib including a full fledged smalltalk interpreter ;-)_]
+[_oops .. looks like Smalltalk code .. one more year and FST will be the first serialization lib including a full fledged Smalltalk interpreter ;-)_]
 
 This is a little change to JSON, but it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. The Dson implementation of FST does not implement all optimizations possible, however Strings and short/int/long values are directly decoded "into" an object's field. Since these are frequently used types, it already has reasonable performance.
 
