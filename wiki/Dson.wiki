@@ -139,6 +139,13 @@ ex.map.put( "you", new User("you", 23) );
 ex.map.put( "xyz", 345 );
 }}}
 
+Note Java implementation only:
+One can ommit quotes of String's if the target field is of type String (Warning: cannot be read by other languages Dson implementation, but handy when using Dson as DSL with java). (if the string contains whitespace or ;., it still has to get quoted):
+
+{{{
+user name: you age: 23 ; 
+}}}
+
 * Full Code Example *
 
 * Define Custom String type * 
