@@ -51,9 +51,7 @@ ugly.full.qualified.ClassName {
 in order to eliminate full qualified classnames, an application can provide a mapping String<=>full qualified ClassName, so it looks like this:
 
 {{{
-authreq {  # comment until to end of line
-  
-  # another comment
+authreq {
   user:"Me"
   pwd:"usual"
   array: [ 1,2,3,4 ]
@@ -62,7 +60,7 @@ authreq {  # comment until to end of line
 }
 }}}
 
-now that's curly .. optionally one can ommit {{{'{}'}}} but signal the end of an object structure with {{{}}}';'.
+now that's curly .. optionally one can ommit {{{'{}'}}} but signal the end of an object structure with {{{';'}}}.
 
 {{{
 authreq
