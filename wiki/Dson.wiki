@@ -2,7 +2,7 @@ Dson is an extension of the popular JSON format. The FST Dson classes allow for 
 It can be used 
   * for language agnostic communication/data exchange
   * have an easy way to provide and parse config files
-  * to create lo-tec dsl's 
+  * to create low-tec and easy to manage DSL's 
 
 Currently Java and Dart is supported. Since the encoding is simple, it can be ported pretty quick (within some hours).
 
