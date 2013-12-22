@@ -124,8 +124,8 @@ decurlyfied ..
 {{{
 example  
   map: [ 
-    "you" : user name: "you" age: 23 ; 
-    "xyz" : 345                         # Note ':' is optional. Used for decoration here
+    "you" user name: "you" age: 23 ; 
+    "xyz" 345
   ] 
 ;
 }}}
