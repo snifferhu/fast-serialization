@@ -62,7 +62,7 @@ authreq {  # comment until to end of line
 }
 }}}
 
-now that's curly .. optionally one can ommit '{]' but signal the end of an object structure with ';'.
+now that's curly .. optionally one can ommit {{{'{}'}}} but signal the end of an object structure with {{{}}}';'.
 
 {{{
 authreq
