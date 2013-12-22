@@ -62,6 +62,18 @@ authreq {  # comment until to end of line
 }
 }}}
 
+now that's curly .. optionally one can ommit '{]' but signal the end of an object structure with ';'.
+
+{{{
+authreq # comment until to end of line
+  # another comment
+  user:"Me"
+  pwd:"usual"
+  array: [ 1,2,3,4 ]
+  nestedObject: userdata name: 'aName' age: 13 email: "Not@me.com";
+;
+}}}
+
 This is a little change to JSON, but it enables direct mapping of Java object graphs to text and vice versa. Data can be read into the associated java classes without temporary structures, which should give a major speed advantage. The Dson implementation of FST does not implement all optimizations possible, however Strings and short/int/long values are directly decoded "into" an object's field. Since these are frequently used types, it already has reasonable performance.
 
 Additionally this way a set of classes can define your protocol/allowed attributes, so coding is less "stringy" and "casty".
