@@ -68,7 +68,7 @@ authreq
   pwd:   "usual"
   array: [ 1,2,3,4 ]
   nestedObject: 
-    userdata name: 'aName' age: 13 email: "Not@me.com";
+    userdata name: 'aName' age: 13 email: "Not@me.com" ;
 ;
 }}}
 
