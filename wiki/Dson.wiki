@@ -4,6 +4,10 @@ It can be used
   * have an easy way to provide and parse config files
   * to create lo-tec dsl's 
 
+Currently Java and Dart is supported. Since the encoding is simple, it can be ported pretty quick (within some hours).
+
+Its called 'D'son because it derives from Json and .. erm you know Dart starts with 'D' ..
+
 *Why yet another text based structured data flavour ?*
 
 JSON was born out of the {{{JavaScript}}} syntax. A major issue in using it to serialize arbitrary Java object graphs is the absence of type information/tagging. Frequently a special attribute is used like
