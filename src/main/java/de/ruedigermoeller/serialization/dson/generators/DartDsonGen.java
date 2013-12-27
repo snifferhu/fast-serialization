@@ -160,9 +160,9 @@ public class DartDsonGen {
         DsonTypeMapper mapper = new DsonTypeMapper();
         mapper.map("DateTime", Date.class);
         mapper.map("user", DsonDeserializer.UD.class);
-        mapper.map("nested", DsonDeserializer.Nest.class);
+        mapper.map("nested", DsonDeserializer.Sel.class);
 
-        new DartDsonGen().generate( "RealLive", System.out,Arrays.asList(DsonDeserializer.UD.class, DsonDeserializer.Nest.class), mapper );
+        new DartDsonGen().generate( "RealLive", System.out,Arrays.asList(DsonDeserializer.UD.class, DsonDeserializer.Sel.class), mapper );
 
     }
 }
