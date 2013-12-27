@@ -48,7 +48,7 @@ public class DsonStringCharInput implements DsonCharInput {
      */
     @Override
     public int readChar() {
-        if ( pos > end )
+        if ( pos >= end )
             return -1;
         return s.charAt(pos++);
     }
@@ -72,6 +72,6 @@ public class DsonStringCharInput implements DsonCharInput {
 
     @Override
     public String getString(int pos, int length) {
-        return s.substring(pos,pos+length);
+        return s.substring(Math.max(0,pos),Math.min(s.length(),pos+length));
     }
 }

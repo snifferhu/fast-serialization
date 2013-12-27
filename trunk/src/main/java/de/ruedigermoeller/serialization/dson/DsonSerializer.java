@@ -49,11 +49,14 @@ public class DsonSerializer {
             out.writeString("null");
             return;
         }
-        if ( o instanceof Number ) {
+        if ( o instanceof Character) {
+            out.writeString(o.toString());
+            return;
+        } else if ( o instanceof Number || o instanceof Boolean ) {
             out.writeString(o.toString());
             return;
         } else if ( o instanceof String ) {
-            writeString((String)o);
+            writeString((String) o);
             return;
         } else if ( o instanceof Map) {
         } else if ( o.getClass().isArray()) {
@@ -70,7 +73,7 @@ public class DsonSerializer {
                 FSTClazzInfo.FSTFieldInfo fstFieldInfo = fieldInfo[i];
                 Object fieldValue = fstFieldInfo.getObjectValue(o);
                 fieldValue = mapper.coerceWriting(fieldValue);
-                if ( fieldValue != null || writeNull ) {
+                if ( isNullValue(fieldValue) || writeNull ) {
                     writeln();
                     writeIndent(indent+1);
                     out.writeString(fstFieldInfo.getField().getName());
@@ -80,6 +83,16 @@ public class DsonSerializer {
             }
             out.writeChar(';');
         }
+    }
+
+    static Character zeroC = new Character((char) 0);
+    private boolean isNullValue(Object fieldValue) {
+        if (writeNull)
+            return false;
+        if ( fieldValue instanceof Number ) {
+            return ((Number) fieldValue).doubleValue() != 0.0;
+        }
+        return fieldValue != null && !fieldValue.equals(zeroC) && !fieldValue.equals(Boolean.FALSE);
     }
 
     protected void writeln() {

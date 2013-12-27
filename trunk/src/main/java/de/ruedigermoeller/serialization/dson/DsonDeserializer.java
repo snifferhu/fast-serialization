@@ -7,8 +7,6 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Copyright (c) 2012, Ruediger Moeller. All rights reserved.
@@ -61,6 +59,9 @@ public class DsonDeserializer {
         try {
             skipWS();
             String type = readId();
+            Object literal = mapper.mapLiteral(type);
+            if (literal!=null)
+                return literal;
             skipWS();
             Class mappedClass = mapper.getType(type);
             if ( mappedClass == null ) {
@@ -72,26 +73,43 @@ public class DsonDeserializer {
                 //throw new RuntimeException("expected { at "+in.position());
                 in.back(1); // use ';' as terminator
             }
+            String implied = null;
+            if (in.peekChar()==':') { // implied attribute
+                implied = mapper.getImpliedAttr(mappedClass, type);
+                if (implied==null)
+                    throw new DsonParseException("expected implied attribute",in);
+                skipWS();
+            }
             Object res = clInfo.newInstance();
-            readFields(res, clInfo);
+            readFields( implied, res, clInfo);
             return res;
         } catch (Exception ex) {
-            throw new RuntimeException("unexpected error: "+in.position()+" '"+in.getString(in.position()-10,10)+"'",ex);
+            throw new DsonParseException("unexpected error, tried reading object",in, ex);
         }
     }
 
-    protected void readFields(Object target, FSTClazzInfo clz ) throws Exception {
+    protected void readFields(String implied, Object target, FSTClazzInfo clz ) throws Exception {
+        skipWS();
         while ( in.peekChar() != '}' && in.peekChar() != ';' ) {
             String name = readId();
+            if (name.length()==0 && implied != null)
+                name = implied;
             skipWS();
             int ch = in.readChar();
+            FSTClazzInfo.FSTFieldInfo fieldInfo = clz.getFieldInfo(name, null);
             if ( ch == ':' ) {
-                FSTClazzInfo.FSTFieldInfo fieldInfo = clz.getFieldInfo(name, null);
                 // key val
+                skipWS();
+                if ( implied != null && name.equals(implied) && in.peekChar() == '{' ) // allow to use {} on implieds
+                    in.readChar();
                 readValue(target, fieldInfo);
             } else {
-                // scalar ? => error
-                throw new RuntimeException("expected key value "+in.position()+" '"+in.getString(in.position()-10,10)+"'");
+                if (fieldInfo.getType() == boolean.class ) {
+                    fieldInfo.setBooleanValue(target,true); in.back(1);
+                } else {
+                    // scalar ? => error
+                    throw new DsonParseException("expected key value",in);
+                }
             }
             skipWS();
         }
@@ -149,6 +167,8 @@ public class DsonDeserializer {
                     field.setLongValue(target, l);
                 } else if ( type == String.class ) {
                     field.setObjectValue(target, "" + l);
+                } else if ( type == Object.class ) {
+                    field.setObjectValue(target, l);
                 } else {
                     throw new RuntimeException("cannot assign number to "+type.getName());
                 }
@@ -166,7 +186,7 @@ public class DsonDeserializer {
             if ( ch == '"' || ch == '\'' || (field!=null && isStringValue(field.getType().getComponentType() ) ) ) {
                 // string
                 objects.add(readString(ch == '"' || ch == '\''));
-            } else if ( Character.isLetter(ch) ) {
+            } else if ( isIdStart(ch) ) {
                 // object
                 objects.add(readObject());
             } else if ( Character.isDigit(ch) || ch == '+' || ch == '-' || ch == '.' ) {
@@ -305,25 +325,31 @@ public class DsonDeserializer {
         skipWS();
         int pos = in.position();
         int ch = in.readChar();
-        while( Character.isJavaIdentifierPart(ch) && ch != ':' ) {
+        while( isIdPart(ch) && ch != ':' ) {
             ch = in.readChar();
         }
         in.back(1);
         return in.getString(pos, in.position() - pos);
     }
 
-    public static void main(String a[]) throws Exception {
-        HashMap tm = new HashMap(); tm.put("A",1); tm.put("B",2); Object bla = tm.entrySet().toArray();
-        //numbers:[1,2,3,4,5,6,-4]
-//        String s = "user {name:'rm' test:2.33 test:.3 pwd:'pwd' now:'20.12.2013 16:32:09' number:123456789 numbers:[1 12345678 3 4 5 6 -4] object: nested {hello:'Hello' num:-13} nesteds: [nested {hello:'Hello0' num:1},nested {hello:'Hello1' num:2},nested {hello:'Hello2' num:3}] al: [nested {hello:'Hello0' num:1},nested {hello:'Hello1' num:2},nested {hello:'Hello2' num:3}] }";
-        DsonTypeMapper mapper = new DsonTypeMapper();
-        mapper.map("user", UD.class);
-        mapper.map("nested", Nest.class);
-        DsonDeserializer ser = null;// new DsonDeserializer(new DsonStringCharInput(s),mapper);
-//        Object res = ser.readObject();
-//        new DsonSerializer(new DsonPSCharOut(System.out),mapper).writeObject(res);
+    protected boolean isIdPart(int ch) {
+        return Character.isLetterOrDigit(ch) || ch == '$' || ch == '#';
+    }
 
-        DataInputStream in = new DataInputStream( new FileInputStream("c:\\tmp\\test1.dson") );
+    protected boolean isIdStart(int ch) {
+        return Character.isLetter(ch) || ch == '$' || ch == '#';
+    }
+
+    public static void main(String a[]) throws Exception {
+        DsonTypeMapper mapper = new DsonTypeMapper();
+        mapper
+           .map("cond", UD.class).map("and", UD.class).map("or", UD.class).map("attr", UD.class)
+           .map("select", Sel.class).map("subscribe", Sub.class)
+           .implyAttrFromType("and", "and").implyAttrFromType("or", "or").implyAttrFromType("attr", "attr")
+           .implyAttrFromType("select", "cond").implyAttrFromType("subscribe", "cond");
+        DsonDeserializer ser = null;// new DsonDeserializer(new DsonStringCharInput(s),mapper);
+
+        DataInputStream in = new DataInputStream( new FileInputStream("c:\\tmp\\test.dson") );
         StringBuilder b = new StringBuilder();
         int c = 0;
         try {
@@ -350,20 +376,24 @@ public class DsonDeserializer {
 
 
     public static class UD {
-        String name;
-        String pwd;
-        int number;
-        int numbers[];
-        Object object;
-        Nest nesteds[];
-        float test;
-        ArrayList<Nest> al;
-        Date now = new Date();
-        HashMap<String,Integer> map;
+        String attr;
+        Object greater;
+        String contains;
+        Object lesser;
+        Object equals;
+        Object greaterEq;
+        Object lesserEq;
+        UD and[];
+        UD or[];
+        boolean negate;
     }
 
-    public static class Nest {
-        String hello;
-        int number;
+    public static class Sel {
+        UD cond;
     }
+
+    public static class Sub {
+        UD cond;
+    }
+
 }

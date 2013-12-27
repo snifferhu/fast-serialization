@@ -1,7 +1,7 @@
 package de.ruedigermoeller.serialization.dson;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -49,12 +49,17 @@ public class Dson {
         return new DsonDeserializer(in, defaultMapper).readObject();
     }
 
-    public Object readObject( File file ) {
-        return null;
+    public Object readObject( File file ) throws Exception {
+        FileInputStream fin = new FileInputStream(file);
+        try {
+            return readObject(fin,"UTF-8");
+        } finally {
+            fin.close();
+        }
     }
 
-    public Object readObject( InputStream stream ) {
-        return null;
+    public Object readObject( InputStream stream, String encoding ) throws Exception {
+        return readObject(new Scanner(stream,encoding).useDelimiter("\\A").next());
     }
 
     public String writeObject( Object toWrite ) {
@@ -70,7 +75,7 @@ public class Dson {
     public void writeObject( File file, Object toWrite ) {
     }
 
-    public void writeObject( InputStream stream, Object toWrite ) {
+    public void writeObject( OutputStream stream, Object toWrite ) {
     }
 
 }

@@ -40,7 +40,9 @@ import java.util.*;
 public class DsonTypeMapper {
 
     protected HashMap<String,Class> typeMap = new HashMap<String, Class>();
+    protected HashMap<String,String> impliedMap = new HashMap<String, String>();
     protected HashMap<Class,String> reverseTypeMap = new HashMap<Class, String>();
+
     protected DateFormat dateTimeInstance = DateFormat.getDateTimeInstance();;
 
     public DsonTypeMapper() {
@@ -67,9 +69,15 @@ public class DsonTypeMapper {
         return res;
     }
 
+    public DsonTypeMapper implyAttrFromType(String type, String attr) {
+        impliedMap.put(type,attr);
+        return this;
+    }
+
     public DsonTypeMapper map(String name, Class c) {
         typeMap.put(name, c);
-        reverseTypeMap.put(c,name);
+        if (reverseTypeMap.get(c)==null)
+            reverseTypeMap.put(c,name);
         return this;
     }
 
@@ -162,5 +170,19 @@ public class DsonTypeMapper {
 
     public void setDateTimeInstance(DateFormat dateTimeInstance) {
         this.dateTimeInstance = dateTimeInstance;
+    }
+
+    public Object mapLiteral(String type) {
+        if (type.equals("true") || type.equals("yes") || type.equals("y")) {
+            return Boolean.TRUE;
+        }
+        if (type.equals("false") || type.equals("no") || type.equals("n")) {
+            return Boolean.FALSE;
+        }
+        return null;
+    }
+
+    public String getImpliedAttr(Class mappedClass, String type) {
+        return impliedMap.get(type);
     }
 }
