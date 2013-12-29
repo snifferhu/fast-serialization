@@ -163,6 +163,42 @@ public final class FSTClazzInfo {
         return fieldInfo;
     }
 
+    public final FSTFieldInfo[] getFieldInfoFiltered(Class ... toRemove) {
+        FSTFieldInfo[] fis = getFieldInfo();
+        int count = 0;
+        for (int i = 0; i < fis.length; i++) {
+            FSTFieldInfo fi = fis[i];
+            boolean skip = false;
+            for (int j = 0; j < toRemove.length; j++) {
+                Class aClass = toRemove[j];
+                if ( fi.getField().getDeclaringClass() == aClass ) {
+                    skip = true;
+                    break;
+                }
+            }
+            if ( ! skip ) {
+                count++;
+            }
+        }
+        FSTFieldInfo res[] = new FSTFieldInfo[count];
+        count = 0;
+        for (int i = 0; i < fis.length; i++) {
+            FSTFieldInfo fi = fis[i];
+            boolean skip = false;
+            for (int j = 0; j < toRemove.length; j++) {
+                Class aClass = toRemove[j];
+                if ( fi.getField().getDeclaringClass() == aClass ) {
+                    skip = true;
+                    break;
+                }
+            }
+            if ( ! skip ) {
+                res[count++] = fis[i];
+            }
+        }
+        return res;
+    }
+
     public final FSTFieldInfo getFieldInfo(String name, Class declaringClass) {
         if ( declaringClass == null ) {
             return fieldMap.get(name);

@@ -373,29 +373,16 @@ public class FSTStruct implements Serializable {
          return tracker != null;
      }
 
-     // FIXME: provide FSTExternalizable for speedup
-//     @Override
-//     public void writeExternal(ObjectOutput out) throws IOException {
-//        if ( isOffHeap() ) {
-//            int byteSize = getByteSize();
-//            out.writeInt(byteSize);
-//            out.write(getBase(), getOffset(), byteSize );
-//        } else {
-//            throw new RuntimeException("cannot serialize on heap struct "+getClass().getName());
-//        }
-//     }
-//
-//     @Override
-//     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-//         int len = in.readInt();
-//         ___bytes = new byte[len];
-//         ___offset = len+bufoff;
-//         ___fac = FSTStructFactory.getInstance();
-//     }
-
      public FSTStruct toOffHeap() {
          if ( isOffHeap() )
              return this;
          return FSTStructFactory.getInstance().toStruct(this);
+     }
+
+     //////////////////////////////////////////////
+     // helper to support stringy web protocols
+
+     public Object getFieldValues() {
+         throw new RuntimeException("only supported for structs");
      }
  }

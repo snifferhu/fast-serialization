@@ -534,4 +534,8 @@ public final class FSTConfiguration {
     public boolean isIgnoreSerialInterfaces() {
         return serializationInfoRegistry.isStructMode();
     }
+
+    public FSTClazzInfo getClazzInfo(Class rowClass) {
+        return getCLInfoRegistry().getCLInfo(rowClass);
+    }
 }

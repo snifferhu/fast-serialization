@@ -12,6 +12,7 @@ import de.ruedigermoeller.serialization.FSTConfiguration;
 import de.ruedigermoeller.serialization.util.FSTInt2ObjectMap;
 import de.ruedigermoeller.serialization.util.FSTUtil;
 import javassist.*;
+import javassist.Modifier;
 import javassist.bytecode.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
@@ -20,7 +21,7 @@ import sun.misc.Unsafe;
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.Serializable;
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -116,7 +117,8 @@ public class FSTStructFactory {
             boolean allowed = ((method.getModifiers() & AccessFlag.ABSTRACT) == 0 ) &&
                     (method.getModifiers() & AccessFlag.NATIVE) == 0 &&
                     (method.getModifiers() & AccessFlag.FINAL) == 0 &&
-                    ! method.getDeclaringClass().getName().equals(FSTStruct.class.getName()) &&
+                    (   !method.getDeclaringClass().getName().equals(FSTStruct.class.getName())
+                       ||method.getName().equals("getFieldValues")) &&
                     ! method.getDeclaringClass().getName().equals(Object.class.getName());
             allowed &= method.getAnnotation(NoAssist.class) == null;
             allowed &= (method.getModifiers() & AccessFlag.STATIC) == 0;
@@ -129,7 +131,7 @@ public class FSTStructFactory {
             if ( allowed ) {
                 ClassMap mp = new ClassMap();
                 mp.fix(clazz.getName());
-                mp.fix(clazz.getSuperclass().getName());
+                mp.fix(clazz.getSuperclass().getName()); // ?? only depth 2 ??
                 method = new CtMethod(method,newClz,mp);
                 String methName = method.getName();
                 // array access:
@@ -183,6 +185,44 @@ public class FSTStructFactory {
                     structGen.defineArrayLength(lenfi, clInfo, method);
                     newClz.addMethod(method);
                 } else {
+                    if ( methName.equals("getFieldValues") &&
+                            ( (clInfo.getClazz().getSuperclass().getName().equals("de.ruedigermoeller.reallive.impl.RLStructRow")) // oops
+                            || (curClz != FSTStruct.class) )
+                       ) {
+                        FSTClazzInfo.FSTFieldInfo[] fieldInfo = clInfo.getFieldInfo();
+                        StringBuilder body = new StringBuilder("{  return new Object[] { ");
+                        for (int j = 0; j < fieldInfo.length; j++) {
+                            FSTClazzInfo.FSTFieldInfo fstFieldInfo = fieldInfo[j];
+                            int modifiers = fstFieldInfo.getField().getModifiers();
+                            if ( (java.lang.reflect.Modifier.isProtected(modifiers) ||
+                                  java.lang.reflect.Modifier.isPublic(modifiers)) &&
+                                  !java.lang.reflect.Modifier.isStatic(modifiers)
+                                )
+                            {
+                                body.append( "\""+fstFieldInfo.getField().getName()+"\", " );
+                                Class type = fstFieldInfo.getType();
+                                if ( FSTStruct.class.isAssignableFrom(type) ) {
+                                    body.append(fstFieldInfo.getField().getName()+".getFieldValues()");
+                                } else {
+                                    if ( type.isPrimitive() ) {
+                                        if ( long.class == type ) {
+                                            body.append("new Long("+fstFieldInfo.getField().getName()+")");
+                                        } else if ( float.class == type ||double.class == type ) {
+                                            body.append("new Double("+fstFieldInfo.getField().getName()+")");
+                                        } else {
+                                            body.append("new Integer("+fstFieldInfo.getField().getName()+")");
+                                        }
+                                    } else {
+                                        body.append(fstFieldInfo.getField().getName());
+                                    }
+                                }
+                                if ( j != fieldInfo.length-1 )
+                                    body.append(",");
+                            }
+                        }
+                        body.append("}; }");
+                        method.setBody(body.toString());
+                    }
                     newClz.addMethod(method);
                     method.instrument( new ExprEditor() {
                         @Override
