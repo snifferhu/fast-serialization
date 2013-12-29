@@ -85,7 +85,7 @@ public class DartDsonGen {
     protected void generate(PrintStream ps, FSTClazzInfo clInfo, DsonTypeMapper tm) {
         ps.println();
         String name = tm.getStringForType(clInfo.getClazz());
-        ps.println("class " + name + " {");
+        ps.println("class " + name + " /*implements DsonReflectable*/ {");
         ps.println();
         ps.println("  dsonName() => '" + name + "';");
         ps.println();

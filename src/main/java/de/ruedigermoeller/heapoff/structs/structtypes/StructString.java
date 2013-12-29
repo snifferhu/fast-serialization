@@ -168,4 +168,9 @@ public class StructString extends FSTStruct implements Comparable {
         }
         return -1;
     }
+
+    @Override @NoAssist
+    public Object getFieldValues() {
+        return toString();
+    }
 }
