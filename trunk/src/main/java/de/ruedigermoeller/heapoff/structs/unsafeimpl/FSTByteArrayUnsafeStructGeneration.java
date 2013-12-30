@@ -45,12 +45,13 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
             if ( vola ) {
                 insert = "Volatile";
             }
+            String fieldName = "\""+fieldInfo.getField().getName()+"\"";
             if ( type == CtPrimitiveType.booleanType ) {
                 final String body = "___bytes.putBool" + insert + "((long)" + off + "+___offset, $1 );";
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,1);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,1,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -61,7 +62,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,1);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,1,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -72,7 +73,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,2);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,2,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -83,7 +84,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,2);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,2,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -94,7 +95,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,4);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,4,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -105,7 +106,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,8);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,8,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -116,7 +117,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,4);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,4,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -127,7 +128,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 if (trackChanges) {
                     f.replace("{" +
                             body +
-                            "if (tracker!=null) tracker.addChange("+off+"+___offset,8);" +
+                            "if (tracker!=null) tracker.addChange("+off+"+___offset,8,"+ fieldName +");" +
                             "}");
                 } else {
                     f.replace(body);
@@ -147,7 +148,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     "    struct=___fac.toStruct(struct);"+ // FIMXE: do direct toByte to avoid tmp alloc
                     "}"+
                     "if (struct.getByteSize() > obj_len ) throw new RuntimeException(\"object too large to be written\");"+
-                    (trackChanges ? "if (tracker!=null) tracker.addChange(tmpOff,struct.getByteSize()); ":"") +
+                    (trackChanges ? "if (tracker!=null) tracker.addChange(tmpOff,struct.getByteSize(),"+ fieldName +"); ":"") +
 //                    "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,tmpOff,(long)struct.getByteSize());"+
                     "struct.___bytes.copyTo(___bytes,tmpOff,struct.___offset,(long)struct.getByteSize());"+
                     "___bytes.putInt(tmpOff, obj_len);"+ // rewrite original size
@@ -182,51 +183,52 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                     "if ($1>=_st_len||$1<0) throw new ArrayIndexOutOfBoundsException(\"index:\"+$1+\" len:\"+_st_len);";
             if ( method.getReturnType() == CtClass.voidType ) {
                 String record = "";
+                String fieldName = "\""+fieldInfo.getField().getName()+"\"";
                 if ( arrayType == boolean.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1,1);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1,1,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.putBool"+insert+"( _st_off+$1,$2);"+record+"}");
                 } else
                 if ( arrayType == byte.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange((long)_st_off+$1,1);";
+                        record = "if (tracker!=null) tracker.addChange((long)_st_off+$1,1,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.put"+insert+"( _st_off+$1,$2);"+record+"}");
                 } else
                 if ( arrayType == char.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.putChar"+insert+"( _st_off+$1*2,$2);"+record+"}");
                 } else
                 if ( arrayType == short.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*2,2,"+ fieldName +");";
                     }
                     method.setBody(prefix+" ___bytes.putShort"+insert+"( _st_off+$1*2,$2);"+record+"}");
                 } else
                 if ( arrayType == int.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4,"+ fieldName +");";
                     }
                     method.setBody(prefix+" ___bytes.putInt"+insert+"(_st_off+$1*4,$2);"+record+"}");
                 } else
                 if ( arrayType == long.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.putLong"+insert+"( _st_off+$1*8,$2);"+record+"}");
                 } else
                 if ( arrayType == double.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*8,8,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.putDouble"+insert+"( _st_off+$1*8,$2);"+record+"}");
                 } else
                 if ( arrayType == float.class ) {
                     if (trackChanges) {
-                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4);";
+                        record = "if (tracker!=null) tracker.addChange(_st_off+$1*4,4,"+ fieldName +");";
                     }
                     method.setBody(prefix+"___bytes.putFloat"+insert+"(_st_off+$1*4,$2);"+record+"}");
                 } else {
@@ -243,7 +245,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                         "}"+
                         "if ( _elem_len < struct.getByteSize() )"+
                         "    throw new RuntimeException(\"Illegal size when rewriting object array value. elem size:\"+_elem_len+\" new object size:\"+struct.getByteSize()+\"\");"+
-                        (trackChanges ? "if (tracker!=null) tracker.addChange(_st_off+$1*_elem_len, struct.getByteSize()); ":"") +
+                        (trackChanges ? "if (tracker!=null) tracker.addChange(_st_off+$1*_elem_len, struct.getByteSize(),"+ fieldName +"); ":"") +
 //                        "unsafe.copyMemory(struct.___bytes,struct.___offset,___bytes,(long)_st_off+$1*_elem_len,(long)struct.getByteSize());"+
                         "struct.___bytes.copyTo(___bytes,(long)_st_off+$1*_elem_len,struct.___offset,(long)struct.getByteSize());"+
                     "}"
@@ -284,7 +286,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                 }
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException("in field "+fieldInfo.getField(),ex);
         }
     }
 
@@ -423,7 +425,7 @@ public class FSTByteArrayUnsafeStructGeneration implements FSTStructGeneration {
                         "long __tmpOff = ___offset + tmpIdx; " +
                         ""+typeString+" tmp = ("+ typeString +")___fac.getStructPointerByOffset(___bytes,__tmpOff); " +
                         "if ( tmp == null ) return null;"+
-                        "tmp.tracker = tracker; " +
+                        "tmp.tracker = new de.ruedigermoeller.heapoff.structs.FSTStructChange(tracker,\""+fieldInfo.getField().getName()+"\"); " +
                         "$_ = tmp; " +
                         "}");
 //                f.replace("{ Object _o = unsafe.toString(); $_ = _o; }");

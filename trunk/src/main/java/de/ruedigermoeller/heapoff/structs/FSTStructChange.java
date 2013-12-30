@@ -17,24 +17,37 @@ public class FSTStructChange implements Serializable {
 
     int changeOffsets[];
     int changeLength[];
+    String changedFields[];
     int curIndex;
+    transient public String _parentField;
+    transient public FSTStructChange _parent;
 
     byte snapshot[]; // created by snapshotChanges, contains new byte values
+
+    public FSTStructChange(FSTStructChange par, String parField) {
+        _parentField = parField;
+        _parent = par;
+    }
 
     public FSTStructChange() {
         changeLength = new int[2];
         changeOffsets = new int[2];
+        changedFields = new String[2];
     }
 
-    public void addChange(int offset, int len) {
-        addChange((long)offset,(long)len);
+    public void addChange(int offset, int len, String field) {
+        addChange((long)offset,(long)len,field);
     }
 
-    public void addChange(long offset, int len) {
-        addChange((long)offset,(long)len);
+    public void addChange(long offset, int len, String field) {
+        addChange((long)offset,(long)len,field);
     }
 
-    public void addChange(long offset, long len) {
+    public void addChange(long offset, long len, String field) {
+        if ( _parent != null ) {
+            _parent.addChange(offset,len,_parentField);
+            return;
+        }
         if ( curIndex > 0 && changeOffsets[curIndex-1]+changeLength[curIndex-1] == offset ) {
             changeLength[curIndex-1]+=len;
             return;
@@ -44,11 +57,16 @@ public class FSTStructChange implements Serializable {
             System.arraycopy(changeOffsets,0,newOff,0,changeOffsets.length);
             int newLen[] = new int[changeOffsets.length*2];
             System.arraycopy(changeLength,0,newLen,0,changeLength.length);
+            String newCF[] = new String[changeOffsets.length*2];
+            System.arraycopy(changedFields,0,newCF,0,changedFields.length);
+
             changeOffsets = newOff;
             changeLength = newLen;
+            changedFields = newCF;
         }
         changeOffsets[curIndex] = (int) (offset);
         changeLength[curIndex] = (int) len;
+        changedFields[curIndex] = field;
         curIndex++;
     }
 
@@ -93,16 +111,8 @@ public class FSTStructChange implements Serializable {
         }
     }
 
-    public void test_applyChangesTo(int originBase, byte[] origin, FSTStruct copy) {
-        Bytez arr = copy.getBase();
-        int baseIdx = (int) copy.getOffset();
-        for (int i = 0; i < curIndex; i++) {
-            int changeOffset = changeOffsets[i];
-            int len = changeLength[i];
-            for ( int ii = 0; ii < len; ii++) {
-                arr.put(baseIdx+changeOffset-originBase+ii,origin[changeOffset+ii]);
-            }
-        }
+    public String[] getChangedFields() {
+        return changedFields;
     }
 
     public byte[] getSnapshot() {
