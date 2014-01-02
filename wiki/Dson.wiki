@@ -1,4 +1,4 @@
-[This is beta, don't use yet]
+*This is beta, don't use yet*
 
 Dson is an extension of the popular JSON format. The FST Dson classes allow for easy and elegant mapping of text to object graphs. 
 It can be used 
