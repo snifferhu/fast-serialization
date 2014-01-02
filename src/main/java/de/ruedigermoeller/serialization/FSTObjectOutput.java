@@ -331,7 +331,20 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
                 return;
             } else if ( toWrite instanceof Enum ) {
                 writeFByte(ENUM);
-                writeClass(toWrite);
+                boolean isEnumClass = toWrite.getClass().isEnum();
+                if ( ! isEnumClass ) {
+                    // weird stuff ..
+                    Class c = toWrite.getClass();
+                    while ( c != null && ! c.isEnum() ) {
+                        c = toWrite.getClass().getEnclosingClass();
+                    }
+                    if ( c == null ) {
+                        throw new RuntimeException("Can't handle this enum: "+toWrite.getClass());
+                    }
+                    clnames.encodeClass(this,c);
+                } else {
+                    writeClass(toWrite);
+                }
                 writeCInt(((Enum) toWrite).ordinal());
                 return;
             }

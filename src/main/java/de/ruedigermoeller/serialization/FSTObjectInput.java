@@ -368,7 +368,12 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         clzSerInfo = readClass();
         c = clzSerInfo.getClazz();
         int ordinal = readCInt();
-        Object res = c.getEnumConstants()[ordinal];
+        Object[] enumConstants = c.getEnumConstants();
+        if ( enumConstants == null ) {
+            // pseudo enum of anonymous classes tom style ?
+            return null;
+        }
+        Object res = enumConstants[ordinal];
         if ( ! referencee.isFlat() ) { // fixme: unnecessary
             objects.registerObjectForRead(res, readPos);
         }
