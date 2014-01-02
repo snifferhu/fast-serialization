@@ -60,7 +60,7 @@ public class TestRunner {
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
 //        SerTest tests[] = { speedFST, kryoUnsTest };
 //        SerTest tests[] = { defFST };
-        SerTest tests[] = { defFST, kryotest };
+        SerTest tests[] = { defFST, defFSTNoUns, kryotest };
 //        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
             SerTest.Run/=100;

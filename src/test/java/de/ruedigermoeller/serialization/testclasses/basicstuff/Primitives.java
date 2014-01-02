@@ -25,6 +25,28 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
         return "A broad test of primitive values and specials such as Enums, EnumSets, Date, String, byte, short, int, .. Byte, Character; Short, Integer, .. <br> plus opaque private field with same name in a private subclass";
     }
 
+    public enum SpecialEnum {
+        ONE() {
+            public void run() {
+                System.out.println("One");
+            }
+        },
+        TWO() {
+            public void run() {
+                System.out.println("One");
+            }
+        },
+        THREE() {
+            public void run() {
+                System.out.println("One");
+            }
+        }
+        ;
+
+        public abstract void run();
+        SpecialEnum() {};
+    }
+
     public enum SampleEnum {
         None("","None",0),
                 Complete("C","Complete",1),
@@ -41,7 +63,7 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
          String stringRepresentation;
          int nativeEnumValue;
 
-         SampleEnum(String value, String stringRepresentation, int nativeEnumValue)
+        SampleEnum(String value, String stringRepresentation, int nativeEnumValue)
         {
             this.value=value;
             this.stringRepresentation = stringRepresentation;
@@ -52,6 +74,8 @@ public class Primitives extends PrivatePrimitive implements Serializable, HasDes
      char w = 234, x = 33344;
      byte y = -34, z = 126;
      short sh0 = 127;
+
+     SpecialEnum specEn = SpecialEnum.TWO;
 
      int gg = -122;
      int zz = 99999;
