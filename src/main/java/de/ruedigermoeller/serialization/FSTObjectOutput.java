@@ -103,7 +103,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
 
     int curDepth = 0;
 
-    int writeExternalWriteAhead = 5000; // max size an external may occupy FIXME: document this, create annotation to configure this
+    int writeExternalWriteAhead = 30000; // max size an external may occupy FIXME: document this, create annotation to configure this
     Unsafe unsafe;
 
     /**
