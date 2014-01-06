@@ -149,6 +149,10 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         initRegistries();
     }
 
+    public Class getClassForName(String name) throws ClassNotFoundException {
+        return clnames.classForName(name);
+    }
+
     void initRegistries() {
         ignoreAnnotations = conf.getCLInfoRegistry().isIgnoreAnnotations();
         clInfoRegistry = conf.getCLInfoRegistry();

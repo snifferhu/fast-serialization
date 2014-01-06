@@ -107,9 +107,6 @@ public class FSTStructSerializer extends FSTBasicObjectSerializer {
             in.read(bytes);
         }
         HeapBytez hb = new HeapBytez(bytes);
-        // need to patch clzId as it may differ from clz id in remote vm
-        int clzId = FSTStructFactory.getInstance().getClzId(serializationInfo.getClazz());
-        hb.putInt(4, clzId);
         return FSTStructFactory.getInstance().createStructWrapper(hb, 0);
     }
 }

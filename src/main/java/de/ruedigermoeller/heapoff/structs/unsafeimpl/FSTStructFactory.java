@@ -20,6 +20,7 @@ import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -62,7 +63,28 @@ public class FSTStructFactory {
 
     public static final int MAX_CLASSES = 1000;
     static FSTConfiguration conf = FSTConfiguration.createStructConfiguration();
-    static Loader proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), ClassPool.getDefault());
+
+    ClassPool defaultPool;
+    Loader proxyLoader;
+    ClassLoader parentLoader;
+
+    {
+        defaultPool = new ClassPool(null) {
+            @Override
+            public CtClass get(String classname) throws NotFoundException {
+                if ( rawByteClassDefs.containsKey(classname)) {
+                    try {
+                        return makeClass(new ByteArrayInputStream(rawByteClassDefs.get(classname)));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return super.get(classname);
+            }
+        };
+        defaultPool.appendSystemPath();
+        proxyLoader = new Loader(FSTStructFactory.class.getClassLoader(), defaultPool);
+    }
 
     ConcurrentHashMap<Class, Class> proxyClzMap = new ConcurrentHashMap<Class, Class>();
     FSTStructGeneration structGen = new FSTByteArrayUnsafeStructGeneration();
@@ -80,13 +102,17 @@ public class FSTStructFactory {
     }
 
     public void registerRawClass( String name, byte bytes[] ) {
+        System.out.println("** put raw "+name);
         rawByteClassDefs.put(name,bytes);
     }
 
-    <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
+    public <T> Class<T> createStructClz( Class<T> clazz ) throws Exception {
         //FIXME: ensure FSTStruct is superclass, check protected, no private methods+fields
         if ( Modifier.isFinal(clazz.getModifiers()) || Modifier.isAbstract(clazz.getModifiers()) ) {
             throw new RuntimeException("Cannot add final classes to structs");
+        }
+        if ( clazz.getName().endsWith("_Struct") ) {
+            throw new RuntimeException("cannot create Struct on Struct class. Class "+clazz+" is already instrumented" );
         }
         String proxyName = clazz.getName()+"_Struct";
         Class present = null;
@@ -97,14 +123,13 @@ public class FSTStructFactory {
         }
         if ( present != null )
             return present;
-        ClassPool pool = ClassPool.getDefault();
+        ClassPool pool = defaultPool;
         CtClass newClz = pool.makeClass(proxyName);
-        CtClass orig = pool.getOrNull(clazz.getName());
-        if ( orig == null ) {
-            if ( rawByteClassDefs.get(clazz.getName()) != null ) {
-                orig = pool.makeClass( new ByteArrayInputStream(rawByteClassDefs.get(clazz.getName())));
-            } else
-                throw new RuntimeException("unable to find class "+clazz.getName()+". Needs registering from remote");
+        CtClass orig = null;
+        if ( rawByteClassDefs.get(clazz.getName()) != null ) {
+            orig = pool.makeClass( new ByteArrayInputStream(rawByteClassDefs.get(clazz.getName())));
+        } else {
+            orig = pool.getOrNull(clazz.getName());
         }
         newClz.setSuperclass(orig);
 
@@ -550,8 +575,8 @@ public class FSTStructFactory {
         return align(elemSiz,SIZE_ALIGN);
     }
 
-    FSTInt2ObjectMap<Class> mIntToClz = new FSTInt2ObjectMap<Class>(97);
-    HashMap<Class,Integer> mClzToInt = new HashMap<Class,Integer>();
+    FSTInt2ObjectMap<Class> mIntToClz = new FSTInt2ObjectMap<Class>(97); // id to onheap class
+    HashMap<Class,Integer> mClzToInt = new HashMap<Class,Integer>(); // reverse
 
     int idCount = 1;
     public void registerClz(Class ... classes) {
@@ -577,6 +602,11 @@ public class FSTStructFactory {
             mIntToClz.put(id,c);
             mClzToInt.put(c,id);
         }
+    }
+
+    public void registerClzId(Class c, int id) {
+        mIntToClz.put(id,c);
+        mClzToInt.put(c,id);
     }
 
     public int getClzId(Class c) {
@@ -833,4 +863,22 @@ public class FSTStructFactory {
         return conf.getClassInfo(clz).getStructSize();
     }
 
+    Class classForName( String name ) throws ClassNotFoundException {
+        try {
+            return Class.forName(name);
+        } catch ( ClassNotFoundException ex ) {
+            if ( parentLoader != null ) {
+                return parentLoader.loadClass(name);
+            }
+            throw ex;
+        }
+    }
+
+    public ClassLoader getParentLoader() {
+        return parentLoader;
+    }
+
+    public void setParentLoader(ClassLoader parentLoader) {
+        this.parentLoader = parentLoader;
+    }
 }
