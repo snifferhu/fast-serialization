@@ -53,7 +53,7 @@ public class FSTClassSerializer extends FSTBasicObjectSerializer {
     public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTClazzInfo.FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         boolean isPrimitive = in.readBoolean();
         String name = in.readStringUTF();
-        Class cls = isPrimitive ? primitiveMap.get(name) : Class.forName(name);
+        Class cls = isPrimitive ? primitiveMap.get(name) : in.getClassForName(name);
         in.registerObject(cls, streamPositioin, serializationInfo, referencee);
         return cls;
     }

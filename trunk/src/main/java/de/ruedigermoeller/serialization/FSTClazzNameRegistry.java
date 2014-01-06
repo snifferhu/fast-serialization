@@ -226,7 +226,7 @@ public class FSTClazzNameRegistry {
 
     HashMap<String,Class> classCache = new HashMap<String, Class>(200);
     AtomicBoolean classCacheLock = new AtomicBoolean(false);
-    private Class classForName(String clName) throws ClassNotFoundException {
+    public Class classForName(String clName) throws ClassNotFoundException {
         if ( parent != null ) {
             return parent.classForName(clName);
         }
@@ -240,7 +240,9 @@ public class FSTClazzNameRegistry {
                 {
                     try {
                         clName = clName.substring(0,clName.length()-"_Struct".length());
-                        Class onHeapStructClz = Class.forName(clName);
+                        Class onHeapStructClz = classCache.get(clName);
+                        if ( onHeapStructClz == null )
+                            onHeapStructClz = Class.forName(clName);
                         res = FSTStructFactory.getInstance().getProxyClass(onHeapStructClz);
                     } catch (Throwable th1) {
                         throw new RuntimeException(th1);

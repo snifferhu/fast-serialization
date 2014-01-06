@@ -19,7 +19,11 @@
  */
 package de.ruedigermoeller.serialization;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -37,6 +41,79 @@ public class FSTClazzInfoRegistry {
     boolean ignoreAnnotations = false;
     final AtomicBoolean rwLock = new AtomicBoolean(false);
     private boolean structMode = false;
+
+
+    public static void addAllReferencedClasses(Class cl, ArrayList<String> names) {
+        HashSet<String> names1 = new HashSet<String>();
+        addAllReferencedClasses(cl, names1, new HashSet<String>());
+        names.addAll(names1);
+    }
+
+    static void addAllReferencedClasses(Class cl, HashSet<String> names, HashSet<String> topLevelDone) {
+        if ( cl == null || topLevelDone.contains(cl.getName()) )
+            return;
+        topLevelDone.add(cl.getName());
+        Field[] declaredFields = cl.getDeclaredFields();
+        for (int i = 0; i < declaredFields.length; i++) {
+            Field declaredField = declaredFields[i];
+            Class<?> type = declaredField.getType();
+            if ( ! type.isPrimitive() && ! type.isArray() ) {
+                names.add(type.getName());
+                addAllReferencedClasses(type,names,topLevelDone);
+            }
+        }
+        Class[] declaredClasses = cl.getDeclaredClasses();
+        for (int i = 0; i < declaredClasses.length; i++) {
+            Class declaredClass = declaredClasses[i];
+            if ( ! declaredClass.isPrimitive() && ! declaredClass.isArray() ) {
+                names.add(declaredClass.getName());
+                addAllReferencedClasses(declaredClass, names,topLevelDone);
+            }
+        }
+        Method[] declaredMethods = cl.getDeclaredMethods();
+        for (int i = 0; i < declaredMethods.length; i++) {
+            Method declaredMethod = declaredMethods[i];
+            Class<?> returnType = declaredMethod.getReturnType();
+            if ( ! returnType.isPrimitive() && ! returnType.isArray() ) {
+                names.add(returnType.getName());
+                addAllReferencedClasses(returnType, names,topLevelDone);
+            }
+            Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
+            for (int j = 0; j < parameterTypes.length; j++) {
+                Class<?> parameterType = parameterTypes[j];
+                if ( ! parameterType.isPrimitive() && ! parameterType.isArray() ) {
+                    names.add(parameterType.getName());
+                    addAllReferencedClasses(parameterType, names,topLevelDone);
+                }
+            }
+        }
+
+        Class[] classes = cl.getDeclaredClasses();
+        for (int i = 0; i < classes.length; i++) {
+            Class aClass = classes[i];
+            if ( ! aClass.isPrimitive() && ! aClass.isArray() ) {
+                names.add(aClass.getName());
+                addAllReferencedClasses(aClass, names,topLevelDone);
+            }
+        }
+
+        Class enclosingClass = cl.getEnclosingClass();
+        if ( enclosingClass != null ) {
+            names.add(enclosingClass.getName());
+            addAllReferencedClasses(enclosingClass,names,topLevelDone);
+        }
+
+        names.add(cl.getName());
+        addAllReferencedClasses(cl.getSuperclass(), names,topLevelDone);
+        Class[] interfaces = cl.getInterfaces();
+        for (int i = 0; i < interfaces.length; i++) {
+            Class anInterface = interfaces[i];
+            if ( ! anInterface.isPrimitive() && ! anInterface.isArray() ) {
+                names.add(anInterface.getName());
+                addAllReferencedClasses(anInterface, names,topLevelDone);
+            }
+        }
+    }
 
     public FSTClazzInfoRegistry() {
     }
