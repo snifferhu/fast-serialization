@@ -102,7 +102,11 @@ public abstract class SerTest {
     }
 
     public void dumpRes() {
+        try {
         System.out.println(title+" : Size:"+length+",  TimeRead: "+(timRead*1000/Run)+" microsec ["+timRead+"],   TimeWrite: "+(timWrite*1000/Run)+" microsec ["+timWrite+"]");
+        } catch (Exception e) {
+            System.out.println("** Exception in dump"+e.getMessage());
+        }
     }
 
     public void runReadTest(Class cl) {

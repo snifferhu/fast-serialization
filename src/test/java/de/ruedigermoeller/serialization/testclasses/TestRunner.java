@@ -61,6 +61,7 @@ public class TestRunner {
 //        SerTest tests[] = { speedFST, kryoUnsTest };
 //        SerTest tests[] = { defFST };
         SerTest tests[] = { defFST, defFSTNoUns, kryotest };
+//        SerTest tests[] = { defFST, defFSTNoUns};
 //        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
             SerTest.Run/=100;
@@ -166,10 +167,10 @@ public class TestRunner {
                 "</p>"
         );
 
-//        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
-        SerTest.WarmUP = 30000; SerTest.Run = 50000;
+        SerTest.WarmUP = 40000; SerTest.Run = SerTest.WarmUP*1+1;
+//        SerTest.WarmUP = 2000; SerTest.Run = 3000;
         runner.runAll(FrequentPrimitives.getArray(200));
-//        runner.runAll(FrequentPrimitivesExternalizable.getArray(200));
+        runner.runAll(FrequentPrimitivesExternalizable.getArray(200));
         runner.runAll(new FrequentCollections());
         runner.runAll(new LargeNativeArrays());
         runner.runAll(new StringPerformance());
