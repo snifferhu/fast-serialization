@@ -42,8 +42,14 @@ public class PrimitiveArrays implements Serializable, HasDescription {
     long longA[] = new long[] {2,3,4,5,6,7, -1, -2, -3 };
     float floatA[] = new float[] {2,3,4,5,6,7, -1, -2, -3 };
     double doubleA[] = new double[] {2,3,4,5,6,7, -1, -2, -3 };
+    double dd[][] = {
+        new double[] { 1.0,2.3},
+        new double[] { 2.0,2.3},
+        new double[] { 3.0,2.3},
+    };
 
     Dim dim[][][] = new Dim[][][] {{{new Dim(11,10)},{new Dim(9,10),new Dim(1666661,11)}}};
+    Dim nullDim[][] = {null};
     Object dimo[][][] = new Object[][][] {{{new Dim(11,10)},{new Dim(10,8),new Dim(6,11)}}};
     Object dimonotype0 = new Object[][][] {{{new Date(),new Dim(10,777)},{new Dim(1666661,11),new Dim(6,11)}}};
     Object dimonotype1 = new Object[] { dim, dimo, dimonotype0, o0, o1, o2, new Date(), new Object[]{ new Dim[]{ new Dim(1666661,11)},o0,new Object[]{new Dim(66,10),new Dim(1666661,11)}}};
