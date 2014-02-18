@@ -43,7 +43,7 @@ public class FSTUtil {
     public static Unsafe unFlaggedUnsafe = FSTUtil.getUnsafe(); // even if unsafe is disabled, use it for memoffset computation
 
     static {
-        if ( System.getProperty("fst.unsafe","true").equals("true") ) {
+        if ( System.getProperty("fst.unsafe","false").equals("true") ) {
             FSTUtil.unsafe = unFlaggedUnsafe;
         }
         if ( unFlaggedUnsafe != null ) {

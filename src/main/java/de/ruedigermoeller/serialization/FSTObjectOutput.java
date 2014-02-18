@@ -497,6 +497,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
                     }
                     break;
                 } else {
+                    System.out.println("wf:"+subInfo.getField().getName()+" "+toWrite.getClass());
                     if ( boolcount == 8 ) {
                         writeFByte(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
@@ -510,6 +511,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
             for (int i = j; i < length; i++)
             {
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                System.out.println("wf:"+subInfo.getField().getName()+" of "+toWrite.getClass().getName());
                 if ( subInfo.isPrimitive() ) {
                     // speed safe
                     int integralType = subInfo.getIntegralType();
@@ -580,6 +582,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
                     }
                     break;
                 } else {
+                    System.out.println("wf:"+subInfo.getField().getName());
                     if ( boolcount == 8 ) {
                         writeFByteUnsafe(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
@@ -593,6 +596,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
             for (int i = j; i < length; i++)
             {
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                System.out.println("wf:"+subInfo.getField().getName());
                 if ( subInfo.isPrimitive() ) {
                     // speed unsafe
                     int integralType = subInfo.getIntegralType();
