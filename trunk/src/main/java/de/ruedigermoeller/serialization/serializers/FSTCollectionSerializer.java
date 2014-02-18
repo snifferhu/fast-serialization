@@ -115,7 +115,8 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             }
             return res;
         } catch (Throwable th) {
-            throw new RuntimeException(th);
+            th.printStackTrace();
+            return null;
         }
     }
 }
