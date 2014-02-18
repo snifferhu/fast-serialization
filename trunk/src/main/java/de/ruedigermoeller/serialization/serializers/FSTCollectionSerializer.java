@@ -87,6 +87,9 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             } else
             if ( objectClass == Vector.class ) {
                 res = new Vector(len);
+            } else
+            if ( objectClass == LinkedList.class ) {
+                res = new LinkedList();
             } else {
                 res = objectClass.newInstance();
             }
@@ -112,7 +115,7 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             }
             return res;
         } catch (Throwable th) {
-            return null;
+            throw new RuntimeException(th);
         }
     }
 }

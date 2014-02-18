@@ -551,13 +551,13 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         int boolcount = 8;
         final int length = fieldInfo.length;
         int conditional = 0;
-        final Unsafe unsafe = FSTUtil.unsafe;
         try {
             for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
+                System.out.println("rf:"+subInfo.getField().getName());
                 if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
@@ -683,6 +683,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
+                System.out.println("rf:"+subInfo.getField().getName()+" "+newObj.getClass());
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }

@@ -498,6 +498,9 @@ public final class FSTConfiguration {
         return null;
     }
 
+    public FSTObjectInput getObjectInput( byte arr[]) {
+        return getObjectInput(arr, 0, arr.length);
+    }
     /**
      * take the given array as input. the array is NOT copied
      * @param arr
