@@ -36,6 +36,36 @@ import java.util.*;
  */
 public final class FSTClazzInfo {
 
+    public static final Comparator<FSTFieldInfo> defFieldComparator = new Comparator<FSTFieldInfo>() {
+        @Override
+        public int compare(FSTFieldInfo o1, FSTFieldInfo o2) {
+            int res = 0;
+            if (o1.getType() == boolean.class && o2.getType() != boolean.class) {
+                return -1;
+            }
+            if (o1.getType() != boolean.class && o2.getType() == boolean.class) {
+                return 1;
+            }
+            if (o1.isConditional() && !o2.isConditional()) {
+                res = 1;
+            } else if (!o1.isConditional() && o2.isConditional()) {
+                res = -1;
+            } else if (o1.isPrimitive() && !o2.isPrimitive()) {
+                res = -1;
+            } else if (!o1.isPrimitive() && o2.isPrimitive())
+                res = 1;
+//                if (res == 0) // 64 bit / 32 bit issues
+//                    res = (int) (o1.getMemOffset() - o2.getMemOffset());
+            if (res == 0)
+                res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
+            if (res == 0)
+                res = o1.getField().getName().compareTo(o2.getField().getName());
+            if (res == 0) {
+                return o1.getField().getDeclaringClass().getName().compareTo(o2.getField().getDeclaringClass().getName());
+            }
+            return res;
+        }
+    };
     Class[] predict;
     private boolean ignoreAnn;
     HashMap<String, FSTFieldInfo> fieldMap = new HashMap<String, FSTFieldInfo>(15); // all fields
@@ -287,36 +317,7 @@ public final class FSTClazzInfo {
         }
 
         // default sort order
-        Comparator<FSTFieldInfo> comp = new Comparator<FSTFieldInfo>() {
-            @Override
-            public int compare(FSTFieldInfo o1, FSTFieldInfo o2) {
-                int res = 0;
-                if (o1.getType() == boolean.class && o2.getType() != boolean.class) {
-                    return -1;
-                }
-                if (o1.getType() != boolean.class && o2.getType() == boolean.class) {
-                    return 1;
-                }
-                if (o1.isConditional() && !o2.isConditional()) {
-                    res = 1;
-                } else if (!o1.isConditional() && o2.isConditional()) {
-                    res = -1;
-                } else if (o1.isPrimitive() && !o2.isPrimitive()) {
-                    res = -1;
-                } else if (!o1.isPrimitive() && o2.isPrimitive())
-                    res = 1;
-//                if (res == 0) // 64 bit / 32 bit issues
-//                    res = (int) (o1.getMemOffset() - o2.getMemOffset());
-                if (res == 0)
-                    res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
-                if (res == 0)
-                    res = o1.getField().getName().compareTo(o2.getField().getName());
-                if (res == 0) {
-                    return o1.getField().getDeclaringClass().getName().compareTo(o2.getField().getDeclaringClass().getName());
-                }
-                return res;
-            }
-        };
+        Comparator<FSTFieldInfo> comp = defFieldComparator;
         if ( ! reg.isStructMode() )
             Arrays.sort(fieldInfo, comp);
         int off = 8; // object header: length + clzId
@@ -817,8 +818,10 @@ public final class FSTClazzInfo {
         public FSTFieldInfo[] getFieldArray() {
             if (infoArr == null) {
                 List<FSTClazzInfo.FSTFieldInfo> fields = getFields();
-                infoArr = new FSTClazzInfo.FSTFieldInfo[fields.size()];
-                fields.toArray(infoArr);
+                final FSTFieldInfo[] fstFieldInfos = new FSTFieldInfo[fields.size()];
+                fields.toArray(fstFieldInfos);
+                Arrays.sort(fstFieldInfos,defFieldComparator);
+                infoArr = fstFieldInfos;
             }
             return infoArr;
         }
