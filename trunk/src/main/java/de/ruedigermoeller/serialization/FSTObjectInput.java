@@ -557,7 +557,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
-                System.out.println("rf:"+subInfo.getField().getName());
+                System.out.println("rf:"+subInfo.getField().getName()+" "+input.pos);
                 if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
@@ -683,7 +683,9 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                System.out.println("rf:"+subInfo.getField().getName()+" "+newObj.getClass());
+                System.out.println("rf:"+subInfo.getField().getName()+" "+newObj.getClass()+" "+input.pos);
+                if (subInfo.getField().getName().startsWith("preFiltered"))
+                    System.out.println("POK");
                 if (FSTObjectOutput.DUMP) {
                     System.out.println("READFIELD " + fieldInfo[i].getField().getName());
                 }
