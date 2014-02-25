@@ -305,8 +305,8 @@ public final class FSTClazzInfo {
                     res = -1;
                 } else if (!o1.isPrimitive() && o2.isPrimitive())
                     res = 1;
-                if (res == 0)
-                    res = (int) (o1.getMemOffset() - o2.getMemOffset());
+//                if (res == 0) // 64 bit / 32 bit issues
+//                    res = (int) (o1.getMemOffset() - o2.getMemOffset());
                 if (res == 0)
                     res = o1.getType().getSimpleName().compareTo(o2.getType().getSimpleName());
                 if (res == 0)

@@ -489,7 +489,13 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
             int boolcount = 0;
             final int length = fieldInfo.length;
             int j = 0;
-            for (; j < length; j++) {
+            for (;; j++) {
+                if ( j == length ) {
+                    if ( boolcount > 0 ) {
+                        writeFByte(booleanMask<<(8-boolcount));
+                    }
+                    break;
+                }
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[j];
                 if ( subInfo.getType() != boolean.class ) {
                     if ( boolcount > 0 ) {
