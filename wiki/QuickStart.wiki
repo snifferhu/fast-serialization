@@ -5,13 +5,7 @@
 
 *Maven*
 
-{{{
-<dependency>
-    <groupId>de.ruedigermoeller</groupId>
-    <artifactId>fst</artifactId>
-    <version>1.36</version>
-</dependency>
-}}}
+see project page.
 
 Content:
 
