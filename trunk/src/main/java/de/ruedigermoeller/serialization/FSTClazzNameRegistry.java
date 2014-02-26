@@ -39,7 +39,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FSTClazzNameRegistry {
 
     static final boolean ENABLE_SNIPPETS = false;
-    private static final boolean DEBUG_CLNAMES = false;
 
     FSTObject2IntMap<Class> clzToId = new FSTObject2IntMap<Class>(13,false);
     FSTInt2ObjectMap idToClz = new FSTInt2ObjectMap(13);
@@ -136,8 +135,6 @@ public class FSTClazzNameRegistry {
 //            lastCatch = clid; lastClazz = c;
             out.writeCShort((short) clid); // > 2 !!
         } else {
-            if ( DEBUG_CLNAMES )
-                System.out.println("write class name class:"+c.getName());
             int snippet = 0;
             if ( ENABLE_SNIPPETS ) {
                 snippet = findLongestSnippet(c);
@@ -149,8 +146,6 @@ public class FSTClazzNameRegistry {
                     addCLNameSnippets(c);
                     addCLNameSnippets( Array.newInstance(c,0).getClass() );
                 }
-                if ( DEBUG_CLNAMES )
-                    System.out.println("netto write:'" + c.getName() + "'");
             } else {
                 out.writeCShort((short) 1); // no direct cl id, but snippet
                 String snippetString = getSnippetFromId(snippet);
@@ -164,8 +159,6 @@ public class FSTClazzNameRegistry {
                 addCLNameSnippets(c);
                 addCLNameSnippets( Array.newInstance(c,0).getClass() );
                 out.writeStringUTF(written);
-                if ( DEBUG_CLNAMES )
-                    System.out.println("netto write:'"+written+"'");
             }
             registerClass(c, false);
         }
@@ -248,8 +241,7 @@ public class FSTClazzNameRegistry {
                         throw new RuntimeException(th1);
                     }
                 } else {
-                    System.out.println("CLASSNAME:"+clName);
-                    throw new RuntimeException(th);
+                    throw new RuntimeException("CLASSNAME:"+clName,th);
                 }
             }
             if ( res != null ) {
@@ -359,7 +351,6 @@ public class FSTClazzNameRegistry {
         }
         stringSnippets.put(pack, snippetCount);
         stringSnippetsReverse.put(snippetCount,pack);
-        //System.out.println("SNIPPET:" + pack + " " + snippetCount);
         snippetCount++;
         return snippetCount-1;
     }

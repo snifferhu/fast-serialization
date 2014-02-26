@@ -91,7 +91,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     boolean preferSpeed;
     // done
     ConditionalCallback conditionalCallback;
-    int readExternalReadAHead = 16000;
+    int readExternalReadAHead = 8000;
 
     static ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
 
@@ -241,9 +241,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
     }
 
     public Object readObject(Class... possibles) throws Exception {
-        if (curDepth != 0) {
-            //System.out.println("Do not call this method from inside serialization");
-        }
         curDepth++;
         try {
             if (possibles != null) {
@@ -339,7 +336,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
     private Object instantiateHandle(FSTClazzInfo.FSTFieldInfo referencee) throws IOException {
         int handle = readCInt();
-//                System.out.println("READ HANDLE "+handle+" "+referencee.getDesc());
         Object res = objects.getReadRegisteredObject(handle);
         if (res == null) {
             throw new IOException("unable to ressolve handle " + handle + " " + referencee.getDesc() + " " + input.pos);
@@ -483,7 +479,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
 
 
     protected Object readObjectCompatible(FSTClazzInfo.FSTFieldInfo referencee, FSTClazzInfo serializationInfo, Object newObj) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        if (FSTObjectOutput.DUMP) System.out.println("read compatible :" + newObj.getClass());
         Class cl = serializationInfo.getClazz();
         readObjectCompatibleRecursive(referencee, newObj, serializationInfo, cl);
         if (newObj != null &&
@@ -554,10 +549,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         try {
             for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (FSTObjectOutput.DUMP) {
-                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
-                }
-                System.out.println("rf:"+subInfo.getField().getName()+" "+input.pos);
                 if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
@@ -615,9 +606,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         try {
             for (int i = 0; i < length; i++) {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (FSTObjectOutput.DUMP) {
-                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
-                }
                 if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
@@ -683,12 +671,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         for (int i = 0; i < length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                System.out.println("rf:"+subInfo.getField().getName()+" "+newObj.getClass()+" "+input.pos);
-                if (subInfo.getField().getName().startsWith("preFiltered"))
-                    System.out.println("POK");
-                if (FSTObjectOutput.DUMP) {
-                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
-                }
                 if (subInfo.isPrimitive()) {
                     final Class subInfTzpe = subInfo.getType();
                     if (subInfTzpe == boolean.class) {
@@ -768,9 +750,6 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         for (int i = 0; i < fieldInfo.length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if (FSTObjectOutput.DUMP) {
-                    System.out.println("READFIELD " + fieldInfo[i].getField().getName());
-                }
                 if (subInfo.isIntegral() && !subInfo.isArray()) {
                     final Class subInfoType = subInfo.getType();
                     if (subInfoType == boolean.class) {
@@ -2040,4 +2019,7 @@ public class FSTObjectInput extends DataInputStream implements ObjectInput {
         }
     }
 
+    public FSTInputStream getInput() {
+        return input;
+    }
 }

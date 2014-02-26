@@ -34,9 +34,9 @@ public class TestRunner {
 
     SerTest kryotest = new KryoTest("Kryo 2.2.2");
     SerTest kryoUnsTest = new KryoUnsafeTest("Kryo 2.2.2 UnsafeIn/Output");
-    SerTest speedFST = new FSTTest("FST (preferSpeed=true)",true,true);
-    SerTest defFST = new FSTTest("FST",true,false);
-    SerTest defFSTNoUns = new FSTTest("FST (Disabled Unsafe)",false,false); // unpublished as kryo always uses unsafe
+    SerTest speedFST = new FSTTest("FST (preferSpeed=true, Unsafe enabled)",true,true);
+    SerTest defFST = new FSTTest("FST (Unsafe enabled)",true,false);
+    SerTest defFSTNoUns = new FSTTest("FST ",false,false);
     SerTest defser = new JavaSerTest("Java built in");
 //    SerTest gridgain = new GridGainTest("GridGain 4.5"); cannot redistribute ..
 
@@ -55,12 +55,12 @@ public class TestRunner {
         System.out.println();
         System.out.println();
         System.out.println("************** Running all with "+toSer.getClass().getName()+" **********************************");
-//        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest, defser };
+        SerTest tests[] = { speedFST, defFSTNoUns, kryoUnsTest, defFST, kryotest, defser };
 //        SerTest tests[] = { speedFST, kryoUnsTest, defFST, kryotest};
 //        SerTest tests[] = { speedFST, kryotest, kryoUnsTest };
 //        SerTest tests[] = { speedFST, kryoUnsTest };
 //        SerTest tests[] = { defFST };
-        SerTest tests[] = { defFST, defFSTNoUns, kryotest };
+//        SerTest tests[] = { defFST, defFSTNoUns, kryotest };
 //        SerTest tests[] = { defFST, defFSTNoUns};
 //        SerTest tests[] = { kryotest };
         if ( toSer instanceof BigObject ) {
@@ -167,7 +167,7 @@ public class TestRunner {
                 "</p>"
         );
 
-        SerTest.WarmUP = 1; SerTest.Run = SerTest.WarmUP*1+1;
+        SerTest.WarmUP = 30000; SerTest.Run = SerTest.WarmUP*1+1;
 //        SerTest.WarmUP = 2000; SerTest.Run = 3000;
         runner.runAll(FrequentPrimitives.getArray(200));
         runner.runAll(FrequentPrimitivesExternalizable.getArray(200));

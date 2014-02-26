@@ -40,9 +40,6 @@ public final class FSTObjectRegistry {
 
     FSTConfiguration conf;
     FSTClazzInfoRegistry reg;
-
-    private static final boolean DUMP = false;
-
     Object reuseMap[] = new Object[4000];
     private int highestPos;
 
@@ -110,16 +107,11 @@ public final class FSTObjectRegistry {
         } else {
             idToObject.put(streamPos, replaced);
         }
-        if ( DUMP  )
-            System.out.println("REPLACE "+streamPos+" old "+old.getClass().getName()+" new:"+replaced.getClass().getName());
     }
 
     public void registerObjectForRead(Object o, int streamPosition) {
         if (disabled /*|| streamPosition <= lastRegisteredReadPos*/) {
             return;
-        }
-        if ( DUMP ) {
-            System.out.println("for read "+o.getClass()+" "+streamPosition);
         }
         int pos = streamPosition / OBJ_DIVISOR;
         Object[] reuseMap = this.reuseMap;
@@ -172,8 +164,6 @@ public final class FSTObjectRegistry {
             }
         }
 //        objects.put(o, streamPosition); // done with putorget above
-        if ( DUMP )
-            System.out.println("REGISTER "+o.getClass()+" pos:"+streamPosition+" handle:"+streamPosition+" id:"+System.identityHashCode(o));
         if ( reUseEquals ) {
             equalsMap.put(o,streamPosition);
         }
