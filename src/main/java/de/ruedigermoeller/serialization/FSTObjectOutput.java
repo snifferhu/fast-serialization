@@ -91,9 +91,6 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
     static final byte NULL = -1;
     static final byte OBJECT = 0;
 
-    public static final boolean DUMP = false;
-
-
     public FSTClazzNameRegistry clnames; // immutable
     FSTConfiguration conf; // immutable
 
@@ -103,7 +100,7 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
 
     int curDepth = 0;
 
-    int writeExternalWriteAhead = 5000; // max size an external may occupy FIXME: document this, create annotation to configure this
+    int writeExternalWriteAhead = 8000; // max size an external may occupy FIXME: document this, create annotation to configure this
     Unsafe unsafe;
 
     /**
@@ -447,8 +444,6 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
     private void writeObjectCompatible(FSTClazzInfo.FSTFieldInfo referencee, Object toWrite, FSTClazzInfo serializationInfo) throws IOException {
         // Object header (nothing written till here)
         writeObjectHeader(serializationInfo, referencee, toWrite);
-        if ( FSTObjectOutput.DUMP )
-            System.out.println("write compatible :"+toWrite.getClass());
         Class cl = serializationInfo.getClazz();
         writeObjectCompatibleRecursive(referencee,toWrite,serializationInfo,cl);
     }
@@ -497,15 +492,12 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
                     break;
                 }
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[j];
-                if (subInfo.getField().getName().startsWith("preFiltered"))
-                    System.out.println("pok");
                 if ( subInfo.getType() != boolean.class ) {
                     if ( boolcount > 0 ) {
                         writeFByte(booleanMask<<(8-boolcount));
                     }
                     break;
                 } else {
-                    System.out.println("wf:"+subInfo.getField().getName()+" "+toWrite.getClass()+" "+getWritten());
                     if ( boolcount == 8 ) {
                         writeFByte(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
@@ -519,9 +511,6 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
             for (int i = j; i < length; i++)
             {
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                System.out.println("wf:"+subInfo.getField().getName()+" of "+toWrite.getClass().getName()+" "+getWritten());
-                if (subInfo.getField().getName().startsWith("preFiltered"))
-                    System.out.println("pok");
                 if ( subInfo.isPrimitive() ) {
                     // speed safe
                     int integralType = subInfo.getIntegralType();
@@ -592,7 +581,6 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
                     }
                     break;
                 } else {
-                    System.out.println("wf:"+subInfo.getField().getName());
                     if ( boolcount == 8 ) {
                         writeFByteUnsafe(booleanMask<<(8-boolcount));
                         boolcount = 0; booleanMask = 0;
@@ -606,7 +594,6 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
             for (int i = j; i < length; i++)
             {
                 final FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                System.out.println("wf:"+subInfo.getField().getName());
                 if ( subInfo.isPrimitive() ) {
                     // speed unsafe
                     int integralType = subInfo.getIntegralType();
@@ -687,18 +674,9 @@ public class FSTObjectOutput extends DataOutputStream implements ObjectOutput {
     private void writeCompatibleObjectFields(Object toWrite, Map fields, FSTClazzInfo.FSTFieldInfo[] fieldInfo) throws IOException {
         int booleanMask = 0;
         int boolcount = 0;
-        if ( fieldInfo.length != fields.size() ) {
-            System.out.println("=(((((((((((((((((((((((((((((((((((((((((((((((");
-        }
         for (int i = 0; i < fieldInfo.length; i++) {
             try {
                 FSTClazzInfo.FSTFieldInfo subInfo = fieldInfo[i];
-                if ( ! fields.containsKey(subInfo.getField().getName() )) {
-                    System.out.println("(((((((((((((((((((((((((((((((((((((((((((");
-                }
-                if ( DUMP ) {
-                    System.out.println("WRITE FIELD:"+subInfo.getField().getName());
-                }
                 boolean isarr = subInfo.isArray();
                 Class subInfType = subInfo.getType();
                 if ( subInfType != boolean.class || isarr) {

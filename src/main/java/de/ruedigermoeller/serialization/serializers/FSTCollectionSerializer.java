@@ -46,7 +46,6 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
                 List l = (List) col;
                 for (int i = 0; i < size; i++) {
                     Object o = l.get(i);
-                    System.out.println( "wcf["+i+"] "+(o==null?new Object():o).getClass()+" "+referencedBy);
                     out.writeObjectInternal(o, possibleClasses);
                     if ( o != null ) {
                         possibleClasses[0] = o.getClass();
@@ -54,7 +53,6 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
                 }
             } else {
                 for (Object o : col) {
-                    System.out.println( "wcf[..] "+(o==null?new Object():o).getClass()+" "+referencedBy);
                     out.writeObjectInternal(o, possibleClasses);
                     if ( o != null ) {
                         possibleClasses[0] = o.getClass();
@@ -66,12 +64,10 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
                 List l = (List) col;
                 for (int i = 0; i < size; i++) {
                     Object o = l.get(i);
-                    System.out.println( "wcf["+i+"] "+(o==null?new Object():o).getClass()+" "+referencedBy);
                     out.writeObjectInternal(o, possibleClasses);
                 }
             } else {
                 for (Object o : col) {
-                    System.out.println( "wcf[..] "+(o==null?new Object():o).getClass()+" "+referencedBy);
                     out.writeObjectInternal(o, possibleClasses);
                 }
             }
@@ -106,7 +102,6 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             if ( (possibleClasses == null || possibleClasses.length == 0) ) {
                 possibleClasses = new Class[] {null};
                 for ( int i = 0; i < len; i++ ) {
-                    System.out.println("rcf["+i+"] "+referencee);
                     Object obj = in.readObjectInternal(possibleClasses);
                     col.add(obj);
                     if ( obj != null ) {
@@ -116,7 +111,6 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
             } else {
                 for ( int i = 0; i < len; i++ ) {
                     final Object o = in.readObjectInternal(possibleClasses);
-                    System.out.println("rcf["+i+"] "+referencee);
                     col.add(o);
                 }
             }

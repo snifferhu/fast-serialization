@@ -145,7 +145,6 @@ public class FSTStructAllocator {
                 return getFactory().toStruct(aTemplate,alloc);
             }
         } catch (Throwable e) {
-            System.out.println("tried to allocate "+siz+" bytes. StructArray of "+size+" "+templ.getClass().getName());
             throw new RuntimeException(e);
         }
     }
@@ -192,7 +191,6 @@ public class FSTStructAllocator {
                 chunk = alloc.alloc(chunkSize);
                 System.out.println("[Allocator] sum allocated "+MallocBytezAllocator.alloced.get()/1024/1024+" MB");
                 chunkIndex = 0;
-//                System.out.println("** allocated new chunk ** old contained "+chunkObjCount+" objects in "+chunkSize/1024/1024+" MB");
                 chunkObjCount = 0;
             }
 //            FSTStruct.unsafe.copyMemory(aTemplate.___bytes, aTemplate.___offset, chunk, FSTStruct.bufoff + chunkIndex, byteSize);

@@ -300,8 +300,7 @@ public final class FSTClazzInfo {
                                 curClzFields.add(fstFieldInfo);
                                 fields.add(fstFieldInfo.getField());
                             } else {
-                                if (FSTObjectOutput.DUMP)
-                                    System.out.println("Class:" + c.getName() + " no field found " + ff);
+                                // TODO: throw exception ? (needs testing)
                             }
                         }
                     }

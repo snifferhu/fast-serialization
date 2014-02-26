@@ -102,7 +102,6 @@ public class FSTStructFactory {
     }
 
     public void registerRawClass( String name, byte bytes[] ) {
-        System.out.println("** put raw "+name);
         rawByteClassDefs.put(name,bytes);
     }
 
