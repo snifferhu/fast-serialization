@@ -3,9 +3,9 @@
 ----
 ==Short Guide==
 
-*Maven*
+(Maven see project page.)
 
-see project page.
+
 
 Content:
 
